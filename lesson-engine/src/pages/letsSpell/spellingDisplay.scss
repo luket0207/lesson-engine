@@ -1,0 +1,252 @@
+@use '../../assets/scss/mixins' as mixins;
+
+.lets-spell-playback {
+  position: fixed;
+  display: grid;
+  grid-template-rows:
+    minmax(0, 1fr)
+    clamp(4.5rem, 18dvh, 11rem)
+    clamp(8.5rem, 18dvh, 9rem);
+  gap: clamp(0.5rem, 1.5vmin, 1rem);
+  align-items: stretch;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  inset: 0;
+  padding:
+    max(clamp(4.75rem, 10vmin, 6rem), calc(env(safe-area-inset-top) + 4.75rem))
+    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-right))
+    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-bottom))
+    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-left));
+  overflow: hidden;
+  cursor: pointer;
+
+  &:focus {
+    outline: 3px solid currentcolor;
+    outline-offset: -6px;
+  }
+
+  &__assistive {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &__image-region,
+  &__word-region,
+  &__completion-region {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 0;
+    contain: layout paint;
+  }
+
+  &__image-region {
+    padding: clamp(0.25rem, 1.5vmin, 1rem);
+  }
+
+  &__image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(750px, 100%);
+    max-height: min(750px, 100%);
+    object-fit: contain;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.55);
+    transform-origin: center;
+    will-change: opacity, transform;
+
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    &--entering {
+      visibility: visible;
+      animation: spelling-image-enter var(--spelling-image-animation-duration, 500ms)
+        ease-out both;
+    }
+
+    &--exiting {
+      visibility: visible;
+      animation: spelling-image-exit var(--spelling-image-animation-duration, 500ms)
+        ease-in both;
+    }
+  }
+
+  &__word {
+    display: flex;
+    gap: 0.08em;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    font-family: var(--font-heading);
+    font-size: min(10rem, 16dvh, var(--spelling-fit-size));
+    font-weight: 600;
+    line-height: 0.9;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  &__letter {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.25) rotate(-720deg);
+    transform-origin: center;
+    will-change: opacity, transform;
+
+    &--space {
+      visibility: hidden;
+    }
+
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) rotate(0deg);
+    }
+
+    &--entering {
+      visibility: visible;
+      animation: spelling-letter-enter var(--spelling-letter-animation-duration, 700ms)
+        cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    }
+
+    &--exiting {
+      visibility: visible;
+      animation: spelling-letter-exit var(--spelling-letter-animation-duration, 700ms)
+        cubic-bezier(0.55, 0, 0.8, 0.35) both;
+    }
+  }
+
+  &__completion-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.625rem, 2vmin, 1rem);
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 38rem);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    .app-button {
+      flex: 1 1 13rem;
+    }
+
+    &--single .app-button {
+      flex: 0 1 20rem;
+      width: min(100%, 20rem);
+    }
+
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    &--entering {
+      visibility: visible;
+      animation: spelling-completion-fade-in
+        var(--spelling-completion-animation-duration, 350ms) ease-out both;
+    }
+
+    &--exiting {
+      visibility: visible;
+      animation: spelling-completion-fade-out
+        var(--spelling-completion-animation-duration, 350ms) ease-in both;
+    }
+  }
+
+  @include mixins.reduced-motion {
+    &__image--entering,
+    &__image--exiting,
+    &__letter--entering,
+    &__letter--exiting,
+    &__completion-actions--entering,
+    &__completion-actions--exiting {
+      animation-duration: 1ms;
+    }
+  }
+}
+
+@keyframes spelling-image-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spelling-image-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+}
+
+@keyframes spelling-letter-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.25) rotate(-720deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes spelling-letter-exit {
+  from {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.25) rotate(720deg);
+  }
+}
+
+@keyframes spelling-completion-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes spelling-completion-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

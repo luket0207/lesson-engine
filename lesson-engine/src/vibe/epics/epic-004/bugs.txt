@@ -1,0 +1,36 @@
+
+# Epic-004 - Bugs
+
+## Bug-001 - Allow Screen Click to Activate Next
+
+Status: complete
+Notes: Routed playback-surface forward input to Next when a non-final completion state is visible, while leaving final navigation inert and preserving button event filtering. Added a short reducer-backed, cleanup-safe item transition lock so rapid follow-up input cannot reveal the next item's image.
+
+Currently, when the "Next" button appears after completing a word in a multi-item sequence, the user must click the button itself to advance to the next item.
+
+The user should also be able to click anywhere on the activity screen to advance.
+
+Requirements:
+- When the "Next" button is visible, clicking anywhere on the activity screen should trigger the same action as clicking Next.
+- The Next button itself must continue working normally.
+- Pressing the Right Arrow key should also activate Next.
+- Clicking or tapping the screen should move to the next item in the existing sequence.
+- The next item must begin at the blank initial stage, requiring another click to reveal its image.
+- A single click must never both advance to the next item and reveal its image.
+- Prevent event bubbling from causing the Next button to trigger twice.
+- Ignore additional clicks while transitioning between items.
+- Preserve the existing playback order.
+- Do not change the behaviour of the final item, where "Back to Category" and "Back to Home" buttons are displayed.
+- When the final navigation buttons are visible, clicking elsewhere on the screen should not trigger navigation.
+- Clicking the global menu or interacting with its modal must not activate Next.
+- Preserve existing backward navigation. Pressing Left Arrow or right-clicking should still hide the Next button and return to the fully revealed word.
+
+Acceptance Criteria:
+- Clicking Next advances to the next item.
+- Clicking anywhere on the activity screen while Next is visible also advances to the next item.
+- Right Arrow activates Next.
+- Only one item transition occurs per interaction.
+- The next item starts with a blank screen.
+- Global menu interactions do not trigger Next.
+- Final-item navigation behaviour remains unchanged.
+- Backward navigation continues working correctly.

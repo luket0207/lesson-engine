@@ -1,6 +1,7 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { useLocation } from 'react-router-dom';
 import OptionsModal from '../optionsModal/optionsModal';
 import './appShell.scss';
 
@@ -11,8 +12,18 @@ export function useAppShell() {
 }
 
 function AppShell({ children }) {
+  const location = useLocation();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const contextValue = useMemo(() => ({ isOptionsOpen }), [isOptionsOpen]);
+  const usesLetsSpellTheme =
+    location.pathname === '/letsSpell' || location.pathname.startsWith('/letsSpell/');
+
+  useEffect(() => {
+    const themeClass = 'theme--lets-spell';
+    document.documentElement.classList.toggle(themeClass, usesLetsSpellTheme);
+
+    return () => document.documentElement.classList.remove(themeClass);
+  }, [usesLetsSpellTheme]);
 
   return (
     <AppShellContext.Provider value={contextValue}>

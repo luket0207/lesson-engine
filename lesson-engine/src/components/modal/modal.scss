@@ -9,7 +9,7 @@
   place-items: center;
   inset: 0;
   padding: clamp(1.5rem, 5vmin, 3rem);
-  background-color: rgba(0, 35, 42, 0.62);
+  background-color: rgba(var(--color-theme-shadow-rgb), 0.62);
 
   @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
     -webkit-backdrop-filter: blur(0.45rem);
@@ -54,7 +54,7 @@
   max-height: calc(100vh - 3rem);
   max-height: calc(100dvh - 3rem);
   padding: clamp(1.25rem, 4vmin, 2rem);
-  color: variables.$color-text;
+  color: var(--color-text);
 
   &__header {
     position: relative;

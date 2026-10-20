@@ -27,23 +27,23 @@
     min-height: 4.25rem;
     padding: 1rem 2rem;
     font-size: 1.5rem;
-    background-color: rgba(variables.$color-deep-teal, 0.94);
+    background-color: rgba(var(--color-theme-secondary-rgb), 0.94);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.42),
-      0 0.9rem 2rem rgba(0, 35, 42, 0.3);
+      0 0.9rem 2rem rgba(var(--color-theme-shadow-rgb), 0.3);
   }
 
   &--secondary {
     min-height: 3.75rem;
     padding: 0.875rem 1.5rem;
     font-size: 1.25rem;
-    background-color: rgba(variables.$color-slate-blue, 0.82);
+    background-color: rgba(var(--color-theme-primary-rgb), 0.82);
   }
 
   &--tertiary {
     padding: 0.625rem 1rem;
     font-size: 1rem;
-    background-color: rgba(variables.$color-deep-teal, 0.72);
+    background-color: rgba(var(--color-theme-secondary-rgb), 0.72);
   }
 
   &--large {
@@ -56,7 +56,7 @@
     border-width: 3px;
     box-shadow:
       inset 0 0 0 2px rgba(255, 255, 255, 0.48),
-      0 0.75rem 1.75rem rgba(0, 35, 42, 0.28);
+      0 0.75rem 1.75rem rgba(var(--color-theme-shadow-rgb), 0.28);
 
     &::after {
       font-weight: 700;

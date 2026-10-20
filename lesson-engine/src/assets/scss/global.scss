@@ -8,7 +8,22 @@
   --color-slate-blue: #{variables.$color-slate-blue};
   --color-deep-teal: #{variables.$color-deep-teal};
   --color-text: #{variables.$color-text};
+  --color-theme-primary: #{variables.$color-slate-blue};
+  --color-theme-primary-rgb: #{variables.$color-slate-blue-rgb};
+  --color-theme-secondary: #{variables.$color-deep-teal};
+  --color-theme-secondary-rgb: #{variables.$color-deep-teal-rgb};
+  --color-theme-shadow-rgb: #{variables.$color-shadow-rgb};
   color-scheme: dark;
+
+  &.theme--lets-spell {
+    --color-text: #{variables.$color-spell-text};
+    --color-theme-primary: #{variables.$color-spell-orange};
+    --color-theme-primary-rgb: #{variables.$color-spell-orange-rgb};
+    --color-theme-secondary: #{variables.$color-spell-dark-yellow};
+    --color-theme-secondary-rgb: #{variables.$color-spell-dark-yellow-rgb};
+    --color-theme-shadow-rgb: #{variables.$color-spell-text-rgb};
+    color-scheme: light;
+  }
 }
 
 * {
@@ -17,7 +32,7 @@
 
 html {
   min-height: 100%;
-  background: variables.$color-deep-teal;
+  background: var(--color-theme-secondary);
 }
 
 body {
@@ -30,12 +45,12 @@ body {
   min-height: 100dvh;
   margin: 0;
   overflow-x: hidden;
-  color: variables.$color-text;
-  background-color: variables.$color-deep-teal;
+  color: var(--color-text);
+  background-color: var(--color-theme-secondary);
   background-image:
-    radial-gradient(circle at 18% 24%, rgba(variables.$color-slate-blue, 0.82), transparent 52%),
-    radial-gradient(circle at 82% 72%, rgba(variables.$color-deep-teal, 0.9), transparent 55%),
-    linear-gradient(135deg, variables.$color-slate-blue, variables.$color-deep-teal);
+    radial-gradient(circle at 18% 24%, rgba(var(--color-theme-primary-rgb), 0.82), transparent 52%),
+    radial-gradient(circle at 82% 72%, rgba(var(--color-theme-secondary-rgb), 0.9), transparent 55%),
+    linear-gradient(135deg, var(--color-theme-primary), var(--color-theme-secondary));
   background-position: 0% 0%, 100% 100%, 20% 30%;
   background-repeat: no-repeat;
   background-size: 145% 155%, 165% 145%, 220% 220%;
@@ -55,15 +70,15 @@ body::after {
 
 body::before {
   background:
-    radial-gradient(circle at 25% 30%, rgba(variables.$color-slate-blue, 0.48), transparent 40%),
-    radial-gradient(circle at 72% 68%, rgba(variables.$color-deep-teal, 0.55), transparent 43%);
+    radial-gradient(circle at 25% 30%, rgba(var(--color-theme-primary-rgb), 0.48), transparent 40%),
+    radial-gradient(circle at 72% 68%, rgba(var(--color-theme-secondary-rgb), 0.55), transparent 43%);
   animation: background-cloud-drift 9s ease-in-out infinite alternate;
 }
 
 body::after {
   background:
-    radial-gradient(circle at 70% 22%, rgba(variables.$color-slate-blue, 0.4), transparent 36%),
-    radial-gradient(circle at 32% 78%, rgba(variables.$color-deep-teal, 0.46), transparent 40%);
+    radial-gradient(circle at 70% 22%, rgba(var(--color-theme-primary-rgb), 0.4), transparent 36%),
+    radial-gradient(circle at 32% 78%, rgba(var(--color-theme-secondary-rgb), 0.46), transparent 40%);
   animation: background-tide-drift 15s ease-in-out infinite alternate-reverse;
 }
 
