@@ -1,0 +1,129 @@
+
+# Epic-002 - Bugs
+
+## Bug-001 - Two-Column Options Layout and Auto Count Default
+
+Status: complete
+Notes: Reworked the options panel into a compact two-column, two-row grid with a narrow-screen single-column fallback, reduced page-specific spacing, and enabled Auto Count by default while retaining Normal speed and all other defaults.
+
+The options panel on the Let's Count start screen currently takes up too much vertical space.
+
+Requirements:
+- Change the options panel to use a two-column grid layout.
+- Arrange the four main settings into two rows and two columns.
+- Ensure the layout is compact and well-balanced.
+- Keep consistent spacing and alignment between options.
+- The Auto Count speed buttons should remain within the Auto Count section when enabled.
+- Reduce unnecessary vertical padding or gaps where appropriate.
+- The Start Counting button, options panel and Back to Home link should ideally all fit within one viewport without scrolling.
+- Maintain a usable layout on smaller screens without clipping or overlapping elements.
+- Use responsive font sizes and spacing where necessary.
+- Avoid introducing horizontal scrolling.
+- Change Auto Count to be enabled by default.
+- Normal should remain the default Auto Count speed.
+- Users must still be able to disable Auto Count and use manual counting.
+- Preserve all other existing option defaults.
+
+Acceptance Criteria:
+- The options panel displays two columns.
+- Options are arranged clearly and consistently.
+- The start screen fits vertically within the viewport at supported screen sizes where practical.
+- No controls are clipped or inaccessible on smaller screens.
+- Auto Count is enabled by default.
+- Normal remains the default speed.
+- All other options continue functioning correctly.
+
+
+## Bug-002 - Increase Start Counting Button Size
+
+Status: complete
+Notes: Added an opt-in reusable large Button size with increased responsive type, padding, and height, then applied it only to Start Counting with a wider responsive page cap; all other buttons retain their existing dimensions.
+
+The Start Counting button on the Let's Count options screen is currently too small.
+
+Requirements:
+- Increase the overall size of the Start Counting button.
+- Increase its font size so the text is more prominent.
+- Increase the vertical and horizontal padding to give the button a larger physical appearance.
+- Maintain the existing primary button styling.
+- Preserve its more solid glass background, rounded corners, borders and hover effects.
+- Keep the button horizontally centred.
+- Ensure the larger button remains visually balanced with the options panel.
+- Keep the button responsive so it fits on smaller screens.
+- Do not increase the size of every primary button throughout the application.
+- Implement the larger size using a reusable size variant or component modifier rather than changing the global primary button dimensions.
+- Preserve keyboard focus and TV remote accessibility.
+
+Acceptance Criteria:
+- The Start Counting button is noticeably larger.
+- The button text is noticeably larger.
+- The button remains centred and responsive.
+- Other buttons throughout the application retain their current dimensions.
+- Existing button interactions and styling continue working.
+
+
+## Bug-003 - Prevent Finished Text Moving When Buttons Appear
+
+Status: complete
+Notes: Positioned completion actions independently beneath the viewport-centred Finished text using responsive offsets, eliminating the conditional-render layout shift without changing either entrance or button fade timing.
+
+On the completion screen, the word "Finished!" initially animates into the centre of the screen correctly.
+
+However, when the two navigation buttons fade in beneath it, the Finished! text moves upwards.
+
+This layout shift should not happen.
+
+Requirements:
+- Keep the Finished! text in exactly the same position throughout the entire completion sequence.
+- The text should remain horizontally and vertically centred in its designated position.
+- When the navigation buttons appear, they must not affect the position of the Finished! text.
+- Reserve space for the buttons before they become visible, or position them independently of the Finished! text.
+- The buttons should fade in beneath the text without causing any existing elements to move.
+- Do not alter the existing Finished! entrance animation.
+- Do not change the existing button fade-in timing.
+- Keep the completion screen responsive.
+- Ensure buttons never overlap the Finished! text on smaller screens.
+- Avoid layout shifts caused by conditional rendering or changes to container alignment.
+
+Acceptance Criteria:
+- Finished! remains stationary after completing its entrance animation.
+- The appearance of the buttons does not move the text.
+- Buttons fade in smoothly beneath Finished!.
+- No visible layout shift occurs.
+- The layout remains correct on mobile, desktop and television screens.
+- Existing completion animations and navigation continue working.
+
+
+## Bug-004 - Slightly Slower and Smoother Wobble Animation
+
+Status: complete
+Notes: Smoothed the isolated wobble by spreading its settle across more of the existing 0.5-second entrance, softening rotation/translation/squash values, and using a gentler easing curve without changing words, exits, or counting delays.
+
+The cartoon wobble animation introduced in Feature-007 works well and should be retained.
+
+However, the wobble currently feels slightly too fast and abrupt.
+
+Requirements:
+- Keep the existing cartoon wobble animation.
+- Make the wobble slightly slower and smoother.
+- Adjust the easing and keyframe progression to make the movement feel more natural.
+- Reduce any abrupt rotation, scaling or directional changes.
+- Preserve the existing playful cartoon personality.
+- Avoid making the wobble excessively slow or exaggerated.
+- Prefer a subtle adjustment rather than a complete redesign.
+- Keep the wobble integrated into the existing 0.5-second entrance animation.
+- Do not increase the overall entrance duration.
+- The digit must still finish settling into its final position within 0.5 seconds.
+- Ensure the word animation remains synchronised with the digit entrance.
+- Do not modify the digit exit animations.
+- Keep the wobble implementation isolated so it can still be rolled back independently.
+- Respect prefers-reduced-motion.
+
+Acceptance Criteria:
+- The wobble remains visible and playful.
+- The wobble feels slightly slower and smoother.
+- Abrupt movements are reduced.
+- The overall entrance animation still lasts 0.5 seconds.
+- Number words remain synchronised with digits.
+- Automatic counting timings are unaffected.
+- All existing counting animations continue working.

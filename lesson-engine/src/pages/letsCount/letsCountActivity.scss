@@ -1,0 +1,383 @@
+@use '../../assets/scss/glass' as glass;
+@use '../../assets/scss/mixins' as mixins;
+@use '../../assets/scss/variables' as variables;
+
+.lets-count-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 72rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(0.75rem, 3vmin, 2rem);
+
+  &--sequence {
+    position: fixed;
+    inset: 0;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  &--paused * {
+    animation-play-state: paused !important;
+  }
+
+  &__title {
+    margin: 0 0 clamp(0.75rem, 2vmin, 1.25rem);
+    font-size: clamp(2.25rem, 6vmin, 4.5rem);
+    text-align: center;
+  }
+
+  &__start {
+    width: min(100%, 30rem);
+  }
+
+  &__options {
+    @include glass.surface;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.875rem, 2vmin, 1.5rem) clamp(1rem, 3vw, 2rem);
+    width: min(100%, 58rem);
+    margin-top: clamp(0.75rem, 2vmin, 1.25rem);
+    padding: clamp(1rem, 2.5vmin, 1.75rem);
+  }
+
+  &__options-title {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: clamp(1.5rem, 3.5vmin, 2.25rem);
+    text-align: center;
+  }
+
+  &__setting {
+    display: grid;
+    align-content: start;
+    gap: 0.625rem;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    legend {
+      margin-bottom: 0.625rem;
+      padding: 0;
+      font-size: clamp(1rem, 2vmin, 1.125rem);
+    }
+  }
+
+  &__choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .app-button {
+      flex: 1 1 6rem;
+    }
+  }
+
+  &__checkbox {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    width: fit-content;
+    min-height: 3rem;
+    font-size: 1.125rem;
+    cursor: pointer;
+
+    input {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0;
+      accent-color: var(--color-deep-teal);
+    }
+  }
+
+  &__speed {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  &__back {
+    margin-top: clamp(0.75rem, 2vmin, 1.25rem);
+  }
+
+  &__sequence-screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: clamp(1.25rem, 5vmin, 4rem);
+    text-align: center;
+  }
+
+  &__message {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-family: variables.$font-heading;
+    font-size: clamp(3rem, 16vmin, 10rem);
+    line-height: 1;
+    transform-origin: center;
+
+    &--entering {
+      animation: lets-count-message-grow var(--counting-animation-duration, 500ms)
+        ease-out both;
+    }
+
+    &--exiting {
+      animation: lets-count-message-fade-out var(--counting-animation-duration, 500ms)
+        ease-in both;
+    }
+  }
+
+  &__completion-actions {
+    position: absolute;
+    top: calc(50% + clamp(3.25rem, 11vmin, 7rem));
+    left: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    width: min(calc(100% - 2rem), 36rem);
+    margin: 0;
+    transform: translateX(-50%);
+    animation: lets-count-actions-fade-in
+      var(--completion-actions-fade-duration, 500ms) ease-out both;
+
+    .app-button {
+      flex: 1 1 14rem;
+    }
+  }
+
+  &__counting-display {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    padding: clamp(1rem, 4vmin, 3rem);
+    overflow: hidden;
+
+    &--interactive {
+      margin: 0;
+      border: 0;
+      font: inherit;
+      color: inherit;
+      background: transparent;
+      appearance: none;
+      cursor: pointer;
+
+      &:focus {
+        outline: 4px solid rgba(255, 255, 255, 0.98);
+        outline-offset: -8px;
+      }
+    }
+
+    &--digit-only {
+      grid-template-rows: minmax(0, 1fr);
+    }
+
+    &--with-word {
+      grid-template-rows: minmax(0, 1fr) clamp(5rem, 22vmin, 12rem);
+      gap: clamp(0.75rem, 2vmin, 1.5rem);
+    }
+  }
+
+  &__digit-region,
+  &__word-region {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  &__digit,
+  &__word {
+    display: block;
+    font-family: variables.$font-heading;
+    line-height: 0.85;
+    color: variables.$color-text;
+    text-align: center;
+    white-space: nowrap;
+    transform-origin: center;
+    will-change: opacity, transform;
+  }
+
+  &__digit {
+    font-size: min(62vh, 55vw);
+    font-size: min(62dvh, 55vw);
+    animation-duration: var(--counting-animation-duration, 500ms);
+    animation-timing-function: cubic-bezier(0.22, 0.7, 0.24, 1);
+    animation-fill-mode: both;
+
+    .lets-count-page__counting-display--digit-only & {
+      font-size: min(80vh, 65vw);
+      font-size: min(80dvh, 65vw);
+    }
+  }
+
+  &__word {
+    max-width: 100%;
+    font-size: clamp(2rem, 16vmin, 10rem);
+    animation-duration: var(--counting-animation-duration, 500ms);
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+
+    &--entering {
+      animation-name: lets-count-word-enter;
+    }
+
+    &--exiting {
+      animation-name: lets-count-word-exit;
+      animation-timing-function: ease-in;
+    }
+  }
+
+  &__digit--up#{&}__digit--entering {
+    animation-name: lets-count-digit-enter-left;
+  }
+
+  &__digit--up#{&}__digit--exiting {
+    animation-name: lets-count-digit-exit-right;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+
+  &__digit--down#{&}__digit--entering {
+    animation-name: lets-count-digit-enter-right;
+  }
+
+  &__digit--down#{&}__digit--exiting {
+    animation-name: lets-count-digit-exit-left;
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+
+  @include mixins.reduced-motion {
+    &__message--entering,
+    &__message--exiting,
+    &__completion-actions,
+    &__digit--entering,
+    &__digit--exiting,
+    &__word--entering,
+    &__word--exiting {
+      animation-duration: 1ms;
+    }
+  }
+}
+
+@media (max-width: 42rem) {
+  .lets-count-page {
+    &__options {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__options-title {
+      grid-column: 1;
+    }
+  }
+}
+
+@keyframes lets-count-message-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes lets-count-message-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes lets-count-actions-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lets-count-digit-enter-left {
+  from {
+    transform: translateX(calc(-100vw - 100%)) scale(0.5);
+  }
+
+  to {
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes lets-count-digit-exit-right {
+  from {
+    transform: translateX(0) scale(1);
+  }
+
+  to {
+    transform: translateX(calc(100vw + 100%)) scale(0.5);
+  }
+}
+
+@keyframes lets-count-digit-enter-right {
+  from {
+    transform: translateX(calc(100vw + 100%)) scale(0.5);
+  }
+
+  to {
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes lets-count-digit-exit-left {
+  from {
+    transform: translateX(0) scale(1);
+  }
+
+  to {
+    transform: translateX(calc(-100vw - 100%)) scale(0.5);
+  }
+}
+
+@keyframes lets-count-word-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes lets-count-word-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}

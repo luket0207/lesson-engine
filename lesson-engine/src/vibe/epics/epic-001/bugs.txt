@@ -1,0 +1,90 @@
+
+# Epic-001 - Bugs
+
+## Bug-001 - Increase Activity Pod Height
+
+Status: complete
+Notes: Added a reusable tall NavigationPod size and applied it only to Activities, increasing vertical padding by 40px per side and minimum height by 80px.
+
+The navigation pods in the Activities section of the homepage are currently too short.
+
+Requirements:
+- Increase the vertical padding of each Activities pod by 40px at the top and 40px at the bottom.
+- This should increase the total height of each pod by approximately 80px.
+- Preserve the existing horizontal padding.
+- Keep all icons and labels centred within their pods.
+- Ensure all Activity pods maintain consistent dimensions.
+- Do not change the height of the pods in the Teachers section.
+- Maintain responsive behaviour across mobile, tablet, desktop and TV screen sizes.
+- Preserve the existing glass styling, hover glint and keyboard focus effects.
+- Implement the difference using a reusable component variant or SCSS modifier rather than duplicating the entire pod component.
+
+Acceptance Criteria:
+- Activities pods are approximately 80px taller than before.
+- Teachers pods retain their existing height.
+- Icons and labels remain correctly centred.
+- The responsive grid continues working correctly.
+- Existing hover, focus and navigation behaviour remains unchanged.
+
+
+## Bug-002 - Increase Animated Background Movement
+
+Status: complete
+Notes: Added three smooth CSS gradient layers with distinct 9s, 13s and 15s multidirectional paths, restored the #4b6982 grey-blue token, and retained the reduced-motion fallback.
+
+The current animated gradient background is far too subtle. The movement is barely noticeable, making the background appear almost static.
+
+Requirements:
+- Make the gradient animation significantly more noticeable.
+- The colours should visibly move and flow around the screen.
+- Rather than simply shifting from one side to another, the gradient should move organically in multiple directions.
+- Introduce more variation in the movement, including horizontal, vertical and diagonal motion.
+- Use multiple animated gradient layers with different animation speeds and movement patterns to create a fluid, random-looking effect.
+- Avoid obvious repetitive movement or sudden changes in direction.
+- Increase the range of movement so that different colours visibly occupy different areas of the screen over time.
+- The animation should feel dynamic and alive while remaining smooth and relaxing.
+- Aim for visible movement within approximately 2–3 seconds of watching the background.
+- Consider using larger gradient layers, animated background positions or moving radial gradients to achieve this.
+- Keep the existing slate grey-blue and deep teal colour palette established in Bug-001.
+- Do not reintroduce purple tones.
+- Keep all animation styling centralised and reusable throughout the application.
+- Prefer CSS animations over JavaScript.
+- Ensure the animation performs smoothly on mobile devices, desktops and televisions.
+- Respect prefers-reduced-motion by disabling or significantly reducing movement when enabled.
+
+Acceptance Criteria:
+- The background is clearly animated when viewed for a few seconds.
+- Colours visibly flow across different areas of the screen.
+- Movement occurs in multiple directions rather than following a simple linear pattern.
+- The animation appears organic rather than obviously repetitive.
+- Transitions remain smooth without abrupt jumps or flickering.
+- The slate grey-blue and deep teal palette is preserved.
+- The animation does not noticeably impact interface responsiveness.
+- The updated animation applies consistently across all application pages.
+
+
+## Bug-004 - Increase Activities Pod Font Size
+
+Status: complete
+Notes: Extended the Activities-only tall pod modifier with 2rem centred text while leaving Teacher pod typography and global styles unchanged.
+
+The text within the Activities navigation pods on the homepage is currently too small.
+
+Requirements:
+- Increase the font size of the text within Activities pods to 2rem (32px at the default root font size).
+- Apply this change only to the Activities pods.
+- Do not change the font size of the Teachers pods.
+- Continue using the global Short Stack font for pod labels.
+- Keep the text centred horizontally and vertically within each pod.
+- Ensure the larger text fits comfortably within the existing pod dimensions.
+- Allow text to wrap naturally on smaller screens if necessary.
+- Preserve the existing icons, glass styling, hover effects and keyboard focus behaviour.
+- Use a reusable component variant or SCSS modifier rather than duplicating the NavigationPod component.
+- Do not modify global typography settings.
+
+Acceptance Criteria:
+- All three Activities pods display their labels at 2rem.
+- Teachers pods retain their existing font size.
+- Text remains correctly centred and readable.
+- The responsive grid layout continues working correctly.
+- Existing pod styling and functionality remain unchanged.

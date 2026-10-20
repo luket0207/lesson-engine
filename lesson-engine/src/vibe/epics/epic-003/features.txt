@@ -1,0 +1,474 @@
+
+# Epic-003 - Global UI Improvements
+
+## Overview
+
+This epic focuses on improving the application's shared interface and navigation.
+
+The main objectives are:
+- Fix visual artefacts in the animated background.
+- Introduce a reusable modal component.
+- Create a dedicated Teachers Page.
+- Add a persistent menu button to every page.
+- Remove the Teachers grid from the homepage.
+
+All changes must follow the existing design system established in Epic-001 and Epic-002.
+
+Continue using:
+- DynaPuff for headings.
+- Short Stack for other text.
+- The existing slate grey-blue and deep teal palette.
+- The animated gradient background.
+- The frosted-glass styling.
+- The existing shared button components.
+- Centralised SCSS variables and reusable styles.
+
+Maintain keyboard, touchscreen and TV remote compatibility.
+
+
+## Feature-001 - Fix Animated Background Artefacts
+
+Status: complete
+Notes: Prevented shared gradient layers from tiling and constrained animated background positions to covered 0–100% bounds, removing repeat seams while preserving the existing palette, animation durations, movement, and reduced-motion behavior.
+
+The existing animated gradient background occasionally displays a visible straight line across the screen.
+
+This appears to be a rendering artefact or boundary between animated gradient layers.
+
+Requirements:
+
+1. Investigate the Cause
+- Inspect the existing background animation implementation.
+- Identify what causes the straight line to appear.
+- Check for visible boundaries between gradient layers.
+- Check for background repetition, clipping or insufficient layer coverage.
+- Check whether transforms cause an animated layer's edge to enter the viewport.
+- Check for rendering issues caused by pseudo-elements or animation properties.
+
+2. Fix the Background
+- Remove the visible straight-line artefact.
+- Ensure gradient layers cover the entire viewport throughout their animations.
+- Prevent the edges of animated layers from becoming visible.
+- Avoid visible seams between gradients.
+- Ensure the background remains continuous while moving.
+- Do not simply hide the issue by disabling the animation.
+
+3. Preserve Existing Appearance
+- Keep the existing slate grey-blue and deep teal colour palette.
+- Do not reintroduce purple tones.
+- Maintain the more noticeable organic movement introduced in Epic-001 Bug-003.
+- Preserve the existing animation's general appearance and speed.
+- Avoid introducing abrupt transitions or obvious looping patterns.
+
+4. Performance and Responsiveness
+- Ensure the background works on mobile, tablet, desktop and television screens.
+- Prevent artefacts during viewport resizing.
+- Avoid horizontal or vertical overflow.
+- Keep the animation performant.
+- Prefer CSS-based solutions.
+- Respect prefers-reduced-motion.
+
+5. Reusability
+- Make the fix in the existing shared background styling.
+- Do not implement separate background animations for individual pages.
+- Ensure the fix applies throughout the application.
+
+Acceptance Criteria:
+- No straight lines or visible gradient boundaries appear.
+- The background remains continuously animated.
+- The existing colours and movement style are preserved.
+- No clipping or seams appear during viewport resizing.
+- The background works consistently across all pages.
+
+
+## Feature-002 - Reusable Modal Component
+
+Status: complete
+Notes: Added a generic portaled glass Modal with configurable title/content, controlled open state, circular offset close control, Escape dismissal, focus trapping/restoration, inert background and scroll locking, responsive internal scrolling, and reduced-motion-aware enter/exit transitions.
+
+Create a reusable Modal component that can be used throughout the application.
+
+The first use of this component will be the Options modal, but it must support different titles and content in future features.
+
+Requirements:
+
+1. Component Structure
+- Create a shared Modal component.
+- Keep it separate from page-specific components.
+- Support a configurable title.
+- Support configurable content through children.
+- Support an open/closed state.
+- Support an onClose callback.
+- Allow different modal contents without duplicating the component.
+- Use the existing project's component naming and file structure conventions.
+
+2. Modal Appearance
+- Follow the application's existing frosted-glass visual design.
+- Use a translucent glass background.
+- Apply backdrop blur where supported.
+- Use rounded corners.
+- Include a subtle border and shadow.
+- Ensure the modal is visually distinct from the background.
+- Use the existing centrally defined colour palette.
+- Keep text white unless the global theme changes.
+
+3. Modal Overlay
+- Display a full-screen overlay behind the modal.
+- Slightly darken or blur the application behind the modal.
+- The modal should appear above all normal page content.
+- Centre the modal horizontally and vertically.
+- Ensure its contents remain fully visible on smaller screens.
+- Allow internal scrolling if modal content exceeds the available viewport.
+- Prevent interaction with the underlying page while the modal is open.
+
+4. Modal Header
+- Display the modal title at the top.
+- Use DynaPuff for the title.
+- Centre the title horizontally.
+- Ensure the title does not overlap the close button.
+
+5. Close Button
+- Add a close button to the top-right corner of the modal.
+- Display a clear X icon inside the button.
+- Place the X inside its own circular background.
+- Position the circular button slightly offset from the modal's top-right border.
+- The circle should visually overlap or protrude beyond the modal border.
+- Give the circle a glass-style appearance that complements the modal.
+- Make the close button visually prominent and easy to identify.
+
+6. Close Button Hover Effect
+- Add a smooth hover transition.
+- Make the background slightly more solid on hover.
+- Add a subtle scale or highlight effect.
+- Preserve a clear focus indicator.
+- Respect prefers-reduced-motion.
+
+7. Modal Behaviour
+- Clicking the close button closes the modal.
+- Closing the modal must not trigger any other action.
+- The underlying page should remain in its previous state.
+- Pressing Escape should also close the modal.
+- Do not navigate away when the modal is closed.
+- Do not reset the underlying page's settings or state.
+
+8. Accessibility
+- Use appropriate dialog semantics.
+- Associate the modal title with the dialog.
+- Move keyboard focus into the modal when it opens.
+- Keep Tab navigation within the modal while it is open.
+- Restore focus to the button that opened the modal when it closes, if that button still exists.
+- Prevent keyboard interaction with background controls while the modal is open.
+- Ensure all modal controls work using a keyboard or compatible TV remote.
+
+9. Animation
+- Add a subtle opening and closing transition.
+- A small fade or scale effect is appropriate.
+- Keep the animation smooth and relatively quick.
+- Avoid excessive motion.
+- Respect prefers-reduced-motion.
+
+10. Reusability
+- Keep the modal's general layout and styling within the shared component.
+- Keep modal-specific content outside the shared component.
+- Avoid hardcoding the title "Options" into the reusable Modal component.
+- Structure the component so future activities can use their own modals.
+
+Acceptance Criteria:
+- A reusable Modal component exists.
+- Modal titles and contents are configurable.
+- The modal follows the application's glass styling.
+- The close button is circular and offset from the top-right border.
+- The close button has a hover and focus effect.
+- Escape and the close button dismiss the modal.
+- Closing the modal preserves the underlying page state.
+- Background controls cannot be interacted with while the modal is open.
+- Keyboard focus is managed correctly.
+- The component is suitable for future reuse.
+
+
+## Feature-003 - Teachers Page and Homepage Cleanup
+
+Status: complete
+Notes: Added a minimal /teachers page containing only the shared Back to Home button, removed the Teachers heading and setup grid from Home, and preserved both existing setup pages and routes unchanged.
+
+Create a dedicated Teachers Page and remove the Teachers section from the homepage.
+
+Requirements:
+
+1. Teachers Page
+- Create a new page called Teachers Page.
+- Store it within src/pages/teachers/.
+- Follow the existing project's file naming conventions.
+- Register the route:
+
+/teachers
+
+2. Placeholder Content
+- This page will eventually contain teacher-related functionality, FAQs and activity configuration options.
+- These features are outside the scope of this epic.
+- For now, the page should only contain a button labelled:
+
+Back to Home
+
+- The button should navigate to /.
+- Use the existing shared button component.
+- Follow the application's global styling.
+- Do not implement teacher FAQs or additional features yet.
+
+3. Homepage Changes
+- Remove the entire Teachers section from the homepage.
+- Remove the Teachers heading.
+- Remove the Teachers navigation grid.
+- Remove the Let's Spell setup pod.
+- Remove the Let's Find setup pod.
+- Keep the Activities section unchanged.
+
+4. Existing Setup Pages
+- Do not delete the existing Let's Spell setup page.
+- Do not delete the existing Let's Find setup page.
+- Preserve their existing routes and functionality.
+- These pages will eventually become accessible through the Teachers Page.
+- Do not move their navigation into the Teachers Page yet.
+
+5. Routing
+- Ensure /teachers loads correctly.
+- Ensure the Back to Home button works.
+- Preserve all existing activity and setup routes.
+- Do not introduce unnecessary routing changes.
+
+Acceptance Criteria:
+- The Teachers Page exists at /teachers.
+- The page contains a working Back to Home button.
+- The Teachers section is no longer visible on the homepage.
+- The Activities section remains unchanged.
+- Existing teacher setup pages and routes are preserved.
+- No teacher-specific functionality has been introduced.
+
+
+## Feature-004 - Persistent Global Menu and Options Modal
+
+Status: complete
+Notes: Added a shared app shell with a persistent accessible glass menu and dedicated Options modal, including Home and Teachers navigation. Let's Count now pauses its timers and animations while the modal is open, resumes without advancing, and relies on route unmount cleanup when navigating away.
+
+Add a persistent menu button to the top-left corner of every page.
+
+This button will open an Options modal using the reusable Modal component created in Feature-002.
+
+Requirements:
+
+1. Global Menu Button
+- Add a menu button to the top-left corner of the application.
+- The menu button must be visible on every page.
+- It must remain available while activities are running.
+- Use a recognisable menu icon, such as Font Awesome faBars.
+- Give the button an accessible name such as "Open Options".
+- Follow the application's existing visual design.
+- Use a glass-style background that is sufficiently solid to remain visible.
+- Give the button rounded corners.
+- Add subtle hover and focus effects.
+
+2. Global Placement
+- Position the menu button near the top-left corner of the viewport.
+- Keep consistent spacing from the top and left edges.
+- Account for mobile safe areas where appropriate.
+- Ensure the button remains accessible on mobile, tablet, desktop and television screens.
+- The button should not move when the page content changes.
+- Ensure the button does not interfere with activity animations.
+- Avoid permanently overlapping important page controls or headings.
+- The button should remain accessible even during fullscreen-style activities such as Let's Count.
+
+3. Global Architecture
+- Implement the menu at the shared application layout or app-shell level.
+- Do not manually add separate copies of the menu to individual pages.
+- The same menu should be available throughout the application.
+- Centralise its styling and behaviour.
+- Ensure it works on all existing pages and future pages using the shared layout.
+
+4. Opening the Modal
+- Clicking the menu button opens the reusable Modal component.
+- The modal title must be:
+
+Options
+
+- The modal should contain two navigation buttons.
+- Use the existing shared Button component.
+- The buttons should be prominently displayed and clearly separated.
+- Both buttons must contain a Font Awesome icon and text.
+
+5. Return to Home Button
+Label:
+
+Return to home
+
+Icon:
+
+<FontAwesomeIcon icon={faHouse} />
+
+Requirements:
+- Use the faHouse icon from Font Awesome.
+- Display the icon alongside the text.
+- Clicking the button navigates to /.
+- Close the modal as part of navigation.
+- Exit whichever activity the user is currently using.
+- Properly clean up active timers, animations and activity listeners.
+- Do not leave activities running in the background.
+- If the user is already on the homepage, simply close the modal and remain there.
+
+6. For Teachers Button
+Label:
+
+For Teachers
+
+Icon:
+
+<FontAwesomeIcon icon={faPersonChalkboard} />
+
+Requirements:
+- Use the faPersonChalkboard icon from Font Awesome.
+- Display the icon alongside the text.
+- Clicking the button navigates to /teachers.
+- Close the modal as part of navigation.
+- Exit any currently running activity.
+- Properly clean up activity timers, animations and event listeners.
+- If the user is already on the Teachers Page, simply close the modal and remain there.
+
+7. Modal Navigation Styling
+- Use existing shared button variants.
+- Ensure both buttons have consistent dimensions.
+- Display the icons clearly alongside their labels.
+- Use Short Stack for button text.
+- Keep both buttons easy to interact with.
+- Make their focus states clearly visible.
+- Ensure the layout remains usable on smaller screens.
+- Do not create separate one-off button styling when existing shared styles can be reused.
+
+8. Close Button Behaviour
+- The close button must dismiss the Options modal.
+- Closing the modal must not navigate anywhere.
+- Closing the modal must not reset page state.
+- The user must remain on the same page.
+- Preserve any activity configuration that was already selected.
+
+9. Interaction With Let's Count
+The menu must work correctly during the Let's Count activity.
+
+When the menu opens:
+- Do not advance the current number.
+- Prevent clicks on the modal or menu button from triggering manual counting progression.
+- Prevent background counting-screen keyboard handlers from responding to modal interactions.
+- Pause automatic counting while the modal is open.
+- Do not reset the sequence merely because the modal opened.
+
+When the modal closes without navigation:
+- Resume the activity from its previous state.
+- Do not skip or repeat numbers.
+- Resume automatic counting without counting the time spent in the modal towards the active number's display delay.
+- Preserve all selected counting settings.
+
+When navigating away:
+- Terminate the active counting sequence.
+- Clear active timers.
+- Cancel or clean up pending animation callbacks.
+- Remove activity-specific event listeners.
+- Prevent further counting progression after navigation.
+
+10. Keyboard and TV Remote Navigation
+- The global menu must be accessible using Tab navigation.
+- Provide a clearly visible focus state.
+- Enter and Space should activate the menu button.
+- Modal controls must be reachable using keyboard navigation.
+- Ensure focus remains within the modal while it is open.
+- Escape must close the modal.
+- On closing without navigation, restore focus appropriately.
+- Prevent underlying arrow-key navigation from operating while the modal is open.
+- Support compatible TV remotes that generate standard keyboard events.
+
+11. Reusability
+- Keep the persistent menu separate from the reusable Modal component.
+- The Modal component should not contain hardcoded navigation options.
+- Create a dedicated Options modal or equivalent component that provides its title and buttons.
+- Use shared SCSS for styling.
+- Ensure future application features automatically receive the global menu.
+- Avoid duplicating menu behaviour in individual activities.
+
+Acceptance Criteria:
+- The menu button appears at the top-left of every page.
+- It remains accessible during activities.
+- Clicking it opens a modal titled Options.
+- The modal uses the reusable Modal component.
+- The close button dismisses the modal without navigation.
+- Return to home navigates to /.
+- For Teachers navigates to /teachers.
+- Both navigation buttons display the correct icons.
+- Navigating away properly terminates active activities.
+- Opening the modal does not accidentally advance Let's Count.
+- Automatic counting pauses while the modal is open and resumes correctly when closed.
+- Keyboard and TV remote navigation work correctly.
+- Global menu styling and logic are reusable.
+
+
+## Epic-003 - General Implementation Rules
+
+1. Follow all instructions in AGENTS.md.
+
+2. Follow the existing project structure and naming conventions.
+
+3. Reuse shared components, hooks, utilities and SCSS styles.
+
+4. Use DynaPuff for headings and Short Stack for other text.
+
+5. Preserve the existing centralised colour palette.
+
+6. Preserve the animated background while correcting visual artefacts.
+
+7. Maintain consistent frosted-glass styling.
+
+8. Reuse the existing Button component from Epic-002.
+
+9. Keep the Modal component generic and reusable.
+
+10. Implement the global menu within the shared application layout.
+
+11. Do not duplicate navigation components on individual pages.
+
+12. Preserve all existing activity and setup routes.
+
+13. Do not implement teacher FAQs or additional teacher functionality.
+
+14. Ensure compatibility with keyboard, touchscreen and standard TV remote inputs.
+
+15. Preserve clear and accessible focus states.
+
+16. Respect prefers-reduced-motion.
+
+17. Avoid introducing unnecessary dependencies.
+
+18. Ensure modals do not interfere with activity input handling.
+
+19. Ensure activity timers and listeners are cleaned up when navigating away.
+
+20. Complete the features in numerical order.
+
+21. Do not modify unrelated functionality.
+
+22. If any implementation is rolled back, follow the rollback rules defined in AGENTS.md and do not automatically reintroduce it.
+
+
+## Epic-003 - Overall Acceptance Criteria
+
+The completed epic should provide:
+
+- A continuously animated background without visible straight-line artefacts.
+- A reusable frosted-glass Modal component.
+- A circular, offset modal close button.
+- A new Teachers Page at /teachers.
+- Removal of the Teachers grid from the homepage.
+- A persistent menu button on every page.
+- An Options modal with Return to home and For Teachers buttons.
+- Correct Font Awesome icons.
+- Reliable navigation between pages.
+- Proper cleanup when exiting activities.
+- Safe modal interactions during Let's Count.
+- Responsive layouts across different devices.
+- Keyboard and TV remote accessibility.
+- Reusable shared styling and components.

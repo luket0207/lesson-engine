@@ -1,0 +1,36 @@
+@use '../../assets/scss/glass' as glass;
+@use '../../assets/scss/mixins' as mixins;
+@use '../../assets/scss/variables' as variables;
+
+.app-shell__menu {
+  @include glass.surface;
+  @include glass.interactive;
+
+  position: fixed;
+  z-index: 900;
+  top: max(1rem, calc(env(safe-area-inset-top) + 0.5rem));
+  left: max(1rem, calc(env(safe-area-inset-left) + 0.5rem));
+  display: grid;
+  place-items: center;
+  width: clamp(3.25rem, 7vmin, 4rem);
+  height: clamp(3.25rem, 7vmin, 4rem);
+  padding: 0;
+  border-radius: 1rem;
+  font-size: clamp(1.25rem, 3vmin, 1.6rem);
+  background-color: rgba(variables.$color-deep-teal, 0.88);
+  cursor: pointer;
+
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    background-color: rgba(variables.$color-deep-teal, 0.76);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  @include mixins.reduced-motion {
+    &:active {
+      transform: none;
+    }
+  }
+}

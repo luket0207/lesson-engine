@@ -1,0 +1,96 @@
+@use '../../assets/scss/glass' as glass;
+@use '../../assets/scss/mixins' as mixins;
+@use '../../assets/scss/variables' as variables;
+
+.app-button {
+  @include glass.surface;
+
+  display: inline-flex;
+  gap: 0.625rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.25rem;
+  font-family: variables.$font-body;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    filter 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+
+  &--primary {
+    min-height: 4.25rem;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    background-color: rgba(variables.$color-deep-teal, 0.94);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      0 0.9rem 2rem rgba(0, 35, 42, 0.3);
+  }
+
+  &--secondary {
+    min-height: 3.75rem;
+    padding: 0.875rem 1.5rem;
+    font-size: 1.25rem;
+    background-color: rgba(variables.$color-slate-blue, 0.82);
+  }
+
+  &--tertiary {
+    padding: 0.625rem 1rem;
+    font-size: 1rem;
+    background-color: rgba(variables.$color-deep-teal, 0.72);
+  }
+
+  &--large {
+    min-height: 5.5rem;
+    padding: clamp(1.25rem, 3vw, 1.5rem) clamp(2rem, 6vw, 3.5rem);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+  }
+
+  &--selected {
+    border-width: 3px;
+    box-shadow:
+      inset 0 0 0 2px rgba(255, 255, 255, 0.48),
+      0 0.75rem 1.75rem rgba(0, 35, 42, 0.28);
+
+    &::after {
+      font-weight: 700;
+      content: '\2713';
+    }
+  }
+
+  &:not(:disabled):not([aria-disabled='true']):hover {
+    filter: brightness(1.12);
+    transform: translateY(-2px);
+  }
+
+  &:not(:disabled):not([aria-disabled='true']):active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: 3px solid rgba(255, 255, 255, 0.98);
+    outline-offset: 4px;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+    filter: grayscale(0.35);
+    opacity: 0.5;
+  }
+
+  @include mixins.reduced-motion {
+    transition: none;
+
+    &:not(:disabled):not([aria-disabled='true']):hover,
+    &:not(:disabled):not([aria-disabled='true']):active {
+      transform: none;
+    }
+  }
+}

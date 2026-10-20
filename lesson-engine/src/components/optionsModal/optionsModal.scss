@@ -1,0 +1,8 @@
+.options-modal__actions {
+  display: grid;
+  gap: clamp(0.875rem, 3vmin, 1.25rem);
+
+  .app-button {
+    width: 100%;
+  }
+}

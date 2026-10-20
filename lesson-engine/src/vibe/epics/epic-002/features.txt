@@ -1,0 +1,702 @@
+
+# Epic-002 - Let's Count Activity
+
+## Overview
+
+Implement the Let's Count activity, allowing children to count upwards or downwards between 1 and a selected number.
+
+The activity must support:
+- Counting upwards or downwards.
+- Counting to or from 5, 10 or 20.
+- Manual or automatic progression.
+- Configurable automatic counting speeds.
+- Optional English number words.
+- Animated introduction and completion screens.
+- Animated numbers and words.
+- A separate optional cartoon wobble effect.
+
+All styling must follow the existing application design established in Epic-001.
+
+Use existing global SCSS variables, fonts, glass styles, animations and shared components wherever possible.
+
+The activity route is:
+/letsCount
+
+No separate teacher setup page is required.
+
+
+## Feature-001 - Reusable Button Component
+
+Status: complete
+Notes: Added a shared Button that renders native actions or router links with primary, secondary and tertiary variants, disabled/focus states, and aria-pressed plus a checkmark for selected options.
+
+Create a reusable Button component for use throughout the application.
+
+This is the first shared button component and should support three visual variants:
+
+- Primary
+- Secondary
+- Tertiary
+
+Only implement the primary variant's full styling initially, along with secondary and tertiary styling required by this epic.
+
+Requirements:
+
+1. Component Structure
+- Create a shared Button component.
+- Accept configurable text or children.
+- Support primary, secondary and tertiary variants.
+- Support onClick functionality.
+- Support disabled states.
+- Support accessible focus states.
+- Support appropriate native button behaviour.
+- Use native button elements for actions.
+- Use navigation links for route changes, styled consistently with the button component.
+- Default to the primary variant where no variant is specified.
+
+2. General Styling
+- Follow the application's existing frosted-glass design.
+- Buttons should have a more solid background than standard glass panels and navigation pods.
+- Maintain rounded corners and subtle borders.
+- Use existing central SCSS colours.
+- Use Short Stack for button text.
+- Ensure sufficient contrast against the animated background.
+- Use smooth hover and focus transitions.
+- Buttons should be visually identifiable as interactive elements.
+
+3. Primary Variant
+- The most prominent button style.
+- More visually solid than other glass elements.
+- Suitable for important actions such as starting an activity.
+- Large, clearly readable text.
+- A subtle hover effect that increases visual prominence.
+
+4. Secondary Variant
+- Slightly less prominent than primary buttons.
+- Use the same overall visual language.
+- Suitable for navigation and completion-screen actions.
+
+5. Tertiary Variant
+- A compact button style.
+- Suitable for selecting options such as number limits and animation speeds.
+- Support a clearly visible selected state.
+- Selected options should be visually distinguishable without relying on colour alone.
+
+6. Accessibility
+- All buttons must be keyboard accessible.
+- Enter and Space must activate action buttons.
+- Focus must be clearly visible.
+- Preserve natural tab order.
+- Provide suitable target sizes for touchscreens and TV remote navigation.
+- Respect prefers-reduced-motion.
+
+Acceptance Criteria:
+- A reusable Button component exists.
+- Primary, secondary and tertiary variants are supported.
+- Buttons appear more solid than other glass components.
+- Tertiary buttons support selected states.
+- Hover and focus effects work.
+- Keyboard activation works.
+- Styling is reusable throughout the application.
+
+
+## Feature-002 - Let's Count Options Screen
+
+Status: complete
+Notes: Replaced the placeholder with a responsive glass options screen using one configuration object and a Start snapshot ready for Feature-003 sequence handling.
+
+Replace the existing Let's Count placeholder page with the initial activity configuration screen.
+
+Requirements:
+
+1. Page Layout
+- Use the existing animated gradient background.
+- Display a large primary button labelled "Start Counting".
+- Display an options panel beneath the Start Counting button.
+- Include a visible way to return to the homepage.
+- Centre the main content within the page.
+- Use the existing DynaPuff font for headings.
+- Use Short Stack for labels, instructions and buttons.
+- Ensure the layout remains responsive.
+
+2. Options Panel
+- Use the existing frosted-glass styling.
+- The options panel should contain four configurable settings.
+- Maintain consistent spacing and alignment.
+- The panel must remain readable across different screen sizes.
+
+3. Count Direction
+- Default: Count Up.
+- Allow the user to toggle between Count Up and Count Down.
+- Clearly indicate which direction is selected.
+- Count Up means counting from 1 to the selected number.
+- Count Down means counting from the selected number to 1.
+
+4. Number Limit
+- Default: 10.
+- Provide three tertiary buttons:
+  - 5
+  - 10
+  - 20
+- Only one option may be selected at a time.
+- The selected button must have a visible selected state.
+- When counting up, label this setting "End Number".
+- When counting down, label this setting "Start Number".
+- Changing the direction must update the label without resetting the selected number.
+
+5. Auto Count
+- Default: Off.
+- Display a checkbox labelled "Auto Count".
+- When disabled, the user manually advances through the numbers.
+- When enabled, show three additional tertiary buttons:
+  - Slow
+  - Normal
+  - Fast
+- Default speed: Normal.
+- Only one speed may be selected.
+- Hide the speed buttons when Auto Count is disabled.
+- Preserve the selected speed when Auto Count is switched off and on again.
+
+6. Words
+- Default: On.
+- Display a checkbox labelled "Words".
+- When enabled, the English word for each number will accompany the numerical digit.
+- When disabled, only the numerical digit will appear.
+
+7. Navigation
+- Include a Back to Home navigation control.
+- This must return the user to /.
+- Use existing shared navigation styles where appropriate.
+
+8. State
+- Keep all options in a single consistent activity configuration state.
+- Changing one option must not unexpectedly reset unrelated options.
+- Options must be passed to the counting sequence when Start Counting is selected.
+- The selected configuration must remain unchanged during an active sequence.
+
+Acceptance Criteria:
+- Start Counting button is visible.
+- Options panel contains all four settings.
+- Count Up is selected by default.
+- Number 10 is selected by default.
+- Auto Count is disabled by default.
+- Normal is the default automatic speed.
+- Words is enabled by default.
+- Speed buttons appear only when Auto Count is enabled.
+- Start Number / End Number label changes with direction.
+- Selected options are visually clear.
+- Back to Home works.
+- Layout remains responsive.
+
+
+## Feature-003 - Counting Sequence and State Management
+
+Status: complete
+Notes: Added reusable sequence and number-word utilities plus a guarded reducer hook that snapshots options and controls the full introduction, number, and finished lifecycle without timers or duplicate transitions.
+
+Implement the underlying logic responsible for generating and controlling the counting sequence.
+
+This feature should focus on counting logic and state management rather than visual animations.
+
+Requirements:
+
+1. Sequence Generation
+- Generate a counting sequence using the selected direction and number limit.
+- Count Up should start at 1 and finish at the selected number.
+- Count Down should start at the selected number and finish at 1.
+- Support the number limits 5, 10 and 20.
+- Include both the starting and ending numbers.
+
+Examples:
+- Count Up, 5: 1, 2, 3, 4, 5.
+- Count Up, 10: 1 through 10.
+- Count Down, 5: 5, 4, 3, 2, 1.
+- Count Down, 20: 20 through 1.
+
+2. Number Words
+- Provide English word equivalents for numbers 1 through 20.
+- Use standard English spelling.
+- Use capitalised words such as:
+  - 1 = One
+  - 2 = Two
+  - 3 = Three
+  - 10 = Ten
+  - 20 = Twenty
+- Keep number-to-word mapping in a reusable utility or data file.
+- Only display words when the Words option is enabled.
+
+3. Sequence States
+Implement a clear sequence lifecycle.
+
+Suggested states:
+- Options
+- Introduction Entering
+- Introduction Holding
+- Introduction Exiting
+- Number Entering
+- Number Displayed
+- Number Exiting
+- Finished Entering
+- Finished Displayed
+
+Use a consistent state machine or equivalent controlled sequence to prevent conflicting transitions.
+
+4. Starting the Sequence
+- Clicking Start Counting begins a new sequence.
+- Capture the currently selected configuration.
+- Reset the current number to the first number in the generated sequence.
+- Display the introduction before displaying any number.
+- Do not permit multiple sequences to start simultaneously.
+
+5. Progression
+- Display one number at a time.
+- Advance through the generated sequence in the correct order.
+- Never skip numbers.
+- Never display two numerical digits simultaneously.
+- The previous digit must fully exit before the next digit enters.
+- Do not accept additional progression requests while a transition is running.
+
+6. Completion
+- Once the final number has completed its display and exit, transition to the completion screen.
+- Do not loop automatically.
+- Do not start another sequence without returning to the options screen.
+
+7. Reliability
+- Avoid stale timers and conflicting animation callbacks.
+- Clean up active timers and listeners when leaving the activity.
+- Prevent duplicate transitions from rapid clicking.
+- Ensure the sequence behaves correctly when options are changed before starting.
+- Use reusable logic where appropriate.
+
+Acceptance Criteria:
+- All six direction/number-limit combinations work.
+- Numbers appear in the correct order.
+- No numbers are duplicated or skipped.
+- Words map correctly to their numerical digits.
+- The final number completes before the Finished state.
+- Repeated input cannot corrupt the sequence.
+- Sequence state is cleaned up when the activity is exited.
+
+
+## Feature-004 - Introduction and Completion Screens
+
+Status: complete
+Notes: Added reusable responsive intro/completion messaging with central timings, animation-driven phase transitions, a cleanup-safe 3-second intro hold, and completion navigation that preserves the selected options when returning.
+
+Create the introductory and completion animations displayed before and after each counting sequence.
+
+Requirements:
+
+1. Introduction Text
+- Display the exact text:
+
+Let's Start!
+
+- Use DynaPuff.
+- Target font size: 10rem.
+- Centre the text vertically and horizontally.
+- Allow responsive scaling on smaller screens so the text does not overflow.
+
+2. Introduction Entrance
+- Text should begin small at the centre of the screen.
+- Grow smoothly until it reaches its full size.
+- The animation must last 0.5 seconds.
+- The text must remain centred throughout the animation.
+
+3. Introduction Hold
+- After the entrance animation has completed, display the text for 3 seconds.
+- This duration must never change based on the selected automatic counting speed.
+- The 3-second hold does not include the entrance animation.
+
+4. Introduction Exit
+- Fade the text out smoothly.
+- The fade-out animation must last 0.5 seconds.
+- After the fade-out completes, transition to the first number.
+- The introduction must not remain visible during number animations.
+
+5. Completion Text
+- Once the final number has exited, display:
+
+Finished!
+
+- Use DynaPuff.
+- Use the same entrance animation as Let's Start!
+- Target font size: 10rem.
+- Keep the text centred and responsive.
+
+6. Completion Buttons
+After the Finished! entrance animation completes, fade in two secondary buttons:
+
+- Back to Let's Count
+- Back to Home
+
+Back to Let's Count:
+- Return to the Let's Count options screen at /letsCount.
+- Allow another counting sequence to begin.
+- Preserve the previous settings where possible.
+
+Back to Home:
+- Navigate to /.
+
+7. Button Animation
+- The two buttons should fade in after Finished! has completed its entrance animation.
+- Fade-in duration: 0.5 seconds.
+- Do not fade the buttons in before the Finished! text has reached its full size.
+- Position both buttons beneath the Finished! text.
+- Keep the completed screen's content visually centred.
+- Ensure the buttons remain accessible and responsive.
+
+8. Reusability
+- Reuse the same growing-text animation for the introduction and completion.
+- Avoid duplicating animation definitions.
+- Centralise timing constants where appropriate.
+
+Acceptance Criteria:
+- Let's Start! grows to its full size over 0.5 seconds.
+- The introduction holds for exactly 3 seconds after entrance.
+- The introduction fades out over 0.5 seconds.
+- The first number begins only after the introduction exits.
+- Finished! uses the same entrance animation.
+- Both completion buttons fade in after the Finished! entrance.
+- Both navigation buttons work.
+- Text remains centred and responsive.
+
+
+## Feature-005 - Number and Word Animations
+
+Status: complete
+Notes: Added a full-viewport fixed counting layout with responsive digit/word regions, direction-aware 0.5-second slide-and-scale animations, synchronized word growth/fade, reduced-motion handling, and animation-completion lifecycle updates without the optional wobble.
+
+Implement the main counting animations.
+
+Requirements:
+
+1. Counting Display Layout
+- The counting animation should occupy the full available viewport.
+- The number and optional word must be horizontally and vertically centred.
+- Use DynaPuff for both numerical digits and number words.
+- Use the application's existing white text colour.
+- Do not allow scrolling during the counting sequence.
+
+2. Digit Size
+- The numerical digit should be extremely large.
+- When Words is disabled, target approximately 80% of the viewport height for the digit.
+- When Words is enabled, the digit should occupy the remaining available vertical space after allowing room for the word and appropriate padding.
+- Digit sizing must adapt to different screen dimensions.
+- Digits must not overflow or become clipped at their final position.
+- Multi-digit numbers must fit horizontally within the viewport.
+
+3. Word Size
+- When Words is enabled, display the English word beneath the digit.
+- Target word font size: 10rem.
+- Reduce the size responsively where required to avoid overflow.
+- Keep appropriate padding above, below and between the elements.
+- Words must be centred horizontally.
+- Words should not appear when the option is disabled.
+
+4. Fixed Layout Areas
+- Reserve fixed layout regions for the digit and word.
+- Animations must not change the dimensions of these layout regions.
+- The numerical digit must not jump vertically when its word animates.
+- Changing between single-digit and double-digit numbers must not shift the overall layout.
+- Animation movement should use transforms rather than layout-changing properties where possible.
+
+5. Count Up - Entrance
+When counting upwards:
+- The digit begins outside the left edge of the screen.
+- Its initial scale is 50% of its final size.
+- It slides horizontally towards the centre.
+- It grows from 50% to 100% while moving.
+- It comes to rest in the centre of the digit's allocated area.
+- Entrance duration: 0.5 seconds.
+
+6. Count Up - Exit
+When counting upwards:
+- The digit slides from the centre towards the right.
+- It shrinks from 100% to 50% while moving.
+- It must finish completely outside the visible screen.
+- Exit duration: 0.5 seconds.
+- The next digit must not start entering until the previous digit has fully exited.
+
+7. Count Down - Entrance
+When counting down:
+- The digit begins outside the right edge of the screen.
+- Its initial scale is 50%.
+- It slides towards the centre.
+- It grows from 50% to 100%.
+- Entrance duration: 0.5 seconds.
+
+8. Count Down - Exit
+When counting down:
+- The digit slides towards the left.
+- It shrinks from 100% to 50%.
+- It must finish completely outside the visible screen.
+- Exit duration: 0.5 seconds.
+- The next digit starts only after the previous digit has exited.
+
+9. Word Entrance
+- Words must not slide horizontally.
+- Words should grow from their centre point.
+- The word animation begins at the same time as the digit entrance.
+- The word should reach its full size at exactly the same time as the digit reaches the centre.
+- Entrance duration: 0.5 seconds.
+
+10. Word Exit
+- Words should remain in their reserved display area.
+- Words must not slide horizontally.
+- When the digit exits, the word should shrink or fade out.
+- The word exit must finish at the same time as the digit exit.
+- Exit duration: 0.5 seconds.
+- The previous word must not remain visible when the next number enters.
+
+11. Animation Quality
+- Animations should be smooth and fluid.
+- Use CSS transforms and opacity where possible.
+- Avoid layout shifts.
+- Use appropriate easing functions.
+- Do not add the cartoon wobble effect in this feature.
+- That effect belongs exclusively to Feature-007.
+
+12. Responsiveness
+- Support mobile, tablet, desktop and television layouts.
+- Account for narrow screens and landscape orientation.
+- Make sure the largest digit and word combinations fit within the viewport.
+- Use responsive sizing without changing the intended visual hierarchy.
+- Respect prefers-reduced-motion.
+
+Acceptance Criteria:
+- Count Up digits enter from the left and exit right.
+- Count Down digits enter from the right and exit left.
+- Digits grow from 50% on entrance.
+- Digits shrink to 50% on exit.
+- Every entrance and exit lasts 0.5 seconds under normal motion settings.
+- Words grow from their centre point.
+- Words and digits finish entering simultaneously.
+- Words never slide horizontally.
+- Previous content fully exits before new content enters.
+- No vertical layout shifting occurs.
+- Digits and words remain centred and fit the viewport.
+- No cartoon wobble has been implemented yet.
+
+
+## Feature-006 - Automatic and Manual Counting Controls
+
+Status: complete
+Notes: Added centralized 4/2/1-second automatic delays with cleanup-safe display timers, plus a focused full-screen native manual control supporting click, touch, Enter, Space, and TV confirmation only while a number is fully displayed.
+
+Implement the progression controls used during the counting sequence.
+
+Requirements:
+
+1. Automatic Counting
+When Auto Count is enabled:
+- Automatically advance to the next number after the selected delay.
+- The delay begins only after the number's entrance animation has fully completed.
+- The entrance animation must never count towards the display duration.
+- The automatic delay must not begin during the previous number's exit.
+- Each number should remain fully visible for the specified duration.
+
+2. Automatic Speeds
+Use the following durations:
+
+Slow:
+- 4 seconds.
+
+Normal:
+- 2 seconds.
+
+Fast:
+- 1 second.
+
+These delays are additional to the 0.5-second entrance and exit animations.
+
+3. Automatic Timing Example
+For Normal speed:
+
+- Number enters: 0.5 seconds.
+- Number remains stationary: 2 seconds.
+- Number exits: 0.5 seconds.
+- Next number begins entering immediately after the previous number exits.
+
+The same timing rules apply to every number, including the final number.
+
+4. Manual Counting
+When Auto Count is disabled:
+- Do not automatically advance.
+- After a number has completed its entrance animation, wait for user interaction.
+- Clicking or tapping anywhere on the counting screen should advance to the next number.
+- The click initiates the exit animation for the current number.
+- After the exit animation completes, automatically begin the next number's entrance.
+- Continue waiting for the next user interaction after that entrance completes.
+
+5. Input Restrictions
+- Do not allow manual advancement during the introduction.
+- Do not allow advancement during number entrance animations.
+- Do not allow advancement during number exit animations.
+- Do not queue clicks made during animations.
+- Rapid repeated clicking must not skip numbers.
+- After the final number, the next valid advancement should trigger its exit and then the Finished! screen.
+
+6. Keyboard and TV Remote Compatibility
+- Support Enter and Space as manual advancement controls.
+- Support standard TV remote confirmation keys when they generate normal Enter or click events.
+- Manual progression must work without a mouse or touchscreen.
+- Ensure the counting screen can receive the required keyboard input.
+- Make the interactive counting area keyboard accessible with an appropriate accessible name.
+- Avoid duplicate progression when one key press generates multiple browser events.
+- Do not interfere with navigation buttons or unrelated controls.
+
+7. Automatic Mode Interaction
+- When Auto Count is enabled, the configured timer controls progression.
+- Clicking the screen must not skip numbers in automatic mode.
+- Automatic progression must stop when leaving the activity.
+- Automatic timers must be cleaned up when the component is unmounted.
+
+8. Timing Management
+- Keep animation durations and speed settings in central constants.
+- Coordinate state changes with completed animations.
+- Avoid relying on multiple independent timers that can cause desynchronisation.
+- Ensure delays start only after the relevant animations finish.
+- Prevent duplicate transitions and stale callbacks.
+
+Acceptance Criteria:
+- Slow displays each number for 4 seconds after entrance.
+- Normal displays each number for 2 seconds after entrance.
+- Fast displays each number for 1 second after entrance.
+- Each entrance and exit adds 0.5 seconds.
+- Manual mode never advances without valid user input.
+- Clicking anywhere on the counting display advances in manual mode.
+- Enter and Space work in manual mode.
+- Rapid clicking cannot skip numbers.
+- Automatic mode does not respond to manual advancement.
+- The final number follows the same progression rules.
+- All timers are properly cleaned up.
+
+
+## Feature-007 - Optional Cartoon Wobble Animation
+
+Status: complete
+Notes: Added an isolated inner-digit wobble modifier with subtle direction-aware overshoot, rotation, and squash during the end of the existing 0.5-second entrance; words, base slide animations, lifecycle timing, and reduced-motion behavior remain independent.
+
+Add a subtle cartoon-style wobble to numerical digits as they complete their entrance animation.
+
+IMPORTANT:
+This feature must be implemented independently from Feature-005.
+
+It may be rolled back in the future without changing any of the main counting animations.
+
+Requirements:
+
+1. Wobble Effect
+- Add a small wobble to numerical digits as they arrive at the centre of the screen.
+- The effect should resemble a cartoon character coming to a sudden stop.
+- Use a slight overshoot, rotation or squash-and-stretch effect.
+- The effect should have personality without becoming overly distracting.
+- Keep the wobble subtle enough that digits remain easy to read.
+
+2. Animation Timing
+- The wobble should occur at the end of the 0.5-second entrance animation.
+- It must not introduce additional waiting time before the number is considered fully displayed.
+- The wobble should be integrated into the existing 0.5-second entrance duration.
+- Do not change the automatic counting delays.
+- Do not change the exit animation duration.
+
+3. Direction
+- The wobble may respond to the entrance direction.
+- Count Up digits enter from the left.
+- Count Down digits enter from the right.
+- Consider a small directional overshoot before settling into the centre.
+
+4. Word Behaviour
+- Apply the wobble to numerical digits only.
+- Number words should retain their normal grow animation.
+- The word must still reach full size at the same time as the digit finishes entering.
+
+5. Isolation
+- Implement the wobble as an optional animation modifier, separate keyframe definition or similarly isolated mechanism.
+- Do not rewrite the underlying slide animation unnecessarily.
+- The original slide-and-scale animation must remain functional without the wobble.
+- Removing or disabling this feature must not affect the counting sequence, animation timings or layout.
+- Respect prefers-reduced-motion.
+
+Acceptance Criteria:
+- Digits have a subtle cartoon wobble as they arrive.
+- The wobble does not make the numbers difficult to read.
+- The complete entrance still lasts 0.5 seconds.
+- Words do not wobble.
+- Automatic and manual timings are unaffected.
+- The wobble can be removed independently without breaking Feature-005.
+
+
+## Epic-002 - General Implementation Rules
+
+1. Follow all instructions in the project's AGENTS.md file.
+
+2. Follow existing project architecture and naming conventions.
+
+3. Reuse the global design system created in Epic-001.
+
+4. Use DynaPuff for:
+- Headings.
+- Introductory text.
+- Completion text.
+- Numerical digits.
+- Number words.
+
+5. Use Short Stack for:
+- Button labels.
+- Option labels.
+- Supporting interface text.
+
+6. Reuse existing SCSS variables, mixins and glass-style components.
+
+7. All new shared components, animation utilities and hooks must be structured for reuse.
+
+8. Keep button styling separate from activity-specific styling.
+
+9. Avoid unnecessary dependencies.
+
+10. Maintain responsive behaviour across mobile, tablet, desktop and television screen sizes.
+
+11. Ensure keyboard and TV remote accessibility.
+
+12. Use semantic HTML and accessible controls.
+
+13. Preserve clear visual focus indicators.
+
+14. Respect prefers-reduced-motion. Reduced-motion adaptations may override the standard animation durations.
+
+15. Keep animation constants and automatic counting delays centrally defined.
+
+16. Avoid duplicated animation definitions and hardcoded timing values throughout individual components.
+
+17. Do not implement additional counting modes or options outside the described requirements.
+
+18. Do not create a Let's Count teacher setup page.
+
+19. Complete features in numerical order, respecting dependencies.
+
+20. Treat Feature-007 as an independent optional enhancement. If it is rolled back, mark it as rolled back according to AGENTS.md and do not reintroduce it automatically.
+
+21. Do not modify unrelated activity pages or functionality.
+
+
+## Epic-002 - Overall Acceptance Criteria
+
+The completed activity should support:
+
+- Count Up from 1 to 5, 10 or 20.
+- Count Down from 5, 10 or 20 to 1.
+- Automatic counting at three speeds.
+- Manual counting through screen interaction.
+- Keyboard and TV remote progression.
+- Optional English number words.
+- Animated Let's Start! introduction.
+- Smooth directional number animations.
+- Animated number words.
+- Animated Finished! completion.
+- Navigation back to Let's Count.
+- Navigation back to Home.
+- Responsive layouts without overflow.
+- Consistent shared styling throughout the application.
+- Optional cartoon wobble that can be rolled back independently.

@@ -1,0 +1,1087 @@
+
+# Epic-004 - Let's Spell Activity
+
+## Overview
+
+Implement the Let's Spell activity.
+
+The purpose of this activity is to help children learn how to spell English words by displaying an image and revealing the corresponding word one letter at a time.
+
+The activity will contain four categories:
+- Animals
+- Food
+- Sports
+- Clothes
+
+Each category contains 10 items.
+
+Users can:
+- Select an individual item.
+- Play through all items in a category.
+- Play through 3 randomly selected items.
+- Play through 5 randomly selected items.
+- Shuffle the order of all items.
+- Move forwards and backwards through spelling stages.
+- Navigate between items after completing each word.
+
+All progression is manual. There is no automatic progression mode.
+
+The activity will introduce a new orange and dark yellow colour theme while retaining the application's existing animated gradient, glass styling and shared components.
+
+The Let's Spell activity should remain separate from the Let's Count activity.
+
+Existing application functionality must be preserved.
+
+
+## Feature-001 - Let's Spell Colour Theme
+
+Create a dedicated colour theme for the Let's Spell activity.
+
+Requirements:
+
+1. Background Colours
+- Replace the standard slate grey-blue and deep teal background with a warm orange and dark yellow gradient.
+- The colours should complement one another and create a cheerful appearance appropriate for children.
+- Avoid extremely bright or saturated colours that make text difficult to read.
+
+Suggested colour references:
+- Orange: #D98B34
+- Dark Yellow: #B17C25
+- Text: #173B54
+
+These are suggested starting values and can be adjusted slightly to achieve a balanced appearance.
+
+2. Background Animation
+- Reuse the existing global animated background system.
+- Keep the same animation style, movement, speed and organic behaviour.
+- Do not introduce a separate animation implementation.
+- Use theme variables to change the colours rather than duplicating the background animation.
+- Preserve the background artefact fixes from Epic-003.
+- Ensure no visible straight lines or gradient boundaries appear.
+
+3. Text Colours
+- Use a dark blue colour that complements the orange and yellow background.
+- Apply this colour to headings, labels, buttons and animated spelling text.
+- Keep the colour centrally defined.
+- Ensure sufficient contrast across the entire moving background.
+
+4. Glass Elements
+- Retain the existing frosted-glass design.
+- Adapt glass backgrounds, borders and shadows where necessary to suit the warmer colour palette.
+- Preserve existing hover, glint and focus effects.
+- Ensure selected buttons and focused elements remain clearly visible.
+
+5. Theme Scope
+- Apply this theme to the entire Let's Spell experience.
+- This includes the category landing page, category selection pages and spelling animation screens.
+- The theme should also work with the persistent global menu and Options modal.
+- Other activities must retain their existing colour themes.
+- Returning to the homepage must restore the standard application theme.
+- Use reusable central SCSS theme variables or an equivalent theme mechanism.
+
+6. Typography
+- Continue using DynaPuff for headings.
+- Continue using Short Stack for supporting interface text.
+- Use DynaPuff for animated letters.
+
+Acceptance Criteria:
+- Let's Spell uses the orange and dark yellow gradient.
+- Text uses a complementary dark blue colour.
+- The background animation behaves identically to the existing application animation.
+- Shared glass elements match the new theme.
+- The global menu remains readable.
+- Other pages retain their original colours.
+- Theme configuration is centralised and reusable.
+
+
+## Feature-002 - Categories, Items and Image Data
+
+Create the data structure used to define spelling categories and their items.
+
+Requirements:
+
+1. Categories
+
+Create four categories:
+
+Animals
+Food
+Sports
+Clothes
+
+Each category must have:
+- A unique identifier.
+- A display name.
+- A list of spelling items.
+- A reference to the corresponding image folder.
+
+2. Item Structure
+
+Each item should contain:
+- A unique identifier.
+- The English word to spell.
+- The associated image reference.
+- Its category identifier.
+
+Keep item definitions separate from React components.
+
+3. Animals
+
+Image folder:
+src/assets/images/animals/
+
+Items:
+- Cat
+- Dog
+- Pig
+- Cow
+- Fox
+- Bear
+- Lion
+- Fish
+- Frog
+- Duck
+
+4. Food
+
+Image folder:
+src/assets/images/food/
+
+Items:
+- Egg
+- Ham
+- Rice
+- Corn
+- Cake
+- Soup
+- Bread
+- Pizza
+- Sushi
+- Apple
+
+5. Sports
+
+Image folder:
+src/assets/images/sports/
+
+Items:
+- Golf
+- Sumo
+- Rugby
+- Tennis
+- Soccer
+- Karate
+- Boxing
+- Baseball
+- Swimming
+- Ping Pong
+
+6. Clothes
+
+Image folder:
+src/assets/images/clothes/
+
+Items:
+- Hat
+- Sock
+- Coat
+- Shoe
+- Vest
+- Belt
+- Shirt
+- Skirt
+- Dress
+- Shorts
+
+7. Image File Mapping
+
+- Each item must load its image from its corresponding category folder.
+- Image filenames should match the lowercase item name.
+- Images are PNG files.
+
+Examples:
+
+Cat:
+src/assets/images/animals/cat.png
+
+Dog:
+src/assets/images/animals/dog.png
+
+Rice:
+src/assets/images/food/rice.png
+
+Tennis:
+src/assets/images/sports/tennis.png
+
+Dress:
+src/assets/images/clothes/dress.png
+
+For multiword items such as Ping Pong, inspect the actual asset filename and define an explicit image mapping where necessary.
+
+- Do not assume that dynamically constructed strings will automatically resolve assets stored within src/assets.
+- Use a bundler-compatible asset import mechanism.
+- Report missing or incorrectly named assets rather than silently substituting unrelated images.
+
+8. Reusability
+
+- Store category and item data in a dedicated data file or module.
+- Avoid hardcoding item lists directly into page components.
+- Allow additional categories and items to be added easily in future.
+- Keep image references associated with their respective items.
+- Preserve the exact spelling and capitalisation of the displayed words.
+
+Acceptance Criteria:
+- All four categories exist.
+- Each category contains exactly 10 items.
+- All 40 item definitions exist.
+- Every item has an associated image reference.
+- Image loading works with the project's build system.
+- Multiword item names are supported.
+- Data is reusable and separate from presentation components.
+
+
+## Feature-003 - Let's Spell Category Landing Page
+
+Replace the existing Let's Spell placeholder page with the category selection screen.
+
+Route:
+/letsSpell
+
+Requirements:
+
+1. Page Header
+
+Display the title:
+
+Let's Spell
+
+- Centre the title horizontally.
+- Position it near the top of the page.
+- Use DynaPuff.
+- Match the title styling used on the homepage.
+- Use the new dark blue text colour.
+
+2. Category Grid
+
+Below the heading, display a responsive grid containing four category pods:
+
+- Animals
+- Food
+- Sports
+- Clothes
+
+3. Pod Styling
+
+- Reuse the existing NavigationPod component from Epic-001.
+- Retain the existing frosted-glass styling.
+- Retain the hover glint animation.
+- Retain the more solid background on hover.
+- Retain keyboard focus styling.
+- Ensure all pods have consistent dimensions.
+- Adapt styling to the Let's Spell colour theme.
+- Do not introduce a separate category pod component unless genuinely necessary.
+
+4. Category Navigation
+
+Clicking a category should navigate to its dedicated category selection screen.
+
+Suggested routes:
+/letsSpell/animals
+/letsSpell/food
+/letsSpell/sports
+/letsSpell/clothes
+
+5. Back to Home
+
+- Include a button labelled "Back to Home".
+- Use the existing shared Button component.
+- Navigate to /.
+- Preserve the persistent global menu.
+
+6. Responsive Layout
+
+- Use the same responsive grid principles as the homepage.
+- Display multiple columns where space permits.
+- Adapt to smaller viewports.
+- Avoid horizontal scrolling.
+- Keep the category pods large and easy to interact with.
+- Support keyboard and television remote navigation.
+
+7. Existing Routes
+
+- Preserve the existing Let's Spell teacher setup route at /letsSpell/setup.
+- Ensure category routes do not conflict with the setup route.
+- Do not implement teacher setup functionality in this epic.
+
+Acceptance Criteria:
+- The Let's Spell heading is centred.
+- Four category pods are displayed.
+- All category links navigate correctly.
+- Pods use the shared glass styling.
+- The new colour theme is applied.
+- Back to Home works.
+- Keyboard and TV remote navigation work.
+- Existing setup routes remain intact.
+
+
+## Feature-004 - Category Selection and Playback Options
+
+Create the category item-selection page displayed after choosing a category.
+
+Requirements:
+
+1. Category Page
+
+- Display the selected category's items.
+- Use the Let's Spell colour theme.
+- Keep the persistent global menu available.
+- Use shared buttons, pods and SCSS styles.
+
+2. Start Button
+
+At the top of the page, display a large primary button labelled:
+
+Start
+
+- Position it on its own row.
+- Centre it horizontally.
+- Make it visually prominent.
+- Use the existing primary Button component.
+- Clicking Start begins a spelling sequence using the currently selected options.
+
+3. Selection Mode Buttons
+
+Below Start, display three secondary buttons on the same row:
+
+- All
+- 3 Random
+- 5 Random
+
+Requirements:
+- Treat these as a single-selection radio-style group.
+- Only one option may be selected.
+- All must be selected by default.
+- Clearly distinguish the selected option.
+- Use accessible single-selection semantics.
+- Preserve keyboard navigation and TV remote compatibility.
+- The three buttons should have consistent dimensions and spacing.
+
+4. Shuffle Checkbox
+
+Below the selection mode buttons, display:
+
+Shuffle
+
+Requirements:
+- Use a checkbox.
+- Shuffle is checked by default.
+- Shuffle is only available when All is selected.
+- When 3 Random or 5 Random is selected, the checkbox must remain visible.
+- In these modes, the checkbox must become unchecked and disabled.
+- Reduce its opacity to communicate that it is disabled.
+- Do not remove the checkbox or its label from the layout.
+- The disabled checkbox must not be interactive.
+- When All is selected again, automatically enable Shuffle and set it to checked.
+- This reset to checked must occur even if Shuffle was previously unchecked manually.
+
+5. All Mode
+
+When All is selected:
+- Include all 10 items.
+- If Shuffle is checked, randomise the order.
+- If Shuffle is unchecked, use the original category item order.
+- Generate the playback order when Start is pressed.
+
+6. Random Modes
+
+When 3 Random is selected:
+- Randomly choose 3 unique items from the category.
+
+When 5 Random is selected:
+- Randomly choose 5 unique items from the category.
+
+Requirements:
+- Never select the same item twice within one sequence.
+- Random selection should occur when Start is pressed.
+- Randomly selected items should play in the order produced by the selection.
+- Do not require the Shuffle checkbox for random modes.
+
+7. Item Grid
+
+Below the playback options, display a responsive grid containing all 10 items from the selected category.
+
+Requirements:
+- Each pod should contain only the image associated with the item.
+- Do not display the item's word or name visibly within the pod.
+- Reuse existing glass pod styles.
+- Keep images centred.
+- Preserve image aspect ratios.
+- Use object-fit: contain or equivalent so images are not cropped.
+- Keep consistent pod dimensions.
+- Make pods large enough for easy selection.
+- Include meaningful accessible names for image-only navigation controls.
+
+8. Individual Item Selection
+
+- Clicking an item pod should start the spelling sequence for that item only.
+- Ignore the All, Random and Shuffle settings for individual item selection.
+- Do not play any additional items after an individually selected item.
+- Begin at the blank initial animation stage.
+- Preserve the category context for returning later.
+
+9. Navigation
+
+- Include a way to return to the Let's Spell category landing page.
+- Use the shared Button component.
+- Keep the global Options menu available.
+
+10. Layout
+
+- Position Start above the other playback controls.
+- Keep the three selection buttons together.
+- Keep Shuffle directly underneath the selection buttons.
+- Display the item grid beneath the controls.
+- Use compact but comfortable spacing.
+- Ensure the layout remains usable on mobile, desktop and television screens.
+- Avoid unnecessary layout shifts when the Shuffle checkbox becomes disabled.
+
+Acceptance Criteria:
+- Each category page displays 10 image-only pods.
+- Start is on its own row.
+- All, 3 Random and 5 Random behave as a single-selection group.
+- All is selected by default.
+- Shuffle is enabled and checked by default.
+- Shuffle becomes disabled, unchecked and translucent in random modes.
+- Re-selecting All re-enables and checks Shuffle.
+- All mode plays 10 items.
+- Random modes produce 3 or 5 unique items.
+- Clicking an individual image starts only that item.
+- No visible item names appear in the image grid.
+- The page is responsive and accessible.
+
+
+## Feature-005 - Spelling Sequence and Stage Management
+
+Implement the underlying sequence and progression logic for Let's Spell.
+
+This feature should focus on state management and stage progression, independently of the visual animations.
+
+Requirements:
+
+1. Playback Modes
+
+Support the following playback types:
+- All items in category.
+- 3 random items.
+- 5 random items.
+- One individually selected item.
+
+2. Sequence State
+
+Store:
+- The selected category.
+- The chosen playback mode.
+- The ordered list of items.
+- The current item index.
+- The current reveal stage.
+- Whether completion navigation buttons are visible.
+- Whether a stage animation is currently running.
+
+3. Reveal Stages
+
+Every item follows this sequence:
+
+Stage 0:
+Blank screen.
+
+Stage 1:
+Image visible.
+
+Stage 2:
+Image and first letter visible.
+
+Stage 3:
+Image and first two letters visible.
+
+Continue until every letter is visible.
+
+Final letter stage:
+Image and complete word visible.
+
+Next stage:
+Display navigation buttons beneath the complete word.
+
+4. Multiword Items
+
+- Support words containing spaces, such as Ping Pong.
+- Spaces must not be treated as animated letters.
+- Spaces should remain represented in the word layout.
+- Progression must count actual letters rather than spaces.
+- Do not require an extra click to reveal a space.
+- Maintain the correct word spacing throughout the animation.
+
+5. Forward Progression
+
+- Each valid forward action reveals exactly one new stage.
+- Do not skip stages.
+- Do not allow multiple stages to advance from a single click.
+- Ignore or safely prevent additional progression requests while a transition is running.
+- Do not queue rapid clicks made during animations.
+
+6. Backward Progression
+
+- Allow the current sequence to move backwards by one reveal stage.
+- If completion buttons are visible, moving backwards should first hide those buttons.
+- Further backward actions should hide the most recently revealed letter.
+- Continue backwards until only the image remains.
+- One further backward action should return to the blank stage.
+- At the blank stage, further backward actions should do nothing.
+- Backward progression must not change the current selected item.
+- Moving backwards must not automatically navigate to a previous item.
+
+7. Item Progression
+
+- After completing an item in a multi-item sequence, the user must explicitly select Next.
+- Next loads the following item.
+- Each new item starts from the blank stage.
+- Never automatically advance to the next item.
+- Individual item mode has no Next button.
+
+8. Animation Coordination
+
+- Do not allow progression during a running animation.
+- Ensure stage transitions finish before accepting another input.
+- Never display letters from different items simultaneously.
+- Reset reveal state when moving to the next item.
+- Clean up any pending animation callbacks when navigating away.
+
+9. Routing and State
+
+- Keep category and activity state clearly separated.
+- Use a dedicated spelling playback screen or component.
+- A route such as /letsSpell/:category/play may be used.
+- Preserve the existing /letsSpell/setup route.
+- If a playback route is opened without valid sequence data, safely return to the category selection page rather than displaying a broken screen.
+
+10. Reusability
+
+- Separate spelling sequence logic from animation components.
+- Use a reusable hook, state machine or equivalent architecture.
+- Keep the logic easy to test.
+- Do not hardcode behaviour for individual words.
+
+Acceptance Criteria:
+- All playback modes generate the correct sequence.
+- Every item starts with a blank screen.
+- Image and letters are revealed in the correct order.
+- Each forward action advances one stage.
+- Each backward action reverses one stage.
+- Spaces do not require extra clicks.
+- Rapid interactions cannot skip letters.
+- The next item starts blank.
+- Leaving the activity cleans up its active state.
+- Sequence logic is independent of visual animations.
+
+
+## Feature-006 - Image and Letter Animations
+
+Implement the actual spelling animation display.
+
+Requirements:
+
+1. Full-Screen Display
+
+- Use the available viewport for the spelling activity.
+- Retain the Let's Spell animated gradient background.
+- Keep the persistent global menu accessible.
+- Do not display normal category-selection controls during spelling playback.
+- Centre the main animation content horizontally.
+- Arrange the image above the word.
+- Reserve space for the completion buttons beneath the word.
+
+2. Fixed Layout
+
+- Establish dedicated layout areas for:
+  - The image.
+  - The spelling letters.
+  - The completion buttons.
+- The dimensions and positions of these areas must not change when new content appears.
+- Revealing letters must not move the image.
+- Revealing buttons must not move the image or letters.
+- Use opacity, visibility and transforms rather than changing layout dimensions during animations.
+
+3. Initial State
+
+- The activity must begin with a blank animation area.
+- No item image should be visible.
+- No letters should be visible.
+- No completion buttons should be visible.
+- Keep the global menu available.
+
+4. Image Entrance
+
+On the first valid forward action:
+- Reveal the selected item's image.
+- Animate the image from its centre point.
+- Start at a reduced scale.
+- Grow smoothly to its final size.
+- Fade from transparent to fully visible at the same time.
+- Keep the image centred throughout.
+- Do not introduce sliding movement.
+
+5. Image Sizing
+
+IMPORTANT:
+Images must maintain their original aspect ratio and should use their natural dimensions wherever possible.
+
+- Target a maximum image height of 750px.
+- Target a maximum image width of 750px.
+- Images should aim to display at their natural width.
+- Do not automatically stretch images to fill the available 750px width.
+- Do not enlarge smaller images beyond their intrinsic dimensions.
+- Images may be scaled down to fit the available display area.
+- Images must never exceed 750px in width.
+- Images must never exceed 750px in height.
+- Preserve the image's original aspect ratio at all times.
+- Never stretch or distort an image.
+- Images should always be horizontally centred.
+- Keep the image vertically centred within its allocated image area.
+- Allow images to become smaller when the viewport does not provide sufficient space.
+- Reserve sufficient vertical space below the image for the spelling letters and completion buttons.
+- Account for the global menu and viewport padding.
+- Use object-fit: contain or equivalent.
+- Avoid cropping images.
+- Avoid unnecessary upscaling.
+- Apply sizing consistently to all category images.
+
+Example behaviour:
+
+An image with natural dimensions of 500x500:
+- Display at 500x500 where space allows.
+- Do not stretch it to 750x750.
+
+An image with natural dimensions of 1000x1000:
+- Display at 750x750 where space allows.
+
+An image with natural dimensions of 1200x600:
+- Scale proportionally to 750x375.
+
+An image with natural dimensions of 600x900:
+- Scale proportionally to 500x750.
+
+On smaller viewports:
+- Scale images down proportionally.
+- Preserve horizontal centring.
+- Preserve the fixed layout regions.
+- Ensure images never overlap spelling letters or completion buttons.
+
+6. Letter Appearance
+
+On the second forward action:
+- Reveal the first letter of the selected word.
+
+Each letter should:
+- Use DynaPuff.
+- Use the Let's Spell dark blue text colour.
+- Target a font size of 10rem.
+- Begin at a reduced scale.
+- Grow from its centre point.
+- Fade in from transparent.
+- Spin through two complete rotations while appearing.
+- Finish at its normal upright orientation.
+- Finish at full size and opacity.
+
+7. Letter Rotation
+
+- Use a total rotation of 720 degrees for each entering letter.
+- Combine the rotation with scaling and opacity.
+- Keep the animation smooth and playful.
+- Use a consistent animation duration for every letter.
+- Keep animation timings centrally defined.
+- The complete entrance animation must finish before another letter can be revealed.
+- Respect prefers-reduced-motion.
+
+8. Letter Placement
+
+This is an important requirement.
+
+- Every letter must appear directly in its final position.
+- Revealing additional letters must not move any existing letters.
+- The complete word must remain horizontally centred relative to the image.
+- Calculate or reserve the layout for the complete word before the first letter appears.
+- Hidden letters must continue to occupy their final layout positions.
+- Do not render only the currently visible letters in a way that causes the row to change width.
+- Use fixed layout slots or another reliable technique.
+- Apply animations to individual letters inside their reserved positions.
+
+9. Spacing
+
+- Add appropriate spacing between letters.
+- Support words containing up to 10 letters.
+- Support multiple words such as Ping Pong.
+- Preserve spaces between words.
+- Spaces must not animate.
+- Ensure consistent alignment across words with different lengths.
+- Avoid excessive spacing that causes long words to overflow.
+- Provide appropriate padding between the image and the word.
+
+10. Responsive Letter Sizing
+
+- Target 10rem for letters where sufficient space exists.
+- Scale letter sizes down when necessary.
+- Ensure complete words fit within the viewport width.
+- Account for multiword items.
+- Consider both horizontal and vertical available space.
+- Do not allow letters to overlap.
+- Do not introduce horizontal scrolling.
+- Prefer a consistent font size for all letters within the same word.
+
+11. Subsequent Letters
+
+- Every subsequent forward action should animate the next letter.
+- Previously revealed letters must remain visible.
+- Previously revealed letters must remain stationary.
+- Only the newly revealed letter should animate.
+- Continue until the complete word is visible.
+- Do not shift or re-centre the word as letters appear.
+
+12. Backward Animations
+
+- Moving backwards should remove the most recently revealed letter.
+- Use a smooth reverse animation or corresponding fade/scale/rotation exit.
+- Do not affect previously revealed letters.
+- When moving backwards from the image-only stage, animate the image out.
+- Keep all layout regions stable.
+- Preserve the same fixed positions during backward progression.
+
+13. Performance
+
+- Prefer CSS transforms and opacity.
+- Avoid unnecessary layout recalculations.
+- Prevent animation flickering.
+- Ensure animations remain smooth on mobile devices and television browsers.
+- Keep reusable animation keyframes centralised.
+
+Acceptance Criteria:
+- The screen initially appears blank.
+- The first forward action animates in the image.
+- Images grow and fade in from their centre.
+- Images never exceed 750px in width or height.
+- Images use their natural width where possible.
+- Smaller images are not unnecessarily enlarged.
+- Images scale down proportionally when required.
+- Image aspect ratios are preserved.
+- Images are always horizontally centred.
+- Images never overlap spelling letters or buttons.
+- Each letter grows, fades in and spins twice.
+- Every letter appears in its final position.
+- Previously revealed letters never move.
+- The entire word remains centred beneath the image.
+- Multiword items display correctly.
+- Long words fit within the viewport.
+- Backward animations work.
+- No vertical or horizontal layout shifts occur.
+- The global menu remains accessible.
+
+
+## Feature-007 - Manual Navigation and Input Handling
+
+Implement forward and backward progression using pointer, keyboard and compatible television remote inputs.
+
+Requirements:
+
+1. Forward Input
+
+During spelling playback, the following actions should advance one stage:
+
+- Left mouse click anywhere on the activity screen.
+- Touchscreen tap anywhere on the activity screen.
+- Right Arrow key.
+
+2. Backward Input
+
+The following actions should reverse one stage:
+
+- Left Arrow key.
+- Right mouse click.
+
+3. Right Mouse Click
+
+- Right-clicking the activity screen should move backwards.
+- Prevent the browser context menu from opening on the active spelling screen when right-click is being used for progression.
+- Do not disable right-click behaviour globally throughout the application.
+- Do not interfere with the normal context menu outside the spelling activity.
+
+4. Interaction During Animations
+
+- Ignore forward and backward input while an animation is running.
+- Do not queue inputs received during an animation.
+- Rapid clicking must not skip letters.
+- Rapid right-clicking must not reverse multiple stages unexpectedly.
+- A single interaction must never trigger more than one progression action.
+
+5. Global Menu Interaction
+
+- The persistent menu from Epic-003 must remain available.
+- Clicking the menu button must not advance the spelling animation.
+- Clicking inside the Options modal must not advance or reverse the animation.
+- Modal button clicks must perform only their intended action.
+- While the modal is open, disable spelling progression inputs.
+- Closing the modal should preserve the current spelling stage.
+- Returning to Home or navigating to Teachers must exit the spelling activity.
+- Clean up activity-specific event listeners when leaving.
+
+6. Navigation Buttons
+
+- Clicking Next, Back to Category or Back to Home must not also trigger an activity progression event.
+- Exclude interactive buttons and links from generic screen-click handling.
+- Prevent event propagation or filter event targets where appropriate.
+- Do not interfere with button keyboard accessibility.
+
+7. Keyboard and Television Remote Support
+
+- Right Arrow advances.
+- Left Arrow reverses.
+- Support standard TV remote controls that transmit these keyboard events.
+- Allow Enter or Space to advance while the spelling play area is focused, without intercepting activation of other controls.
+- Keep the play area appropriately focusable and accessible.
+- Avoid interfering with the global menu's keyboard navigation.
+- Provide clear focus behaviour when moving between the play area and navigation controls.
+
+8. Instructional Accessibility
+
+- Provide an accessible description of the available progression controls.
+- Avoid permanently displaying unnecessary instructions over the animation.
+- Ensure screen readers can identify the currently selected activity item and progression controls.
+- Keep decorative animation elements from creating confusing duplicate announcements.
+
+9. Event Cleanup
+
+- Remove document-level or window-level listeners when playback ends.
+- Avoid installing duplicate event listeners.
+- Prevent stale closures from advancing the wrong item.
+- Ensure navigation away from the page completely disables the spelling controls.
+
+Acceptance Criteria:
+- Left click advances one stage.
+- Touchscreen tap advances one stage.
+- Right Arrow advances one stage.
+- Left Arrow reverses one stage.
+- Right click reverses one stage.
+- The browser context menu is suppressed only where needed.
+- Inputs cannot skip stages during animations.
+- Global menu interactions never advance the activity.
+- Completion buttons perform only their intended actions.
+- Modal opening and closing preserve the current stage.
+- Keyboard and TV remote navigation work.
+- Event listeners are properly cleaned up.
+
+
+## Feature-008 - Completion Buttons and Multi-Item Progression
+
+Implement the controls displayed after the spelling of an item is complete.
+
+Requirements:
+
+1. Completion Trigger
+
+- The completion controls should not appear automatically when the last letter finishes animating.
+- The user must perform one additional forward action after the complete word is displayed.
+- This action reveals the appropriate navigation button or buttons.
+- The complete image and word must remain visible.
+
+2. Multi-Item Sequence
+
+If more items remain in the current playback sequence, display a button labelled:
+
+Next
+
+Requirements:
+- Use the existing shared Button component.
+- Position it beneath the completed word.
+- Keep it horizontally centred.
+- Clicking Next advances to the following item.
+- The following item must begin with a blank screen.
+- Do not automatically display the next image.
+- Do not alter the previously generated playback order.
+
+3. Final Item
+
+If the current item is the last item in the sequence, display two buttons:
+
+Back to [Category]
+Back to Home
+
+Examples:
+- Back to Animals
+- Back to Food
+- Back to Sports
+- Back to Clothes
+
+Requirements:
+- Replace the Next button with these two buttons.
+- Back to Category navigates to the corresponding category selection page.
+- Back to Home navigates to /.
+- Use the existing shared Button component.
+- Keep buttons visually consistent with the application styling.
+
+4. Individual Item Selection
+
+If the user selected an individual image from the category grid:
+- Treat that item as the final item.
+- Do not display Next.
+- Display Back to Category and Back to Home.
+- Return to the correct category when Back to Category is selected.
+
+5. Button Appearance
+
+- Buttons should be clearly visible against the orange and yellow background.
+- Use the shared button styles.
+- Adapt colours to the Let's Spell theme.
+- Keep buttons appropriately sized for touchscreens and TV remote controls.
+- Ensure focus states are clear.
+
+6. Button Animation
+
+- Reveal the completion buttons with a smooth fade-in.
+- Do not display the buttons before the final additional forward action.
+- Do not move the image when buttons appear.
+- Do not move or resize the completed word when buttons appear.
+- Reserve sufficient layout space for the buttons from the beginning of playback.
+
+7. Backward Progression
+
+- If the completion buttons are visible and the user performs a backward action, hide the buttons.
+- Return to the fully revealed word stage.
+- The word and image must remain unchanged.
+- Another backward action should then reverse the final letter as normal.
+
+8. Responsive Layout
+
+- Keep completion buttons beneath the word.
+- Use a horizontal arrangement where sufficient width is available.
+- Allow buttons to stack on smaller screens when necessary.
+- Avoid clipping or horizontal overflow.
+- Maintain a stable image and word position regardless of button visibility.
+
+9. Navigation and Cleanup
+
+- Navigating away must terminate the current playback session.
+- Clean up timers, animation callbacks and event listeners.
+- Returning to the category should restore the selection screen.
+- Do not automatically restart the previous sequence.
+- Keep category data and routes intact.
+
+Acceptance Criteria:
+- Completion buttons require one extra forward action.
+- Next appears when more items remain.
+- Next begins the following item at the blank stage.
+- Final items display Back to Category and Back to Home.
+- Individual selections never display Next.
+- Buttons fade in smoothly.
+- Revealing buttons never moves the image or word.
+- Backward input hides completion controls first.
+- All navigation routes work correctly.
+- Activity state is cleaned up when leaving.
+
+
+## Epic-004 - General Implementation Rules
+
+1. Follow all instructions in AGENTS.md.
+
+2. Follow the existing project architecture and naming conventions.
+
+3. Reuse existing shared components, hooks, utilities and SCSS styles wherever possible.
+
+4. Do not duplicate the global animated background implementation.
+
+5. Create the Let's Spell colour variation through reusable theme variables.
+
+6. Keep all Let's Spell-related pages grouped appropriately under src/pages/letsSpell/.
+
+7. Keep category and item data separate from page components.
+
+8. Preserve the existing Let's Spell setup route.
+
+9. Use DynaPuff for headings and animated spelling letters.
+
+10. Use Short Stack for buttons, options and supporting text.
+
+11. Keep the existing glass-style design consistent throughout the application.
+
+12. Reuse the shared Button and NavigationPod components.
+
+13. Do not introduce unnecessary dependencies.
+
+14. Keep spelling sequence logic independent from animation rendering.
+
+15. Ensure all animations preserve element positions and do not cause layout shifts.
+
+16. Prefer transforms and opacity for animations.
+
+17. Keep animation timings centralised.
+
+18. Ensure all 40 category items are supported through data rather than individual hardcoded components.
+
+19. Maintain responsive layouts across mobile, tablet, desktop and television screens.
+
+20. Support keyboard, mouse, touchscreen and compatible TV remote interactions.
+
+21. Keep the global Options menu functional throughout the activity.
+
+22. Do not allow global menu interactions to trigger spelling progression.
+
+23. Properly clean up activity event listeners when navigating away.
+
+24. Respect prefers-reduced-motion. Reduced-motion adaptations must preserve progression functionality.
+
+25. Do not implement automatic spelling progression.
+
+26. Do not implement audio, pronunciation or text-to-speech functionality.
+
+27. Do not introduce teacher setup functionality in this epic.
+
+28. Preserve image aspect ratios and natural dimensions whenever possible.
+
+29. Do not stretch images to fill their maximum dimensions.
+
+30. Complete features in numerical order.
+
+31. Do not modify unrelated activities or functionality.
+
+32. If any feature is rolled back, follow the rollback rules in AGENTS.md and do not reintroduce it automatically.
+
+
+## Epic-004 - Overall Acceptance Criteria
+
+The completed Let's Spell activity should provide:
+
+- A distinct orange and dark yellow animated theme.
+- Dark blue text.
+- Four category selection pods.
+- All 40 spelling items.
+- Category grids containing image-only pods.
+- All, 3 Random and 5 Random playback modes.
+- Shuffle enabled by default for All.
+- Manual item selection.
+- A blank initial spelling screen.
+- Animated image entrance.
+- Images with a maximum width of 750px.
+- Images with a maximum height of 750px.
+- Natural image sizing wherever possible.
+- Proportional image scaling without distortion.
+- Consistently centred images.
+- Letters revealed individually.
+- Two complete spins per entering letter.
+- Letter scaling and fading.
+- Fixed letter positions throughout the sequence.
+- Support for multiword items.
+- Forward progression through clicks and Right Arrow.
+- Backward progression through right-click and Left Arrow.
+- Safe handling of rapid input.
+- Next buttons between items.
+- Category and Home navigation after final items.
+- No layout shifts when completion buttons appear.
+- Full compatibility with the global Options menu.
+- Responsive layouts and keyboard accessibility.
+- Reusable styling, data and animation components.

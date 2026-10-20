@@ -1,0 +1,366 @@
+
+# Epic-001 - Home Page and Navigation
+
+## Feature-001 - Global Styling and Theme
+
+Status: complete
+Notes: Added central SCSS tokens and mixins, reusable typography, and a reduced-motion-aware layered gradient background.
+
+Create the global styling foundation for the application.
+
+Requirements:
+
+1. Fonts
+- All headings throughout the application must use the Google Font "DynaPuff".
+- All other text must use the Google Font "Short Stack".
+- Fonts should be imported and defined centrally so they can be reused throughout the application.
+- Create reusable typography styles for headings and body text.
+
+2. Colours
+- The application's primary background colours should be slate blue and deep teal.
+- Define these colours as central SCSS variables or theme tokens.
+- All text should be white by default.
+- Colours must be easy to change globally in the future.
+
+3. Animated Background
+- Create a full-page gradient background that transitions between slate blue and deep teal.
+- The gradient should move slowly and continuously.
+- The movement should feel organic and random rather than like a repetitive linear animation.
+- Use multiple animation layers, timings or directions where appropriate to achieve this effect.
+- The animation must remain subtle and should not distract from the content.
+- Prefer CSS animations over JavaScript.
+- The background must fill the entire viewport, including on mobile devices.
+- Respect the user's prefers-reduced-motion setting.
+
+4. Shared Styling
+- Establish a central SCSS structure for reusable variables, mixins and global styles.
+- Ensure future components can easily reuse colours, typography, animations and other common styling.
+- Avoid duplicating global styling in individual components.
+- Do not introduce a separate styling framework unless the project already uses one.
+
+Acceptance Criteria:
+- DynaPuff is used for all headings.
+- Short Stack is used for all other text.
+- Text is white by default.
+- The animated background uses slate blue and deep teal.
+- The background animates subtly and continuously.
+- Motion is reduced or disabled when requested by the user's accessibility preferences.
+- Global styles and variables are reusable throughout the application.
+
+
+## Feature-002 - Activity and Setup Placeholder Pages
+
+Status: complete
+Notes: Added five route-backed placeholder pages grouped by activity, each with only a semantic Back to Home link.
+
+Create the initial activity and teacher setup pages.
+
+These pages are placeholders only. Their actual functionality is outside the scope of this epic.
+
+1. Let's Spell
+Create two pages:
+- letsSpellActivity
+- letsSpellSetup
+
+Store both pages together in:
+src/pages/letsSpell/
+
+Suggested routes:
+- /letsSpell
+- /letsSpell/setup
+
+2. Let's Count
+Create one page:
+- letsCountActivity
+
+Store the page in:
+src/pages/letsCount/
+
+Suggested route:
+- /letsCount
+
+3. Let's Find
+Create two pages:
+- letsFindActivity
+- letsFindSetup
+
+Store both pages together in:
+src/pages/letsFind/
+
+Suggested routes:
+- /letsFind
+- /letsFind/setup
+
+General Requirements:
+- Use the existing routing system where available.
+- All five pages must be accessible through their own routes.
+- Each page should remain blank except for a visible "Back to Home" link.
+- The Back to Home link should navigate to the homepage at /.
+- Use the project's global styling and background.
+- Ensure the Back to Home link is accessible with keyboard and TV remote controls.
+- Follow the project's existing file naming and component conventions, including file extensions.
+- Pages that relate to the same activity must remain grouped within the same folder.
+- Do not implement spelling, counting, finding or teacher setup functionality.
+
+Acceptance Criteria:
+- All five placeholder pages exist.
+- Each page has a working route.
+- Each page has a working Back to Home link.
+- Related activity and setup pages are grouped together.
+- No activity functionality has been implemented.
+
+
+## Feature-003 - Reusable Glass Navigation Pods
+
+Status: complete
+Notes: Added a reusable semantic NavigationPod with configurable label, route and decorative Font Awesome icon, backed by shared reduced-motion-aware glass mixins.
+
+Create a reusable navigation pod component that can be used throughout the application.
+
+The component will initially be used on the homepage, but must be designed so it can be reused for future navigation menus and activity selection screens.
+
+1. Component Structure
+- Create a shared NavigationPod component.
+- Each pod should function as a navigation link.
+- The component must support configurable text, destination and Font Awesome icon.
+- Keep styling separate from the component logic.
+- Use semantic link elements rather than clickable div elements.
+- Use the application's existing routing system.
+
+2. Glass Styling
+- Pods should use a frosted-glass appearance inspired by modern iOS interfaces.
+- Use a translucent background.
+- Apply backdrop blur where supported.
+- Add subtle borders and highlights.
+- Use rounded corners.
+- Add soft shadows to give the pods depth.
+- Ensure the contents remain readable against the animated background.
+- Provide suitable fallback styling for browsers without backdrop-filter support.
+
+3. Hover Animation
+- When a pod is hovered over, its background should become more solid.
+- A subtle glint or shine should move across the pod's surface.
+- The glint should travel smoothly from one side of the pod to the other.
+- The animation should trigger when the user hovers over the pod.
+- The animation should not run continuously when the pod is idle.
+- Use CSS animations or transitions where possible.
+- Avoid distracting or overly bright effects.
+- Respect prefers-reduced-motion.
+
+4. Icons
+Use Font Awesome icons.
+
+Required activity icons:
+
+Let's Spell:
+<FontAwesomeIcon icon={faArrowDownAZ} />
+
+Let's Count:
+<FontAwesomeIcon icon={faArrowDown19} />
+
+Let's Find:
+<FontAwesomeIcon icon={faMagnifyingGlass} />
+
+- The component should receive its icon through props.
+- Teacher setup pods should use the same icon as their corresponding activity.
+- Icons should be visually consistent in size and alignment.
+- Icons should be decorative where the pod's text already describes its destination.
+
+5. Focus Styling
+- Pods must have a clearly visible focus state.
+- Focus styling should complement the glass effect.
+- Keyboard focus must be easy to distinguish from the default appearance.
+- The hover glint and stronger glass background should also be available when keyboard focus is applied.
+- Never remove the focus outline without providing a clear replacement.
+
+6. Reusability
+- Centralise common glass styles and animations in reusable SCSS classes or mixins.
+- Design these styles so future menus, navigation panels and similar components can reuse them.
+- Do not duplicate the glass styling in individual pages.
+
+Acceptance Criteria:
+- A reusable NavigationPod component exists.
+- Pods support configurable labels, routes and icons.
+- Frosted-glass styling is applied consistently.
+- Hovering produces a smooth glint animation.
+- Hovering makes the background more solid.
+- Keyboard focus is clearly visible.
+- Pods navigate correctly when activated.
+- Common glass styles can be reused by future components.
+
+
+## Feature-004 - Homepage and Responsive Navigation Grids
+
+Status: complete
+Notes: Rebuilt the homepage with the five required NavigationPods in semantic Activities and Teachers sections using one responsive auto-fitting grid layout.
+
+Create the homepage using the global theme and reusable NavigationPod component.
+
+1. Homepage Header
+- Display the title "Home".
+- Position the title at the top of the page.
+- Centre the title horizontally.
+- Use the global DynaPuff heading font.
+- Apply appropriate spacing around the heading.
+
+2. Activities Section
+Create a section with the heading:
+
+Activities
+
+Below the heading, create a responsive grid of NavigationPod components.
+
+The grid must contain these three pods:
+
+Pod 1:
+Label: Let's Spell
+Icon: faArrowDownAZ
+Destination: /letsSpell
+
+Pod 2:
+Label: Let's Count
+Icon: faArrowDown19
+Destination: /letsCount
+
+Pod 3:
+Label: Let's Find
+Icon: faMagnifyingGlass
+Destination: /letsFind
+
+3. Teachers Section
+Create another section with the heading:
+
+Teachers
+
+Below the heading, create a responsive grid using the same NavigationPod component.
+
+The grid must contain these two pods:
+
+Pod 1:
+Label: Let's Spell setup
+Icon: faArrowDownAZ
+Destination: /letsSpell/setup
+
+Pod 2:
+Label: Let's Find setup
+Icon: faMagnifyingGlass
+Destination: /letsFind/setup
+
+4. Responsive Layout
+- Both sections must use responsive CSS grids.
+- Pods should automatically adjust to the available screen width.
+- Display multiple columns where sufficient width is available.
+- Reduce the number of columns on smaller screens.
+- Avoid horizontal scrolling.
+- Ensure pods are large enough to interact with comfortably.
+- Maintain consistent spacing, dimensions and alignment.
+- Ensure the layout works on mobile devices, tablets, desktop computers and televisions.
+- Keep the Activities and Teachers sections visually distinct through spacing and headings.
+
+5. Styling
+- Use the global animated background.
+- Use DynaPuff for the Home, Activities and Teachers headings.
+- Use Short Stack for pod labels.
+- Use the shared glass-style NavigationPod component.
+- Keep the layout clean, colourful and appropriate for children learning English.
+- Avoid introducing unique pod styles that should instead belong to the reusable component.
+
+6. Navigation
+- Every pod must link to its corresponding page.
+- The Activities section should contain only activity pages.
+- The Teachers section should contain only teacher setup pages.
+- Do not create a Let's Count setup pod because no setup page is currently required.
+
+Acceptance Criteria:
+- The homepage displays a centred Home title.
+- The Activities heading and three activity pods are visible.
+- The Teachers heading and two setup pods are visible.
+- All five navigation links work.
+- Both grids respond correctly to different viewport sizes.
+- The page uses the global fonts, colours and background.
+- All pods use the reusable NavigationPod component.
+
+
+## Feature-005 - Keyboard and TV Remote Navigation
+
+Status: complete
+Notes: Added reusable geometry-based arrow-key navigation for visible pods while preserving native Tab and Enter behavior and responsive DOM order.
+
+Implement consistent keyboard navigation throughout the homepage and placeholder pages.
+
+The application may frequently be used on televisions with remote controls. Navigation must therefore be possible without a mouse or touchscreen.
+
+1. Tab Navigation
+- All navigation links must be keyboard focusable.
+- Use natural DOM tab order wherever possible.
+- Do not use positive tabIndex values.
+- The tab order must follow the visual reading order of the page.
+- On the homepage, focus should move through the Activities pods first, followed by the Teachers pods.
+- Do not create keyboard traps.
+- Ensure Back to Home links on placeholder pages can be reached using Tab.
+
+2. Directional Navigation
+- Support directional navigation using the keyboard arrow keys.
+- Up, Down, Left and Right should allow users to move between navigation pods.
+- Navigation should reflect the visual arrangement of the responsive grid.
+- Arrow navigation must remain functional when the number of grid columns changes.
+- Where possible, move focus to the nearest appropriate pod in the requested direction.
+- Provide predictable movement between the Activities and Teachers sections.
+- If there is no suitable destination in a requested direction, keep focus on the current pod.
+- The currently focused pod must always be visually identifiable.
+
+3. Selection
+- Pressing Enter on a focused pod must activate its link.
+- Standard link activation behaviour should be preserved.
+- Keyboard navigation must not require a mouse.
+- Do not interfere with standard browser navigation or unrelated keyboard controls.
+
+4. TV Remote Compatibility
+- Design keyboard navigation to work with television remote controls that transmit standard directional arrow and Enter key events.
+- Do not assume that every TV remote produces identical key events.
+- Use normal browser focus behaviour wherever possible.
+- Make focused elements visually obvious when viewed from a distance.
+- Ensure pods provide sufficiently large visual targets.
+- Avoid focus animations that are excessively distracting.
+
+5. Accessibility
+- Use semantic HTML elements.
+- Give navigation links meaningful accessible names.
+- Decorative icons must not create duplicate spoken labels.
+- Preserve normal browser focus behaviour.
+- Do not require hover to reveal essential information.
+- Respect reduced-motion preferences.
+- Ensure keyboard navigation continues to work after viewport resizing.
+
+6. Reusability
+- Put any custom directional-navigation logic into a reusable hook, utility or shared component as appropriate.
+- Do not embed homepage-specific navigation logic into individual pods.
+- Make the directional-navigation solution suitable for future activity menus.
+
+Acceptance Criteria:
+- All navigation links are accessible using Tab.
+- Tab order follows the page's visual reading order.
+- Arrow keys navigate logically between homepage pods.
+- Arrow navigation adapts to responsive grid changes.
+- Enter activates the focused link.
+- Focus states are clearly visible.
+- Navigation works without a mouse.
+- Back to Home links work using the keyboard.
+- Navigation does not create focus traps.
+- Shared navigation logic is reusable throughout the application.
+
+
+## Epic-001 - General Implementation Rules
+
+- Follow the instructions in the project's AGENTS.md file.
+- Follow the existing project architecture and naming conventions.
+- Prefer reusable components, hooks and SCSS styles over duplicated code.
+- Keep component logic and presentation styles separated where appropriate.
+- Do not install unnecessary dependencies.
+- Reuse existing dependencies where possible.
+- Do not modify unrelated application functionality.
+- Do not implement activity gameplay or teacher setup functionality during this epic.
+- Keep the application accessible and responsive.
+- Ensure all new pages and components integrate correctly with the existing application.
+- Where existing conventions conflict with suggested paths or file extensions, preserve project conventions without changing the requested behaviour.
+- Each feature should be implementable and testable independently, in numerical order.
