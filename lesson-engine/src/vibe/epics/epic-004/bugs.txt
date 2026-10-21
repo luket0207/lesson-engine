@@ -34,3 +34,37 @@ Acceptance Criteria:
 - Global menu interactions do not trigger Next.
 - Final-item navigation behaviour remains unchanged.
 - Backward navigation continues working correctly.
+
+
+## Bug-002 - Disable Text Selection Throughout the Application
+
+Status: complete
+Notes: Disabled text selection globally in the central stylesheet with browser-prefixed user-select rules, while restoring normal selection for inputs, textareas, and enabled contenteditable regions (including their descendants). Existing control interaction, focus, navigation, and animation behavior is unchanged.
+
+Currently, text throughout the application can be highlighted and selected by clicking and dragging across it.
+
+This causes the browser's default blue text-selection background to appear, which is undesirable for an interactive children's learning application.
+
+Requirements:
+- Disable text selection throughout the entire application.
+- Users should not be able to highlight text by clicking and dragging.
+- Prevent the default blue selection highlight from appearing.
+- Apply this behaviour to headings, paragraphs, buttons, navigation pods, labels, animated letters and all other non-editable text.
+- Ensure this also applies to the Let's Count and Let's Spell activities.
+- Apply the styling globally through the central SCSS rather than modifying individual components.
+- Use the CSS user-select property with a value of none.
+- Include the appropriate vendor-prefixed properties where necessary for browser compatibility.
+- Ensure the styling works across desktop, mobile, tablet and television browsers.
+- Do not interfere with normal button clicks, navigation, hover effects or animations.
+- Do not disable keyboard focus or accessibility features.
+- If editable text fields, textareas or contenteditable elements are introduced, they must retain normal text selection and editing functionality.
+- Do not prevent users from interacting with checkboxes or other form controls.
+
+Acceptance Criteria:
+- Text cannot be highlighted by clicking and dragging.
+- The browser's blue selection background no longer appears.
+- Text selection is disabled consistently across all application pages.
+- All existing buttons, navigation and animations continue working.
+- Keyboard and TV remote navigation remain unaffected.
+- Editable text fields retain normal selection behaviour.
+- The solution is implemented centrally and applies automatically to future pages and components.
