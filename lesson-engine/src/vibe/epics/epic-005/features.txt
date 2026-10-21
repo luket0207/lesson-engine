@@ -1,0 +1,1532 @@
+
+# Epic-005 - Let's Find: Boxes Mode
+
+## Overview
+
+Implement the Let's Find activity, beginning with its Boxes mode.
+
+Let's Find will eventually contain two modes:
+- Houses
+- Boxes
+
+Only Boxes mode will be implemented in this epic.
+
+The purpose of Boxes mode is to help children associate English words with objects through an interactive hiding and finding game.
+
+The player is shown an object to find. Several coloured boxes appear, an object moves beneath one of them, and the boxes lower to hide it.
+
+The player must then select the correct box.
+
+The activity must support:
+- 2, 3 or 4 boxes.
+- Six possible box colours.
+- Three object categories.
+- Random object selection.
+- Random box colour selection.
+- Random box order.
+- Random object hiding locations.
+- Fresh random selections for every new game.
+- Animated introduction and preparation.
+- Animated object movement and hiding.
+- Interactive box selection.
+- Incorrect-answer feedback.
+- Correct-answer celebration.
+- Playing again with the same settings but new random selections.
+- Navigation to the Boxes options screen or homepage.
+
+The game will use a white and light blue animated background with dark blue text.
+
+All animation stages must preserve stable layout positions.
+
+The global Options menu must remain accessible throughout the activity.
+
+Follow all existing application conventions established in Epics 001-004.
+
+
+## Feature-001 - Let's Find Colour Theme
+
+Status: complete
+Notes: Added a route-scoped Let's Find theme for /letsFind and all nested routes using central white, light-blue and dark-blue tokens. The existing animated background is reused unchanged, while shared glass surfaces, buttons, focus rings, the persistent menu and Options modal adapt to the lighter palette without affecting other activity themes.
+
+Create a dedicated colour theme for the Let's Find activity.
+
+This theme will eventually be shared by both Houses and Boxes modes.
+
+Requirements:
+
+1. Background Colours
+
+- Use a white and light blue gradient.
+- The appearance should be bright, clean and cheerful.
+- Avoid overly saturated blues.
+- Ensure sufficient contrast between the background and interface elements.
+
+Suggested starting colours:
+- White: #F5FAFF
+- Light Blue: #A9D8F0
+- Secondary Blue: #CBE8F7
+- Text: #173B54
+
+These colours can be adjusted slightly to achieve a balanced appearance.
+
+2. Background Animation
+
+- Reuse the existing global animated background system.
+- Preserve the existing movement patterns and animation speed.
+- Maintain the organic movement introduced in previous epics.
+- Do not introduce a separate background animation implementation.
+- Use centralised theme variables to apply the new colours.
+- Preserve the fix for visible gradient lines and boundaries.
+- Ensure the animation remains smooth and continuous.
+
+3. Text Colours
+
+- Use dark blue for all text throughout Let's Find.
+- Apply this to headings, buttons, labels, instructions and animated text.
+- Keep colours centrally defined.
+- Ensure adequate contrast against the light background.
+
+4. Glass Elements
+
+- Retain the application's existing frosted-glass styling.
+- Adapt glass opacity, borders and shadows to work against the lighter background.
+- Preserve existing hover glints.
+- Preserve button hover and focus effects.
+- Ensure primary, secondary and tertiary buttons remain visually distinguishable.
+
+5. Theme Scope
+
+Apply the Let's Find theme to:
+- The Let's Find landing page.
+- The Boxes options page.
+- The Boxes activity.
+- The global Options menu when opened within Let's Find.
+
+The future Houses mode should also use this theme.
+
+Other activities must retain their existing themes.
+
+6. Typography
+
+- DynaPuff for headings and animated gameplay text.
+- Short Stack for buttons, options and supporting text.
+- Preserve the application's existing global text-selection rules.
+
+Acceptance Criteria:
+- Let's Find uses a white and light blue animated background.
+- All text uses the complementary dark blue colour.
+- The existing background animation is reused.
+- No gradient seams or straight-line artefacts appear.
+- Glass components remain clear and readable.
+- The global menu adapts correctly to the new theme.
+- Other activities retain their original themes.
+- Theme styles are centralised and reusable.
+
+
+## Feature-002 - Let's Find Mode Selection Page
+
+Status: complete
+Notes: Replaced the Let's Find placeholder with a responsive, directionally navigable Houses/Boxes mode screen using shared NavigationPod and Button components. Houses is visibly disabled and labelled Coming soon; Boxes navigates to the new /letsFind/boxes route backed by the existing setup placeholder ready for Feature-003.
+
+Replace the existing Let's Find placeholder page with a mode-selection screen.
+
+Route:
+/letsFind
+
+Requirements:
+
+1. Page Header
+
+Display the title:
+
+Let's Find
+
+- Position the title near the top of the page.
+- Centre it horizontally.
+- Use DynaPuff.
+- Match the existing homepage heading style.
+- Use the Let's Find dark blue text colour.
+
+2. Mode Selection Grid
+
+Display a responsive grid containing two modes:
+
+- Houses
+- Boxes
+
+- Use the existing NavigationPod component.
+- Preserve the frosted-glass appearance.
+- Preserve the hover glint effect.
+- Preserve keyboard and TV remote focus styling.
+- Keep pods consistent in dimensions and alignment.
+
+3. Boxes Mode
+
+- The Boxes pod should navigate to:
+
+/letsFind/boxes
+
+- This route will display the Boxes options screen.
+- The pod must be fully functional.
+
+4. Houses Mode
+
+- Display the Houses pod in the grid.
+- Houses functionality is outside the scope of this epic.
+- Indicate that Houses is coming soon.
+- Do not navigate to a broken or unimplemented page.
+- Make its unavailable state visually clear.
+- Do not create Houses gameplay or setup functionality.
+- Preserve the ability to make Houses functional in a future epic.
+
+5. Navigation
+
+- Include a Back to Home button.
+- Navigate to /.
+- Use the existing shared Button component.
+- Preserve the global Options menu.
+
+6. Responsiveness
+
+- Use the existing responsive grid system.
+- Display the modes side by side where sufficient space exists.
+- Adapt gracefully to narrower screens.
+- Maintain adequate interaction sizes.
+- Avoid horizontal scrolling.
+- Preserve keyboard and TV remote compatibility.
+
+Acceptance Criteria:
+- The Let's Find landing page exists at /letsFind.
+- The Let's Find heading is centred.
+- Houses and Boxes pods are displayed.
+- Boxes navigates to the correct options screen.
+- Houses is clearly identified as unavailable.
+- The new colour theme is applied.
+- Back to Home works.
+- Global menu functionality is preserved.
+
+
+## Feature-003 - Boxes Mode Options Screen
+
+Status: complete
+Notes: Replaced the Boxes setup placeholder with a responsive three-part options screen using shared buttons, frosted glass and directional navigation. Accessible radio-style groups retain independent defaults of 3 boxes and Animals, and Start passes both settings together to the reserved /letsFind/boxes/play route for the upcoming game-generation and playback features.
+
+Create the Boxes mode configuration page.
+
+Route:
+/letsFind/boxes
+
+Requirements:
+
+1. Page Layout
+
+The page should contain three main areas:
+
+Top:
+- Start button.
+
+Middle:
+- Options panel.
+
+Bottom:
+- Back to Home button.
+
+- Centre the page content horizontally.
+- Use the Let's Find colour theme.
+- Preserve the global menu.
+- Keep the layout compact enough to fit within the viewport where practical.
+- Allow scrolling on unusually small screens rather than clipping important controls.
+
+2. Start Button
+
+Display a primary button labelled:
+
+Start
+
+- Position it at the top of the main content.
+- Use the existing shared Button component.
+- Make it large and prominent.
+- Use the existing solid-glass primary button style.
+- Clicking Start begins a new Boxes game using the selected settings.
+
+3. Options Panel
+
+- Use the existing frosted-glass panel styling.
+- Keep option groups clearly separated.
+- Use Short Stack for option labels.
+- Maintain consistent padding and spacing.
+
+4. Amount of Boxes
+
+Display a setting labelled:
+
+Amount of Boxes
+
+Provide three tertiary buttons:
+
+- 2
+- 3
+- 4
+
+Requirements:
+- Arrange the buttons horizontally.
+- Treat them as a radio-style single-selection group.
+- Only one number may be selected.
+- Default selection: 3.
+- Clearly indicate the active selection.
+- Use existing tertiary button styling.
+
+5. Objects
+
+Display a setting labelled:
+
+Objects
+
+Provide three tertiary buttons:
+
+- Animals
+- Food
+- Clothes
+
+Requirements:
+- Arrange the buttons horizontally.
+- Treat them as a radio-style single-selection group.
+- Only one category may be selected.
+- Default selection: Animals.
+- Clearly distinguish the selected category.
+
+6. Option State
+
+- Changing one setting must not reset the other.
+- Store the selected number of boxes and object category together.
+- Pass both settings into the activity when Start is selected.
+- Prevent the options from changing during an active game.
+
+7. Back to Home
+
+- Display a Back to Home button at the bottom of the page.
+- Use the existing shared Button component.
+- Navigate to /.
+
+8. Accessibility
+
+- Use appropriate accessible single-selection semantics.
+- Preserve keyboard navigation.
+- Preserve TV remote compatibility.
+- Keep the selection state visually obvious.
+- Ensure controls are accessible by touch and mouse.
+
+Acceptance Criteria:
+- The Start button appears at the top.
+- The options panel appears in the middle.
+- Back to Home appears at the bottom.
+- Box amounts 2, 3 and 4 can be selected.
+- The default is 3 boxes.
+- Animals, Food and Clothes can be selected.
+- Animals is the default category.
+- Selected options are clearly identifiable.
+- Start passes the correct settings into a new game.
+- The screen is responsive.
+
+
+## Feature-004 - Object Data, Box Assets and Randomisation
+
+Status: complete
+Notes: Reused the existing Animals, Food and Clothes spelling data, added a central mapping for all six verified box assets, and introduced a standalone round generator. Each call creates independent object/box data, fresh stable identifiers, exactly one correct box and a new below-viewport entrance position; same-category object repetition and identical consecutive box order are avoided using optional previous-round data. Start now generates the round once and passes it to playback.
+
+Create the data and randomisation logic required by Boxes mode.
+
+Keep this logic independent of the animation components.
+
+IMPORTANT:
+Every new game must generate fresh random selections.
+
+This includes games started by clicking Play Again.
+
+The only settings that should carry over when playing again are:
+- Number of boxes.
+- Selected object category.
+
+All randomly generated gameplay data must be regenerated.
+
+Requirements:
+
+1. Object Categories
+
+Use three existing object categories:
+
+Animals
+Food
+Clothes
+
+Where possible, reuse the item data and images created for Let's Spell in Epic-004.
+
+Do not duplicate the same lists unnecessarily.
+
+2. Animals
+
+Use the existing items:
+- Cat
+- Dog
+- Pig
+- Cow
+- Fox
+- Bear
+- Lion
+- Fish
+- Frog
+- Duck
+
+Image folder:
+src/assets/images/animals/
+
+3. Food
+
+Use the existing items:
+- Egg
+- Ham
+- Rice
+- Corn
+- Cake
+- Soup
+- Bread
+- Pizza
+- Sushi
+- Apple
+
+Image folder:
+src/assets/images/food/
+
+4. Clothes
+
+Use the existing items:
+- Hat
+- Sock
+- Coat
+- Shoe
+- Vest
+- Belt
+- Shirt
+- Skirt
+- Dress
+- Shorts
+
+Image folder:
+src/assets/images/clothes/
+
+5. Object Selection
+
+- Every new game must randomly select an object from the selected category.
+- Every object in the category should be eligible.
+- Store the selected object's identifier, display name and image reference.
+- Use the same selected object throughout the current game.
+- Do not change the object while the game is running.
+- When starting a new game, generate a fresh object selection.
+- Do not reuse the previously selected object automatically.
+- When playing again within the same category, avoid selecting the same object as the immediately previous game.
+- Every other object in the category should have an equal chance of being selected.
+- If the category changes, select randomly from the new category.
+- Do not permanently remove previously used objects from the selection pool.
+
+6. Box Colours
+
+There are six possible box colours:
+
+- Red
+- Blue
+- Yellow
+- Green
+- Orange
+- Purple
+
+Use the appropriate existing box image assets.
+
+- Inspect the project to identify the actual box image filenames and locations.
+- Define a central mapping between box colour and image asset.
+- Do not duplicate asset paths throughout the components.
+- Do not generate substitute images automatically if assets are missing.
+- Report missing assets rather than silently using an incorrect image.
+
+7. Random Box Selection
+
+- Every new game must randomly select the required number of boxes from the six available colours.
+- The number selected depends on the current Amount of Boxes setting.
+- Every selected box must have a different colour.
+- Never duplicate a colour within the same game.
+- Support selections of 2, 3 or 4 boxes.
+- Randomise the order of the chosen boxes.
+- Store the resulting ordered box list for the entire game.
+
+IMPORTANT:
+- When Play Again is selected, do not reuse the previous box array.
+- Generate a completely new random box selection.
+- Generate a new random arrangement.
+- Do not preserve the previous positions or order.
+- Individual colours may appear again because they are selected from the same six-colour pool.
+- Avoid repeating the exact same ordered box arrangement in consecutive games where possible.
+
+8. Box Identity
+
+Every box must have:
+- A unique identifier for the current game.
+- Its colour.
+- Its image reference.
+- Its position within the horizontal arrangement.
+- Whether it contains the object.
+
+- Generate fresh box identifiers for every new game.
+- Do not carry over identifiers from the previous game.
+- Keep identifiers stable throughout the current game.
+
+9. Hidden Object Assignment
+
+- Randomly select one of the active boxes to contain the object.
+- Store its unique identifier.
+- Preserve this assignment throughout the game.
+- The object must only exist beneath one box.
+- Do not change the correct box after the hiding sequence begins.
+- Generate a new correct-box assignment for every new game.
+- Do not automatically use the same hiding position as the previous game.
+
+IMPORTANT:
+Do not rely on visual position alone to determine the correct answer.
+
+Use a stable box identifier so animations cannot accidentally change which box contains the object.
+
+10. Random Object Entrance
+
+- Each new game must generate a new random starting position for the object.
+- The position must be below the visible viewport.
+- The object should enter from a randomly selected horizontal position.
+- Do not reuse a stored entrance position from the previous game.
+- Ensure the starting position is sufficiently far below the screen that the entire image begins off-screen.
+- The random starting position must not affect which box is the correct answer.
+
+11. Central Game Generation
+
+Create a reusable function or utility responsible for generating a new game.
+
+The function should accept:
+- Selected object category.
+- Selected number of boxes.
+- Previous game information where needed to avoid immediate repetition.
+
+It should generate:
+- A newly selected object.
+- A new list of unique box colours.
+- A new box order.
+- New box identifiers.
+- A new correct-box assignment.
+- A new object entrance position.
+- A unique game or round identifier.
+
+The function should be called:
+- When the user presses Start on the Boxes options page.
+- Every time the user presses Play Again.
+
+Do not generate new random selections simply because a React component re-renders.
+
+12. Fresh Game State
+
+- Each new round must have its own independent game data.
+- Do not mutate or reuse the previous game's arrays or objects.
+- Reset all guessing and animation state.
+- Ensure no previous timers or animation callbacks affect the new round.
+- Do not allow previous game state to overwrite newly generated data.
+
+13. Reusability
+
+- Keep random selection logic in dedicated utilities or hooks.
+- Keep object data separate from game rendering.
+- Allow future modes to reuse the existing object category data.
+- Avoid hardcoding individual objects into animation components.
+- Keep the entire random game-generation process easy to test.
+
+Acceptance Criteria:
+- All three object categories work.
+- Every new game generates fresh random selections.
+- Play Again generates fresh random selections.
+- The same object is not selected in two consecutive games within the same category.
+- The requested number of boxes is generated.
+- Box colours are unique within each game.
+- Box colours are freshly selected for each new game.
+- Box order is freshly randomised for each new game.
+- The previous box array is not reused.
+- Exactly one box is assigned the object.
+- The correct box is newly assigned for each round.
+- The correct box remains consistent throughout the active game.
+- A fresh random object entrance position is generated.
+- Only the number of boxes and object category persist when playing again.
+- Object data is reused from Let's Spell where appropriate.
+- Randomisation logic is centralised and independently testable.
+
+
+## Feature-005 - Game States and Fixed Scene Layout
+
+Status: complete
+Notes: Added a validated /letsFind/boxes/play session, reducer-backed phase machine and fixed full-viewport scene foundation. Gameplay data remains separate from presentation; phase actions are round-scoped, invalid transitions are ignored, modal state masks gameplay input, and all future animation/content regions remain mounted at stable responsive positions without document-flow shifts.
+
+Establish the game state management and visual layout used throughout Boxes mode.
+
+This feature should provide the foundation for all subsequent animations.
+
+Requirements:
+
+1. Game Phases
+
+Create a clear sequence of game states.
+
+Suggested phases:
+
+- Introduction Entering
+- Introduction Ready
+- Introduction Exiting
+- Boxes Entering
+- Boxes Ready
+- Object Entering
+- Object Wiggling
+- Boxes Hiding Object
+- Guessing Ready
+- Incorrect Guess Feedback
+- Correct Guess Reveal
+- Success Animation
+- Success Holding
+- Completed
+
+Ensure these states progress in the correct order.
+
+2. State Management
+
+Track:
+- Selected object.
+- Selected object category.
+- Number of boxes.
+- Box colours and their order.
+- Correct box identifier.
+- Current game phase.
+- Selected box during a guess.
+- Whether animations are running.
+- Whether input is currently permitted.
+- Current game or round identifier.
+
+Keep gameplay state separate from animation presentation.
+
+3. Scene Layout
+
+The game must use fixed layout regions.
+
+Reserve space for:
+- Introduction text.
+- Horizontal row of boxes.
+- Object image.
+- Gameplay Start button.
+- Find the Object instruction.
+- Incorrect-answer feedback.
+- Success image and message.
+- Completion buttons.
+
+These areas must not dynamically push other elements around.
+
+4. Positioning
+
+Use the following visual targets:
+
+Initial box resting position:
+Approximately 25% down the screen.
+
+Object hiding position:
+Approximately 50% down the screen.
+
+Gameplay Start button:
+Approximately 75% down the screen.
+
+- These are visual positioning targets rather than rigid values on every viewport.
+- Use responsive positioning to avoid clipping or overlapping.
+- Keep the scene horizontally centred.
+- Ensure transitions between positions are animated rather than instantaneous layout jumps.
+
+5. Box Row
+
+- Arrange all boxes in a single horizontal row.
+- Maintain consistent spacing.
+- Centre the complete row horizontally.
+- Preserve the same horizontal positions throughout the hiding and guessing phases.
+- Do not reorder boxes after the game begins.
+- Do not allow movement animations to change the logical box order.
+
+6. Animation Stability
+
+This is a critical requirement.
+
+- Animating an element into the page must not displace existing elements.
+- Showing or hiding buttons must not move other content.
+- Changing the size of an image must not trigger unwanted layout shifts.
+- Use reserved containers and transform-based animations.
+- Do not rely on normal document flow for moving game elements.
+- Avoid sudden positional changes between game phases.
+
+7. Responsive Behaviour
+
+- Support mobile, tablet, desktop and television screens.
+- Scale the scene down when necessary.
+- Maintain the relative positions and alignment of all boxes.
+- Prevent horizontal scrolling during gameplay.
+- Avoid clipping images, instructions or buttons.
+- Use viewport-relative sizing where appropriate.
+- Keep box selection targets usable on smaller screens.
+
+8. Animation Coordination
+
+- Prevent two conflicting game phases from running simultaneously.
+- Use animation-completion events or controlled sequencing where appropriate.
+- Avoid arbitrary overlapping timers.
+- Clean up timers and callbacks when leaving the game.
+- Do not allow input to trigger unexpected phase changes.
+- Ensure animation callbacks belong to the current round.
+- Ignore stale callbacks from previous rounds.
+
+9. Global Menu
+
+- Keep the global Options menu visible.
+- Opening the modal must not trigger game progression.
+- Ignore gameplay input while the modal is open.
+- Preserve the current game state when closing the modal.
+- Leaving the activity must terminate the current game and clean up its timers and listeners.
+
+Acceptance Criteria:
+- Game phases follow the correct order.
+- Box colours and positions remain stable within the active round.
+- The correct box identifier is preserved.
+- No elements jump when animations start or finish.
+- Showing buttons does not move other elements.
+- Scene sizing adapts to different viewports.
+- Global menu interactions do not interfere with gameplay.
+- Game state is cleaned up when navigating away.
+- Previous-round callbacks cannot modify the current round.
+
+
+## Feature-006 - Introduction and Initial Box Animations
+
+Status: complete
+Notes: Added the reusable 130%/70%/100% bounce, centrally timed introduction entrance/hold/exit, sequential top-down box entrances and the ready-phase Start fade. Animation-end events advance round- and phase-guarded state; click, tap, Enter, Space and the shared Start button use one duplicate-safe path, while Options-modal input is ignored and reduced motion preserves sequencing.
+
+Implement the first part of the Boxes game.
+
+This covers the introduction text, initial box entrance and gameplay Start button.
+
+Requirements:
+
+1. Introduction Text
+
+When the activity starts, display:
+
+Let's find the [Object]!
+
+Examples:
+- Let's find the Dog!
+- Let's find the Apple!
+- Let's find the Shirt!
+
+- Use the randomly selected object's name.
+- Use DynaPuff.
+- Use the Let's Find dark blue text colour.
+- Centre the text horizontally and vertically.
+- Target a font size of 10rem.
+- Scale down responsively to prevent overflow.
+
+2. Introduction Entrance Animation
+
+- Begin with the text small and centred.
+- Grow the text from its centre point.
+- Add a cartoon bounce animation.
+
+The bounce should follow this general progression:
+
+- Start small.
+- Grow to approximately 130% of final size.
+- Shrink to approximately 70% of final size.
+- Grow again to 100% of final size.
+- Come to rest smoothly.
+
+- Keep the text centred throughout.
+- Use smooth easing.
+- Avoid abrupt or jerky transitions.
+- Ensure the overshoot does not cause clipping.
+- Keep animation timings centrally defined.
+
+3. Introduction Hold
+
+- After the bounce completes, keep the introduction visible.
+- Wait for the user to click or tap the screen.
+- Do not automatically progress.
+- Support keyboard and compatible TV remote activation.
+- Ignore input while the introduction entrance animation is running.
+
+4. Introduction Exit
+
+When the user advances:
+- Fade out the introduction text.
+- Do not move the text while fading.
+- Wait until the fade-out has completed.
+- Begin the box entrance sequence only after the text has disappeared.
+
+5. Box Appearance
+
+There may be 2, 3 or 4 boxes.
+
+Each box should initially have target dimensions of:
+
+Width: 300px
+Height: 222px
+
+- Preserve the box image's aspect ratio.
+- Keep the boxes horizontally aligned.
+- Centre the complete row.
+- Reduce box dimensions proportionally on smaller screens if required.
+- Do not stretch or distort the images.
+
+6. Box Entrance Animation
+
+- Boxes must appear one by one.
+- Each box begins above the visible viewport.
+- Each slides vertically down into its assigned position.
+- Boxes should settle into a horizontal row approximately 25% down the screen.
+- Only one new box should enter at a time.
+- The next box should begin after the previous box completes its entrance.
+- Give each box a smooth entrance.
+- Keep each box in its final horizontal position from the beginning of its entrance.
+- Do not allow existing boxes to shift when another box appears.
+
+7. Gameplay Start Button
+
+Once all boxes have completed their entrances:
+
+Display a primary button labelled:
+
+Start
+
+- Position the button approximately 75% down the screen.
+- Centre it horizontally.
+- Use the existing shared Button component.
+- The button should appear only after every box is at rest.
+- Use a smooth fade-in.
+
+8. Starting the Hiding Animation
+
+The user should be able to start the next animation by:
+- Clicking the Start button.
+- Clicking anywhere on the gameplay screen.
+- Tapping the gameplay screen.
+- Pressing Enter or Space when the gameplay area is appropriately focused.
+
+- The global Options menu must not trigger Start.
+- Prevent duplicate activation through event bubbling.
+- A single action must start the hiding sequence only once.
+- Ignore further Start input while the next animation sequence is running.
+
+Acceptance Criteria:
+- The introduction displays the correct object name.
+- Introduction text uses DynaPuff and targets 10rem.
+- The introduction bounces through approximately 130%, 70% and 100%.
+- Introduction progression requires user interaction.
+- The introduction fades out before boxes appear.
+- Boxes enter individually from above the screen.
+- Boxes settle into a centred horizontal row.
+- Box images target 300x222 pixels.
+- The Start button appears only after all boxes have entered.
+- Clicking anywhere during the ready phase starts the hiding sequence.
+- No layout shifts occur.
+
+
+## Feature-007 - Object Entrance and Box Hiding Sequence
+
+Status: complete
+Notes: Added a guarded Start-exit phase, viewport-measured entrance from the round's generated off-screen coordinates, proportional object sizing and wiggle, then ordered 180-degree box flips and lowering. A synchronized clip mask guarantees full concealment behind the unchanged correct box, and guessing unlocks only after the final box finishes.
+
+Implement the sequence where the selected object enters and is hidden beneath one of the boxes.
+
+Requirements:
+
+1. Gameplay Start
+
+When the user begins the hiding sequence:
+- Fade out the gameplay Start button.
+- Disable further Start interactions.
+- Begin the object entrance after the button has disappeared.
+- Preserve all box colours and positions.
+
+2. Object Appearance
+
+- Use the selected object's image.
+- Preserve its original aspect ratio.
+- Maximum object width: 250px.
+- Maximum object height: 200px.
+- Scale proportionally to fit these limits.
+- Do not distort the image.
+- The object must be small enough to fit completely beneath a box.
+
+3. Object Starting Location
+
+- The object must begin outside the bottom edge of the screen.
+- Randomise its initial horizontal position.
+- Keep its starting position completely outside the visible viewport.
+- Choose a fresh starting position for each new game.
+- Do not reuse the previous round's entrance coordinates.
+- Do not alter the predetermined correct box.
+
+4. Object Entrance
+
+- Animate the object from its random position beneath the screen.
+- Slide it upwards and horizontally as needed.
+- Bring it to a position directly beneath the assigned correct box.
+- The object should finish approximately vertically centred on the screen.
+- Keep it horizontally aligned with the centre of the correct box.
+- The movement should be smooth and clearly visible.
+- Do not teleport the object into place.
+
+5. Object Wiggle
+
+Once the object reaches its hiding location:
+- Perform a small playful wiggle animation.
+- Use subtle rotation or side-to-side movement.
+- Keep the object centred around its assigned hiding position.
+- Avoid excessive movement.
+- Allow the wiggle to finish before the boxes begin hiding the object.
+
+6. Box Flip Animation
+
+After the object wiggle:
+- Each box must rotate by 180 degrees.
+- The boxes should finish upside down.
+- Rotate them one by one.
+- Use the same box order established when they entered the screen.
+- Keep box colours and horizontal positions unchanged.
+- Use smooth transform animations.
+- The rotation should be visually clear.
+
+7. Box Lowering Animation
+
+- After or as part of each individual box's flip, lower that box towards the object's vertical position.
+- Each box should move down from its initial position to the hiding row.
+- The boxes should lower one by one.
+- Each box should finish directly beneath its original horizontal slot.
+- All boxes must finish at the same vertical position.
+- The final row should remain horizontally aligned.
+
+8. Object Concealment
+
+- The assigned correct box must completely cover the object.
+- The object should not remain visible around the sides, top or bottom of the box.
+- Correctly manage z-index and stacking order.
+- Account for transparent regions in PNG assets when determining whether the object is completely concealed.
+- Use a suitable covering or masking technique if necessary.
+- Do not hide the object by removing its identity from the game state.
+- The object must remain associated with the correct box.
+
+9. Incorrect Boxes
+
+- Incorrect boxes should perform the same flip and lowering animations.
+- They should appear visually identical in behaviour to the correct box.
+- The user should not be able to identify the correct box through differences in animation timing, positioning or appearance.
+
+10. Completion of Hiding
+
+- Wait until every box has finished moving.
+- Confirm the object is completely hidden.
+- Only then enable box selection.
+- Do not allow guesses while boxes are still flipping or lowering.
+
+Acceptance Criteria:
+- Start fades out before the object enters.
+- The object enters from a newly generated random location below the screen.
+- The object moves to the correct box's horizontal position.
+- The object remains within 250px width and 200px height.
+- The object performs a small wiggle.
+- Boxes rotate 180 degrees.
+- Boxes lower one by one.
+- Every box finishes aligned in the same horizontal row.
+- The object becomes completely hidden.
+- The correct box remains unchanged.
+- Box selection is disabled until the sequence finishes.
+- No unexpected layout movement occurs.
+
+
+## Feature-008 - Interactive Boxes and Incorrect Guess Feedback
+
+Status: complete
+Notes: Added phase-gated semantic box controls with colour-based accessible names, hover/focus scaling, left/right directional navigation and native Enter/Space selection. The reserved DynaPuff instruction fades in for guessing; wrong guesses raise only the selected box, show a 150px-target Font Awesome thumbs-down with two bounces, then restore the box and focus before the reducer re-enables guessing.
+
+Implement the box-selection phase and incorrect-answer animations.
+
+Requirements:
+
+1. Enable Box Selection
+
+Once all boxes have finished hiding the object:
+- Make each box interactive.
+- Allow the user to select a box.
+- Preserve the box's visual colour and position.
+- Do not allow guessing before this phase.
+
+2. Box Hover Effect
+
+- When a box is hovered over, increase its scale slightly.
+- Use a smooth transition.
+- The effect should clearly indicate that the box is selectable.
+- The box must return to its original scale when the hover ends.
+- Provide an equivalent visible focus state for keyboard and TV remote users.
+- Do not alter the box's actual layout dimensions.
+- Ensure scaling does not cause neighbouring boxes to move.
+
+3. Find Instruction
+
+At the same time as box selection becomes available, display:
+
+Find the [Object]!
+
+Examples:
+- Find the Dog!
+- Find the Pizza!
+- Find the Coat!
+
+Requirements:
+- Use the selected object's name.
+- Use DynaPuff.
+- Position the instruction near the bottom of the screen.
+- Centre the text horizontally.
+- Fade or animate the text into view smoothly.
+- Reserve space so the instruction does not move other elements.
+
+4. Box Selection
+
+- Clicking a box should register a guess.
+- Compare the selected box's stable identifier against the correct box identifier.
+- Do not determine the correct answer from its colour alone or from visual screen coordinates.
+- Disable additional selections while guess feedback is running.
+- Prevent a single click from selecting more than one box.
+
+5. Incorrect Selection
+
+If the selected box does not contain the object:
+- Raise the selected box vertically.
+- Keep its horizontal position unchanged.
+- Reveal a thumbs-down icon underneath the box.
+- Use Font Awesome:
+
+<FontAwesomeIcon icon={faThumbsDown} />
+
+- The icon should target a height of 150px.
+- Use an appropriate colour that remains visible against the light background.
+- Centre the icon beneath the selected box.
+
+6. Thumbs-Down Animation
+
+- Animate the thumbs-down icon moving up and down twice.
+- Keep the movement playful rather than aggressive.
+- Do not move neighbouring boxes.
+- Do not move the main Find instruction.
+- Complete both movements before ending the feedback sequence.
+
+7. Reset After Incorrect Selection
+
+After the thumbs-down animation:
+- Hide the icon.
+- Lower the incorrect box back into its original position.
+- Restore the normal box-selection appearance.
+- Re-enable guessing once the animation is complete.
+- The other boxes must become selectable again.
+- Keep the correct object hidden.
+- Preserve the current game without restarting it.
+
+8. Repeat Incorrect Guesses
+
+- The player may make multiple incorrect guesses.
+- Every incorrect selection should produce the same feedback.
+- The correct box must never change.
+- Incorrect guesses must not cause the object to become visible.
+- Avoid stacking multiple thumbs-down animations.
+- Repeated clicks during feedback must be ignored.
+
+9. Keyboard and TV Remote Support
+
+- Boxes must be accessible using keyboard focus.
+- Left and Right Arrow should allow movement between selectable boxes.
+- Enter and Space should select the focused box.
+- Provide clear focus styling.
+- Use accessible names that identify each box by colour.
+- Preserve logical navigation order.
+
+10. Global Menu Interaction
+
+- Clicking the global menu must not select a box.
+- While the Options modal is open, guessing must be disabled.
+- Closing the modal must preserve the game state.
+- Navigating away must clean up active animations and listeners.
+
+Acceptance Criteria:
+- Boxes become interactive only after hiding completes.
+- Hovering enlarges a box slightly.
+- Keyboard focus produces clear visual feedback.
+- The Find the Object instruction appears.
+- Selecting a wrong box raises it.
+- A thumbs-down Font Awesome icon appears underneath.
+- The icon is approximately 150px tall.
+- The icon moves up and down twice.
+- The incorrect box returns to its original position.
+- Other boxes remain available for selection afterwards.
+- Incorrect guesses do not reveal the hidden object.
+- Multiple guesses do not cause overlapping animations.
+- Keyboard and TV remote selection work.
+
+
+## Feature-009 - Correct Guess and Success Animation
+
+Status: complete
+Notes: Added a guarded correct-answer sequence that raises the selected correct box, uncloaks the original hidden image, and fades every box before the object smoothly recentres and grows within responsive 600px limits. The success text uses the shared playful bounce and theme colour in a fixed reserved layout; its animation end starts a centrally timed, cleanup-safe two-second hold before the completed phase.
+
+Implement the correct-answer sequence and celebration animation.
+
+Requirements:
+
+1. Correct Selection
+
+When the user selects the correct box:
+- Disable all further box selections.
+- Begin the success sequence.
+- Preserve the correct object's identity and image.
+- Prevent duplicate correct-answer animations.
+
+2. Reveal the Object
+
+- Raise the correct box vertically.
+- Reveal the original object underneath it.
+- Keep the object centred in its hiding position.
+- The object must become fully visible.
+- The other boxes should remain in position until the next animation stage.
+
+3. Fade Out Boxes
+
+After the object has been revealed:
+- Fade out all boxes.
+- Include the raised correct box in this fade-out.
+- Use a smooth opacity transition.
+- Do not suddenly remove the boxes before the fade completes.
+- Ensure the boxes no longer intercept pointer input once hidden.
+
+4. Enlarge the Object
+
+Once the boxes have faded out:
+- Animate the object growing larger.
+- Keep its original aspect ratio.
+- Maximum display width: 600px.
+- Maximum display height: 600px.
+- Scale the image to fit within these maximum dimensions.
+- Reduce the maximum display size on smaller viewports.
+- Keep the object horizontally centred.
+- Ensure the image is not cropped, stretched or distorted.
+- The enlargement should feel smooth and celebratory.
+- Avoid sudden jumps between the original hiding position and the larger display position.
+
+5. Success Message
+
+Display:
+
+We found the [Object]!
+
+Examples:
+- We found the Dog!
+- We found the Apple!
+- We found the Shirt!
+
+Requirements:
+- Use the selected object's name.
+- Use DynaPuff.
+- Use the Let's Find dark blue text colour.
+- Centre the text horizontally.
+- Use the same bounce animation introduced in Feature-006.
+
+6. Success Bounce Animation
+
+The text should:
+- Begin small.
+- Grow to approximately 130% of its final size.
+- Shrink to approximately 70% of its final size.
+- Grow again to 100% of its final size.
+- Settle smoothly at its final size.
+
+- Reuse the animation rather than creating a duplicate.
+- Target a font size of 10rem.
+- Scale down responsively when required.
+- Prevent overflow during the bounce.
+
+7. Success Layout
+
+- Display the enlarged object above the success message.
+- Keep both horizontally centred.
+- Use appropriate spacing.
+- Reserve room for the completion buttons beneath the message.
+- The appearance of the success message must not cause the object to jump.
+- The later appearance of the buttons must not move the object or message.
+
+8. Completion Delay
+
+- Once the success message has completed its bounce animation, start a 2-second delay.
+- Keep the object and success message visible during this period.
+- Do not include the bounce animation duration in the 2-second delay.
+- After 2 seconds, transition to the completion-button phase.
+
+9. Reusability
+
+- Reuse the existing bounce animation.
+- Reuse the image sizing and animation utilities where appropriate.
+- Keep success-specific animation logic separate from the guessing logic.
+- Keep timings centrally defined.
+
+Acceptance Criteria:
+- The correct box rises.
+- The hidden object is revealed.
+- All boxes fade out smoothly.
+- The object grows to a maximum of 600x600 pixels.
+- The object's aspect ratio is preserved.
+- The object remains centred.
+- The success message displays the correct object name.
+- The message uses the existing bounce animation.
+- The final bounce settles at 100% size.
+- A 2-second delay begins after the bounce finishes.
+- No layout shifts occur.
+- Further guessing is disabled.
+
+
+## Feature-010 - Completion Controls and Fresh Play Again
+
+Status: complete
+Notes: Added a reserved responsive completion area whose shared buttons fade in only in the completed phase, receive automatic/directional keyboard focus, stop screen-click bubbling and share a synchronous rapid-action lock. Play Again replaces the route with a newly generated round using only the prior settings plus anti-repetition context; both navigation exits unmount gameplay, and the options route safely restores the prior box count/category for adjustment.
+
+Implement the final navigation controls displayed after a successful game.
+
+IMPORTANT:
+Play Again must generate an entirely new game.
+
+Only the selected number of boxes and selected object category should be preserved.
+
+All random selections must be generated again.
+
+Requirements:
+
+1. Completion Buttons
+
+After the 2-second success delay, display three buttons:
+
+- Play Again
+- Back to Let's Find
+- Back to Home
+
+- Use the existing shared Button component.
+- Position the buttons beneath the success message.
+- Keep them horizontally centred.
+- Use consistent spacing.
+- Use existing button styling.
+- Ensure the buttons are clearly visible against the light background.
+
+2. Button Animation
+
+- Fade the three buttons into view.
+- Do not display them before the 2-second delay finishes.
+- Use a smooth transition.
+- Reserve layout space before the buttons appear.
+- The success image must not move when buttons appear.
+- The success message must not move when buttons appear.
+
+3. Play Again - Preserve Settings
+
+When Play Again is selected:
+- Preserve the selected number of boxes.
+- Preserve the selected object category.
+- Do not return to the options page.
+- Begin a completely new round using those settings.
+
+Example:
+
+Previous game:
+- Category: Animals.
+- Number of boxes: 3.
+
+After Play Again:
+- Category remains Animals.
+- Number of boxes remains 3.
+- All random gameplay selections are regenerated.
+
+4. Play Again - Fresh Randomisation
+
+Every time Play Again is selected:
+
+Object:
+- Select a new random object from the chosen category.
+- Do not automatically reuse the previous object.
+- Avoid selecting the same object in consecutive games.
+
+Boxes:
+- Randomly select the required number of colours again.
+- Select from all six available box colours.
+- Ensure all colours within the new game are unique.
+- Generate a new ordered box array.
+- Randomise the box positions again.
+- Do not reuse the previous game's box array.
+- Avoid identical consecutive ordered arrangements where possible.
+
+Correct Answer:
+- Randomly assign the object to one of the newly generated boxes.
+- Create a new correct-box identifier.
+- Do not carry over the previous game's correct-box assignment.
+- Ensure exactly one box contains the object.
+
+Object Movement:
+- Generate a new random starting position below the viewport.
+- Calculate the object's new destination using the newly selected correct box.
+- Do not reuse the previous game's movement coordinates.
+
+Game State:
+- Reset the current phase.
+- Reset guess state.
+- Remove any incorrect-answer feedback.
+- Reset animation state.
+- Reset button visibility.
+- Clear stale timers and callbacks.
+- Ensure previous game data cannot affect the new game.
+
+5. Play Again - Restart Sequence
+
+After the fresh game data has been generated:
+- Return to the initial introduction stage.
+- Animate "Let's find the [Object]!" using the newly selected object.
+- Continue through the normal game sequence.
+- Do not skip the introduction.
+- Do not reuse the previous game's displayed image or box arrangement.
+- Do not begin the next round until the previous round has been properly reset.
+
+6. Back to Let's Find
+
+When Back to Let's Find is selected:
+- Return to the Boxes mode options page.
+
+/letsFind/boxes
+
+- Do not return to the general mode-selection page.
+- Preserve the previous configuration where practical.
+- Allow the user to adjust settings before starting another game.
+- Do not automatically start another game.
+
+7. Back to Home
+
+When Back to Home is selected:
+- Navigate to /.
+- Exit the Boxes game.
+- Reset active gameplay state.
+- Clean up all timers, callbacks and event listeners.
+- Restore the homepage's standard theme.
+
+8. Input Handling
+
+- Clicking any completion button must trigger only that button's action.
+- Do not allow generic screen-click handlers to restart the game accidentally.
+- Prevent event bubbling from causing duplicate actions.
+- Ensure keyboard and TV remote activation work.
+- Maintain clear focus states.
+- Prevent Play Again from being triggered multiple times by rapid clicking.
+
+9. Responsiveness
+
+- Keep buttons in a horizontal row where sufficient width exists.
+- Allow buttons to wrap or stack on smaller screens.
+- Maintain comfortable interaction sizes.
+- Do not allow the buttons to overlap the success text.
+- Keep the success image and message stationary when the button layout changes.
+
+10. Cleanup and Round Isolation
+
+- Prevent animation callbacks from continuing after navigation.
+- Cancel pending completion timers when leaving.
+- Avoid stale game state being used when Play Again creates a new game.
+- Ensure the previous round cannot affect the next round.
+- Use a new round identifier or equivalent mechanism where necessary.
+- Ensure that all random gameplay data belongs to the newly created round.
+
+Acceptance Criteria:
+- Completion buttons appear 2 seconds after the success bounce finishes.
+- Buttons fade into view.
+- The image and success text remain stationary.
+- Play Again starts a completely fresh game.
+- Play Again preserves the number of boxes.
+- Play Again preserves the selected object category.
+- A new random object is selected.
+- The immediately previous object is not repeated within the same category.
+- A fresh random box colour selection is generated.
+- A new box order is generated.
+- A new correct-box assignment is generated.
+- A new object entrance location is generated.
+- The old box array and game state are not reused.
+- The new game begins with the introduction animation.
+- Back to Let's Find returns to /letsFind/boxes.
+- Back to Home returns to /.
+- Navigation properly terminates the current game.
+- No duplicate input or animation events occur.
+- Buttons work using keyboard, mouse, touchscreen and TV remote input.
+
+
+## Epic-005 - General Implementation Rules
+
+1. Follow all instructions in AGENTS.md.
+
+2. Follow the existing project structure and naming conventions.
+
+3. Keep Let's Find pages grouped under src/pages/letsFind/.
+
+4. Reuse shared components, hooks, utilities and SCSS styles wherever possible.
+
+5. Do not duplicate the animated gradient background implementation.
+
+6. Create the new Let's Find colour variation through shared theme variables.
+
+7. Use DynaPuff for headings and animated gameplay text.
+
+8. Use Short Stack for buttons, option labels and supporting interface text.
+
+9. Preserve the application's global text-selection prevention behaviour.
+
+10. Reuse the shared Button, NavigationPod and Modal components.
+
+11. Reuse existing object data and images from Let's Spell where appropriate.
+
+12. Do not duplicate category item definitions unnecessarily.
+
+13. Keep randomisation logic separate from animation rendering.
+
+14. Keep box identities independent of their visual position or colour.
+
+15. Preserve the identity of the box containing the object for the entire game.
+
+16. Never allow duplicate box colours in a single game.
+
+17. Every new game must generate fresh random gameplay data.
+
+18. Play Again must never reuse the previous game's stored random selections.
+
+19. Preserve only the selected box amount and category when playing again.
+
+20. Avoid consecutive repetition of the same object within a category.
+
+21. Generate new box colours, box order, correct-box assignment and object entrance position for every round.
+
+22. Use a central game-generation function or utility.
+
+23. Never regenerate random selections during ordinary component re-renders.
+
+24. Use controlled game phases to coordinate animations and interactions.
+
+25. Do not allow interaction while transitions are running unless explicitly required.
+
+26. Keep animation durations and timing constants centrally defined.
+
+27. Prefer transforms and opacity for animation.
+
+28. Avoid layout changes caused by animating elements into or out of the screen.
+
+29. Reserve layout space for content that appears later.
+
+30. Preserve image aspect ratios.
+
+31. Do not stretch or crop box or object images.
+
+32. Maintain horizontal centring throughout the gameplay sequence.
+
+33. Ensure all animated elements remain within the viewport where practical.
+
+34. Maintain responsive layouts across mobile, tablet, desktop and television screens.
+
+35. Support keyboard, mouse, touchscreen and compatible TV remote inputs.
+
+36. Keep the persistent global Options menu accessible.
+
+37. Do not allow global menu interactions to trigger gameplay actions.
+
+38. Properly clean up animation callbacks, event listeners and timers when navigating away.
+
+39. Ensure previous-round callbacks cannot affect newly generated games.
+
+40. Respect prefers-reduced-motion without breaking the gameplay sequence.
+
+41. Do not implement Houses gameplay in this epic.
+
+42. Do not introduce new object categories outside Animals, Food and Clothes.
+
+43. Do not implement automatic guessing or automatic answer selection.
+
+44. Do not introduce audio, pronunciation or text-to-speech functionality.
+
+45. Do not add unnecessary dependencies.
+
+46. Keep the design consistent with the existing application.
+
+47. Complete features in numerical order.
+
+48. Do not modify unrelated activity functionality.
+
+49. If any feature is rolled back, follow the rollback rules defined in AGENTS.md and do not automatically reintroduce it.
+
+
+## Epic-005 - Overall Acceptance Criteria
+
+The completed epic must provide:
+
+- A new white and light blue Let's Find theme.
+- Dark blue text throughout.
+- A mode-selection page containing Houses and Boxes.
+- Houses displayed as a future mode.
+- A functional Boxes mode.
+- Options for 2, 3 or 4 boxes.
+- Animals, Food and Clothes object categories.
+- Default selection of 3 boxes and Animals.
+- Six possible box colours.
+- Unique box colours within each game.
+- Random object selection.
+- Random box order.
+- Random assignment of the correct box.
+- Fresh random selections for every game.
+- Fresh random selections when Play Again is selected.
+- No consecutive repetition of the same object within a category.
+- New box colour selections every round.
+- New box arrangements every round.
+- New correct-box assignments every round.
+- New object starting positions every round.
+- Animated Let's find the Object! introduction.
+- A reusable 130%, 70%, 100% bounce animation.
+- Boxes entering individually from above the screen.
+- Boxes initially positioned around 25% down the screen.
+- Box images targeting 300x222 pixels.
+- A gameplay Start button around 75% down the screen.
+- Screen-wide Start interaction when appropriate.
+- Object entrance from a random position beneath the viewport.
+- Object size limited to 250px wide and 200px high.
+- A playful object wiggle.
+- Boxes flipping 180 degrees and lowering one by one.
+- Complete concealment of the object.
+- Interactive box selection.
+- Slight enlargement on box hover and focus.
+- A Find the Object! instruction.
+- Incorrect guesses revealing a thumbs-down icon.
+- Thumbs-down animation moving up and down twice.
+- Incorrect guesses returning to the guessing phase.
+- Correct guesses revealing the hidden object.
+- All boxes fading out after a correct guess.
+- Object enlargement to a maximum of 600x600 pixels.
+- Animated We found the Object! success message.
+- A 2-second hold after the success bounce.
+- Play Again, Back to Let's Find and Back to Home buttons.
+- Play Again preserving the selected box amount and category.
+- Play Again generating an independent new game.
+- No unwanted layout shifts.
+- Stable box identities and positions within each round.
+- Full compatibility with the global Options menu.
+- Responsive layouts.
+- Keyboard and TV remote accessibility.
+- Reusable gameplay logic and animation components.

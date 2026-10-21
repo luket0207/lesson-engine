@@ -2,15 +2,18 @@
 
 @mixin surface {
   color: var(--color-text);
-  background-color: rgba(255, 255, 255, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background-color: rgba(var(--color-glass-surface-rgb), var(--opacity-glass-surface));
+  border: 1px solid rgba(var(--color-glass-border-rgb), var(--opacity-glass-border));
   border-radius: 1.25rem;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 1px 0 rgba(var(--color-glass-highlight-rgb), 0.32),
     0 0.75rem 1.75rem rgba(var(--color-theme-shadow-rgb), 0.2);
 
   @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(
+      var(--color-glass-surface-rgb),
+      var(--opacity-glass-surface-blurred)
+    );
     -webkit-backdrop-filter: blur(1rem) saturate(140%);
     backdrop-filter: blur(1rem) saturate(140%);
   }
@@ -30,31 +33,31 @@
     background: linear-gradient(
       100deg,
       transparent,
-      rgba(255, 255, 255, 0.3),
+      rgba(var(--color-glass-highlight-rgb), 0.3),
       transparent
     );
     transform: skewX(-18deg);
   }
 
-  &:hover,
+  &:not(:disabled):not([aria-disabled='true']):hover,
   &:focus {
-    background-color: rgba(255, 255, 255, 0.28);
+    background-color: rgba(var(--color-glass-surface-rgb), var(--opacity-glass-hover));
   }
 
-  &:hover::before,
+  &:not(:disabled):not([aria-disabled='true']):hover::before,
   &:focus::before {
     animation: glass-glint 850ms ease-out;
   }
 
   &:focus {
-    outline: 3px solid rgba(255, 255, 255, 0.95);
+    outline: 3px solid rgba(var(--color-focus-ring-rgb), 0.95);
     outline-offset: 4px;
   }
 
   @include mixins.reduced-motion {
     transition: none;
 
-    &:hover::before,
+    &:not(:disabled):not([aria-disabled='true']):hover::before,
     &:focus::before {
       animation: none;
     }

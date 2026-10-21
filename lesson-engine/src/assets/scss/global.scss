@@ -13,6 +13,14 @@
   --color-theme-secondary: #{variables.$color-deep-teal};
   --color-theme-secondary-rgb: #{variables.$color-deep-teal-rgb};
   --color-theme-shadow-rgb: #{variables.$color-shadow-rgb};
+  --color-glass-surface-rgb: 255, 255, 255;
+  --color-glass-border-rgb: 255, 255, 255;
+  --color-glass-highlight-rgb: 255, 255, 255;
+  --color-focus-ring-rgb: 255, 255, 255;
+  --opacity-glass-surface: 0.22;
+  --opacity-glass-surface-blurred: 0.12;
+  --opacity-glass-border: 0.38;
+  --opacity-glass-hover: 0.28;
   color-scheme: dark;
 
   &.theme--lets-spell {
@@ -22,6 +30,23 @@
     --color-theme-secondary: #{variables.$color-spell-dark-yellow};
     --color-theme-secondary-rgb: #{variables.$color-spell-dark-yellow-rgb};
     --color-theme-shadow-rgb: #{variables.$color-spell-text-rgb};
+    color-scheme: light;
+  }
+
+  &.theme--lets-find {
+    --color-text: #{variables.$color-find-text};
+    --color-theme-primary: #{variables.$color-find-white};
+    --color-theme-primary-rgb: #{variables.$color-find-white-rgb};
+    --color-theme-secondary: #{variables.$color-find-light-blue};
+    --color-theme-secondary-rgb: #{variables.$color-find-light-blue-rgb};
+    --color-theme-shadow-rgb: #{variables.$color-find-text-rgb};
+    --color-glass-surface-rgb: #{variables.$color-find-secondary-blue-rgb};
+    --color-glass-border-rgb: #{variables.$color-find-text-rgb};
+    --color-focus-ring-rgb: #{variables.$color-find-text-rgb};
+    --opacity-glass-surface: 0.58;
+    --opacity-glass-surface-blurred: 0.42;
+    --opacity-glass-border: 0.24;
+    --opacity-glass-hover: 0.76;
     color-scheme: light;
   }
 }

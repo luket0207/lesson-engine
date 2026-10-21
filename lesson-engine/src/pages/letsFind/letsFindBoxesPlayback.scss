@@ -1,0 +1,728 @@
+@use '../../assets/scss/animations';
+@use '../../assets/scss/mixins' as mixins;
+
+.lets-find-boxes-game {
+  --boxes-completion-space: clamp(6.5rem, 18dvh, 10rem);
+  --boxes-success-object-max-dimension: 37.5rem;
+  --boxes-success-object-height: min(
+    48dvh,
+    100%,
+    var(--boxes-success-object-max-dimension)
+  );
+  --boxes-success-object-top: 38%;
+  --boxes-success-object-width: min(
+    80vw,
+    100%,
+    var(--boxes-success-object-max-dimension)
+  );
+  --boxes-upper-position: clamp(4.5rem, 15dvh, 9rem);
+
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  inset: 0;
+  padding:
+    max(clamp(4.75rem, 10vmin, 6rem), calc(env(safe-area-inset-top) + 4.75rem))
+    max(clamp(0.75rem, 3vmin, 2rem), env(safe-area-inset-right))
+    max(clamp(0.75rem, 3vmin, 2rem), env(safe-area-inset-bottom))
+    max(clamp(0.75rem, 3vmin, 2rem), env(safe-area-inset-left));
+  overflow: hidden;
+
+  &:focus {
+    outline: 3px solid currentcolor;
+    outline-offset: -6px;
+  }
+
+  &[data-input-permitted='true'][data-phase='introduction-ready'],
+  &[data-input-permitted='true'][data-phase='boxes-ready'] {
+    cursor: pointer;
+  }
+
+  &__assistive {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &__scene {
+    position: relative;
+    width: min(100%, 90rem);
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  &__introduction-region,
+  &__success-region {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    inset: 0;
+    min-width: 0;
+    min-height: 0;
+    text-align: center;
+  }
+
+  &__introduction {
+    width: 100%;
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: min(10rem, 10vmin, var(--boxes-introduction-fit-size));
+    line-height: 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1);
+    transform-origin: center;
+    will-change: opacity, transform;
+
+    &--entering {
+      visibility: visible;
+      animation: playful-bounce-in
+        var(--boxes-introduction-bounce-duration, 1100ms)
+        cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    }
+
+    &--ready {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &--exiting {
+      visibility: visible;
+      animation: find-introduction-fade-out
+        var(--boxes-introduction-exit-duration, 350ms) ease-in both;
+    }
+  }
+
+  &__boxes-region,
+  &__object-region,
+  &__start-region,
+  &__instruction-region,
+  &__feedback-region,
+  &__completion-region {
+    position: absolute;
+    left: 50%;
+    width: 100%;
+    min-width: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  &__boxes-region {
+    top: var(--boxes-upper-position);
+    padding-inline: clamp(0.25rem, 1vw, 1rem);
+    visibility: hidden;
+    z-index: 2;
+
+    &--entering,
+    &--visible,
+    &--hiding,
+    &--lowered,
+    &--correct-reveal {
+      visibility: visible;
+    }
+
+    &--correct-reveal {
+      pointer-events: none;
+      animation: find-success-boxes-fade
+        var(--boxes-correct-reveal-duration, 1100ms) ease-in-out both;
+    }
+
+    &--faded {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  &__boxes-row {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: clamp(0.25rem, 2vw, 1.5rem);
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__box-slot {
+    position: relative;
+    flex: 1 1 0;
+    width: 100%;
+    max-width: 18.75rem;
+    min-width: 0;
+    aspect-ratio: 300 / 222;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  &__box-button {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem;
+    transition: transform 180ms ease;
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      transform: scale(1.06);
+    }
+
+    &:focus-visible {
+      outline: 4px solid rgba(var(--color-focus-ring-rgb), 0.98);
+      outline-offset: 5px;
+    }
+  }
+
+  &__box-visual {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(0);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  &__box-image,
+  &__success-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &__box-image {
+    opacity: 0;
+    transform: translateY(calc(-100vh - 100%));
+    will-change: opacity, transform;
+  }
+
+  &__boxes-region--entering &__box-image {
+    animation: find-box-enter var(--boxes-entrance-duration, 550ms) ease-out both;
+    animation-delay: calc(
+      var(--box-entrance-index) * var(--boxes-entrance-duration, 550ms)
+    );
+  }
+
+  &__boxes-region--visible &__box-image,
+  &__boxes-region--hiding &__box-image,
+  &__boxes-region--lowered &__box-image,
+  &__boxes-region--correct-reveal &__box-image {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &__boxes-region--hiding &__box-visual {
+    animation: find-box-flip var(--boxes-flip-duration, 300ms) ease-in-out
+      var(--box-flip-delay, 0ms) both;
+  }
+
+  &__boxes-region--hiding &__box-slot {
+    animation: find-box-lower var(--boxes-lower-duration, 300ms) ease-in-out
+      var(--box-lower-delay, 300ms) both;
+  }
+
+  &__boxes-region--lowered &__box-slot,
+  &__boxes-region--correct-reveal &__box-slot {
+    transform: translateY(var(--boxes-hide-distance, 25dvh));
+  }
+
+  &__boxes-region--lowered &__box-visual,
+  &__boxes-region--correct-reveal &__box-visual {
+    transform: rotate(180deg);
+  }
+
+  &__boxes-region--correct-reveal &__box-slot--correct {
+    animation: find-correct-box-rise var(--boxes-correct-reveal-duration, 1100ms)
+      ease-in-out both;
+  }
+
+  &__boxes-region--lowered &__box-slot--incorrect {
+    animation: find-incorrect-box-feedback
+      var(--boxes-incorrect-feedback-duration, 1600ms) ease-in-out both;
+  }
+
+  &__incorrect-feedback {
+    position: absolute;
+    top: calc(50% + var(--boxes-hide-distance, 25dvh));
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: min(9.375rem, 20dvh);
+    color: var(--color-text);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: find-incorrect-icon-feedback
+      var(--boxes-incorrect-feedback-duration, 1600ms) ease-in-out both;
+
+    svg {
+      width: auto;
+      height: min(9.375rem, 20dvh);
+    }
+  }
+
+  &__object-region {
+    top: 50%;
+    left: var(--boxes-object-target-left, 50%);
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    width: var(
+      --boxes-object-width,
+      min(70vw, var(--boxes-object-max-width))
+    );
+    height: var(
+      --boxes-object-height,
+      min(24dvh, var(--boxes-object-max-height))
+    );
+    min-width: 0;
+    min-height: 0;
+    visibility: hidden;
+    z-index: 1;
+    pointer-events: none;
+
+    &--entering,
+    &--wiggling,
+    &--hiding,
+    &--concealed,
+    &--revealing,
+    &--celebrating,
+    &--celebrated {
+      visibility: visible;
+    }
+
+    &--celebrating {
+      animation: find-success-object-grow
+        var(--boxes-success-object-grow-duration, 900ms)
+        cubic-bezier(0.2, 0.75, 0.25, 1) both;
+    }
+
+    &--celebrated {
+      top: var(--boxes-success-object-top);
+      left: 50%;
+      width: var(--boxes-success-object-width);
+      height: var(--boxes-success-object-height);
+    }
+  }
+
+  &__object-image {
+    display: block;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transform: translate(
+      var(--boxes-object-start-x, 0),
+      var(--boxes-object-start-y, 100vh)
+    );
+    transform-origin: center;
+    will-change: clip-path, opacity, transform;
+  }
+
+  &__object-region--entering &__object-image {
+    animation: find-object-enter
+      var(--boxes-object-entrance-duration, 900ms)
+      cubic-bezier(0.22, 0.7, 0.28, 1) both;
+  }
+
+  &__object-region--wiggling &__object-image {
+    animation: find-object-wiggle var(--boxes-object-wiggle-duration, 650ms)
+      ease-in-out both;
+  }
+
+  &__object-region--hiding &__object-image,
+  &__object-region--concealed &__object-image,
+  &__object-region--revealing &__object-image {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translate(0, 0);
+  }
+
+  &__object-region--celebrating &__object-image,
+  &__object-region--celebrated &__object-image {
+    opacity: 1;
+    clip-path: inset(0);
+    transform: translate(0, 0);
+  }
+
+  &__feedback-region {
+    top: 50%;
+    width: min(70vw, 15.625rem);
+    height: min(24dvh, 12.5rem);
+    visibility: hidden;
+  }
+
+  &__start-region {
+    display: grid;
+    place-items: center;
+    top: 75%;
+    width: min(100%, 30rem);
+    min-height: 5.5rem;
+    visibility: hidden;
+
+    &--ready,
+    &--exiting {
+      visibility: visible;
+    }
+  }
+
+  &__start-button {
+    width: 100%;
+    animation: find-start-fade-in var(--boxes-start-fade-duration, 300ms)
+      ease-out both;
+  }
+
+  &__start-region--exiting &__start-button {
+    pointer-events: none;
+    animation-name: find-start-fade-out;
+    animation-timing-function: ease-in;
+  }
+
+  &__instruction-region {
+    top: 88%;
+    min-height: clamp(3rem, 8dvh, 5rem);
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 5vw, 4rem);
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+
+    &--visible {
+      visibility: visible;
+      animation: find-instruction-fade-in
+        var(--boxes-instruction-fade-duration, 300ms) ease-out both;
+    }
+  }
+
+  &__success-region {
+    align-items: end;
+    padding-bottom: var(--boxes-completion-space);
+    visibility: hidden;
+
+    &--animating,
+    &--visible {
+      visibility: visible;
+    }
+  }
+
+  &__success-message {
+    width: 100%;
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: min(10rem, 10vmin, var(--boxes-success-fit-size));
+    line-height: 1;
+    opacity: 0;
+    transform: scale(1);
+    transform-origin: center;
+  }
+
+  &__success-region--animating &__success-message {
+    animation: playful-bounce-in
+      var(--boxes-introduction-bounce-duration, 1100ms)
+      cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+
+  &__success-region--visible &__success-message {
+    opacity: 1;
+  }
+
+  &__completion-region {
+    top: auto;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.5rem, 1.5vmin, 1rem);
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    height: var(--boxes-completion-space);
+    padding: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%);
+    pointer-events: none;
+
+    &--visible {
+      visibility: visible;
+      pointer-events: auto;
+      animation: find-completion-fade-in
+        var(--boxes-completion-fade-duration, 350ms) ease-out both;
+    }
+  }
+
+  &__completion-button {
+    flex: 0 1 15rem;
+  }
+
+  @media (max-width: 40rem) {
+    --boxes-completion-space: min(14rem, 36dvh);
+    --boxes-success-object-height: min(
+      34dvh,
+      100%,
+      var(--boxes-success-object-max-dimension)
+    );
+    --boxes-success-object-top: 28%;
+  }
+
+  @include mixins.reduced-motion {
+    &__introduction--entering,
+    &__introduction--exiting,
+    &__boxes-region--entering &__box-image,
+    &__boxes-region--hiding &__box-visual,
+    &__boxes-region--hiding &__box-slot,
+    &__boxes-region--lowered &__box-slot--incorrect,
+    &__boxes-region--correct-reveal,
+    &__boxes-region--correct-reveal &__box-slot--correct,
+    &__incorrect-feedback,
+    &__instruction-region--visible,
+    &__object-region--entering &__object-image,
+    &__object-region--wiggling &__object-image,
+    &__object-region--celebrating,
+    &__completion-region--visible,
+    &__success-region--animating &__success-message,
+    &__start-button {
+      animation-duration: 1ms;
+    }
+
+    &__boxes-region--entering &__box-image {
+      animation-delay: calc(var(--box-entrance-index) * 1ms);
+    }
+
+    &__boxes-region--hiding &__box-visual {
+      animation-delay: calc(var(--box-entrance-index) * 2ms);
+    }
+
+    &__boxes-region--hiding &__box-slot {
+      animation-delay: calc(var(--box-entrance-index) * 2ms + 1ms);
+    }
+
+    &__box-button {
+      transition: none;
+    }
+  }
+}
+
+@keyframes find-introduction-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes find-box-enter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-100vh - 100%));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes find-start-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes find-start-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes find-object-enter {
+  from {
+    opacity: 1;
+    transform: translate(
+      var(--boxes-object-start-x, 0),
+      var(--boxes-object-start-y, 100vh)
+    );
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes find-object-wiggle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(0);
+  }
+
+  25% {
+    opacity: 1;
+    transform: translateX(-5%) rotate(-4deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(4%) rotate(3deg);
+  }
+
+  75% {
+    opacity: 1;
+    transform: translateX(-2%) rotate(-2deg);
+  }
+}
+
+@keyframes find-box-flip {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes find-box-lower {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(var(--boxes-hide-distance, 25dvh));
+  }
+}
+
+@keyframes find-instruction-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes find-incorrect-box-feedback {
+  0%,
+  100% {
+    transform: translateY(var(--boxes-hide-distance, 25dvh));
+  }
+
+  15%,
+  85% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes find-incorrect-icon-feedback {
+  0%,
+  15%,
+  82%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  20%,
+  50%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+
+  35%,
+  65% {
+    opacity: 1;
+    transform: translate(-50%, calc(-50% - 1.25rem));
+  }
+}
+
+@keyframes find-correct-box-rise {
+  0% {
+    transform: translateY(var(--boxes-hide-distance, 25dvh));
+  }
+
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes find-success-boxes-fade {
+  0%,
+  55% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes find-success-object-grow {
+  from {
+    top: 50%;
+    left: var(--boxes-object-target-left, 50%);
+    width: var(
+      --boxes-object-width,
+      min(70vw, var(--boxes-object-max-width))
+    );
+    height: var(
+      --boxes-object-height,
+      min(24dvh, var(--boxes-object-max-height))
+    );
+  }
+
+  to {
+    top: var(--boxes-success-object-top);
+    left: 50%;
+    width: var(--boxes-success-object-width);
+    height: var(--boxes-success-object-height);
+  }
+}
+
+@keyframes find-completion-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

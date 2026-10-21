@@ -67,7 +67,10 @@ function useDirectionalNavigation(itemSelector = DEFAULT_ITEM_SELECTOR) {
 
       const currentRect = currentItem.getBoundingClientRect();
       const candidates = Array.from(container.querySelectorAll(itemSelector)).filter(
-        (item) => item !== currentItem && item.getClientRects().length > 0,
+        (item) =>
+          item !== currentItem &&
+          !item.matches(':disabled, [aria-disabled="true"]') &&
+          item.getClientRects().length > 0,
       );
 
       let closestItem = null;

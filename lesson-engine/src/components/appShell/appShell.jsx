@@ -17,13 +17,20 @@ function AppShell({ children }) {
   const contextValue = useMemo(() => ({ isOptionsOpen }), [isOptionsOpen]);
   const usesLetsSpellTheme =
     location.pathname === '/letsSpell' || location.pathname.startsWith('/letsSpell/');
+  const usesLetsFindTheme =
+    location.pathname === '/letsFind' || location.pathname.startsWith('/letsFind/');
 
   useEffect(() => {
-    const themeClass = 'theme--lets-spell';
-    document.documentElement.classList.toggle(themeClass, usesLetsSpellTheme);
+    const letsSpellThemeClass = 'theme--lets-spell';
+    const letsFindThemeClass = 'theme--lets-find';
 
-    return () => document.documentElement.classList.remove(themeClass);
-  }, [usesLetsSpellTheme]);
+    document.documentElement.classList.toggle(letsSpellThemeClass, usesLetsSpellTheme);
+    document.documentElement.classList.toggle(letsFindThemeClass, usesLetsFindTheme);
+
+    return () => {
+      document.documentElement.classList.remove(letsSpellThemeClass, letsFindThemeClass);
+    };
+  }, [usesLetsFindTheme, usesLetsSpellTheme]);
 
   return (
     <AppShellContext.Provider value={contextValue}>

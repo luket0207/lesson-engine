@@ -3,6 +3,7 @@ import About from './pages/about';
 import Home from './pages/home';
 import LetsCountActivity from './pages/letsCount/letsCountActivity';
 import LetsFindActivity from './pages/letsFind/letsFindActivity';
+import LetsFindBoxesPlayback from './pages/letsFind/letsFindBoxesPlayback';
 import LetsFindSetup from './pages/letsFind/letsFindSetup';
 import LetsSpellActivity from './pages/letsSpell/letsSpellActivity';
 import LetsSpellCategory from './pages/letsSpell/letsSpellCategory';
@@ -21,6 +22,8 @@ function AppRoutes() {
       <Route path="/letsSpell/:categoryId" element={<LetsSpellCategory />} />
       <Route path="/letsCount" element={<LetsCountActivity />} />
       <Route path="/letsFind" element={<LetsFindActivity />} />
+      <Route path="/letsFind/boxes" element={<LetsFindSetup />} />
+      <Route path="/letsFind/boxes/play" element={<LetsFindBoxesPlayback />} />
       <Route path="/letsFind/setup" element={<LetsFindSetup />} />
       <Route path="/teachers" element={<TeachersPage />} />
     </Routes>

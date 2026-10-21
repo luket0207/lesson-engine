@@ -1,0 +1,748 @@
+
+# Epic-005 - Bugs
+
+## Bug-001 - Raise the Boxes' Upper Position
+
+Status: complete
+Notes: Centralised the responsive upper row as `--boxes-upper-position` at approximately 15dvh with safe bounds. Initial entrances settle on that row, while both incorrect and correct reveal keyframes now return from the unchanged measured hiding distance to zero translation, making their raised position identical without altering sizes, flips, horizontal placement or timings.
+
+The boxes currently sit slightly too low on the screen when they are in their raised or "up" position.
+
+This affects both their initial position when they first enter the screen and their position when they rise to reveal what is underneath them.
+
+Requirements:
+
+1. Initial Box Position
+- Move the boxes higher up the screen when they first animate into position.
+- The boxes should settle closer to the top of the viewport.
+- Adjust their current upper resting position from approximately 25% of the viewport height to approximately 15%.
+- Keep all boxes horizontally aligned.
+- Preserve the existing spacing between boxes.
+- Preserve their entrance animations from above the screen.
+
+2. Box Reveal Position
+- When a box is selected and rises to reveal what is underneath it, it should rise to the same new upper position.
+- This applies to both correct and incorrect guesses.
+- Incorrect boxes should rise higher before revealing the thumbs-down icon.
+- The correct box should rise higher when revealing the hidden object.
+- Preserve the existing smooth raising and lowering animations.
+
+3. Consistent Positioning
+- Use a shared position variable or centrally defined value for the upper box position.
+- The initial resting position and raised reveal position must be identical.
+- Do not use separate hardcoded positions for these two states.
+- Keep the lower hiding position unchanged.
+- Do not change the horizontal positioning of any boxes.
+
+4. Responsiveness
+- Ensure the new upper position works on different viewport sizes.
+- Account for the persistent global menu.
+- Prevent boxes from being clipped by the top of the screen.
+- Maintain appropriate spacing above the boxes on smaller screens.
+- Keep the layout stable during all animations.
+
+5. Preserve Existing Behaviour
+- Do not modify box sizes.
+- Do not change the box flip animations.
+- Do not change the object entrance animation.
+- Do not change the thumbs-down animation.
+- Do not change the guessing logic.
+- Do not alter the existing animation speeds.
+- Ensure no other elements move unexpectedly as a result of this adjustment.
+
+Acceptance Criteria:
+- Boxes settle noticeably higher after entering the screen.
+- The upper position is approximately 15% down the viewport instead of 25%.
+- Correct and incorrect boxes rise to this same position when revealing their contents.
+- The lower hiding position remains unchanged.
+- All boxes remain horizontally aligned.
+- Existing animations continue working smoothly.
+- No layout shifts or clipping occur.
+- The positioning is controlled through reusable styling variables.
+
+
+## Bug-002 - Separate Box Flip and Movement Animations, Fix Object and Icon Positioning
+
+Status: complete
+Notes: Split each box's unchanged 600ms hiding turn into a 300ms inner-visual flip followed by a 300ms slot descent, retaining one-by-one sequencing. Removed conceal/reveal animation from the stationary object, and anchored the incorrect icon's centre to the shared measured hiding distance while preserving its two-bounce feedback and delayed box return.
+
+The current box hiding animation performs the flip and downward movement simultaneously.
+
+I want these to be two separate animations. Additionally, the hidden object should remain completely stationary during hiding and revealing, and the thumbs-down icon should be positioned at the same height as the object.
+
+Requirements:
+
+1. Separate Box Flip and Movement
+- When the boxes begin hiding the object, they must first flip upside down by rotating 180 degrees.
+- The box must complete its entire flip animation before beginning its downward movement.
+- Once the flip is complete, the box should travel downwards to cover the object.
+- The flip and downward movement must never happen simultaneously.
+- Keep the existing smooth animation style.
+- Preserve the sequential behaviour where boxes perform their hiding animations one by one.
+- Each box should complete both its flip and downward movement before the next box begins.
+- Keep the existing animation durations unless adjustments are necessary to accommodate the separated animations.
+
+2. Object Position During Hiding
+- Once the object has completed its initial entrance and wiggle animations, it should remain completely stationary.
+- The object must not move, scale, rotate or fade while the boxes are moving downwards to hide it.
+- Only the boxes should animate during the hiding sequence.
+- The correct box should travel down to cover the stationary object completely.
+- Preserve the object's existing horizontal and vertical position.
+
+3. Object Position During Revealing
+- When a box is raised to reveal its contents, the object must remain stationary.
+- The object should not move, scale, rotate or fade as the box rises.
+- The object should simply become visible as the box moves away from it.
+- Do not attach the object's position or animations to the box's movement.
+- Keep the object in its original hiding location until the correct-answer celebration sequence begins.
+- The existing object enlargement animation after the boxes have faded out should remain unchanged.
+
+4. Thumbs-Down Icon Alignment
+- The thumbs-down icon currently appears too high on the screen, close to the raised box.
+- Move the icon down so it aligns vertically with the hidden object's position.
+- The icon should occupy the same vertical area as the object.
+- Its centre point should be at the same vertical position as the object's centre point.
+- The icon should appear horizontally centred beneath the incorrectly selected box.
+- Use the same shared vertical positioning reference used for the object.
+- Do not hardcode a separate unrelated vertical position for the icon.
+- Keep the icon at its existing target size of 150px tall.
+
+5. Thumbs-Down Animation
+- Preserve the existing animation where the icon moves up and down twice.
+- The movement should occur around the newly corrected vertical position.
+- The icon should return to its aligned resting position after each movement.
+- The raised box must remain stationary while the icon animates.
+- After the icon animation completes, hide the icon and lower the incorrect box back into position.
+- Re-enable box selection only after the entire feedback sequence has completed.
+
+6. Shared Positioning
+- Use shared positioning values for the object's hiding location and the thumbs-down icon's resting location.
+- Keep the upper box position established in Bug-001.
+- Do not change the upper box position.
+- Do not change the lower hiding position.
+- Ensure all positioning remains responsive.
+- Avoid layout shifts when elements appear, disappear or move.
+
+7. Preserve Existing Functionality
+- Do not change box sizes or horizontal spacing.
+- Do not change the random box selection logic.
+- Do not change the correct-answer assignment.
+- Do not change object entrance or wiggle animations.
+- Do not change the box hover effect.
+- Do not change the success message or completion buttons.
+- Preserve existing keyboard, mouse, touchscreen and TV remote controls.
+- Ensure the global Options modal continues working correctly.
+
+Acceptance Criteria:
+- Each box completes its 180-degree flip before moving downwards.
+- Box rotation and downward movement never overlap.
+- Boxes continue hiding the object one by one.
+- The object remains completely stationary during hiding.
+- The object remains completely stationary while the correct box rises to reveal it.
+- Object enlargement during the success celebration still works.
+- The thumbs-down icon is vertically aligned with the hidden object.
+- The thumbs-down icon is horizontally centred beneath the selected incorrect box.
+- The thumbs-down icon remains approximately 150px tall.
+- The thumbs-down animation still moves up and down twice.
+- The upper and lower box positions remain unchanged.
+- No layout shifts or unexpected movement occur.
+- All existing gameplay and navigation functionality remains intact.
+
+
+## Bug-003 - Reduce Hidden Object Image Maximum Width
+
+Status: complete
+Notes: Centralised the hiding-stage object bounds at 240px wide by the unchanged 200px high and reused them for scene measurement and responsive CSS fallbacks. Existing contain sizing preserves image proportions, while box geometry, object motion, and the separate 600x600px success bounds remain unchanged.
+
+Some object images are currently slightly too wide, causing parts of the image to remain visible at the sides of the box when the object is supposed to be completely hidden.
+
+Requirements:
+
+1. Object Image Width
+- Reduce the maximum width of object images during the hiding and guessing stages from 250px to 240px.
+- Keep the existing maximum height of 200px unchanged.
+- Preserve the original aspect ratio of every image.
+- Scale images proportionally to fit within the new dimensions.
+- Do not stretch, distort or crop images.
+- Smaller images that already fit within these limits should retain their natural dimensions.
+
+2. Object Concealment
+- Ensure the object remains completely hidden when its assigned box is lowered.
+- No part of the object should be visible at either side of the box.
+- Preserve the existing box dimensions and positioning.
+- Do not modify box images to accommodate the objects.
+
+3. Preserve Existing Animations
+- Keep the existing object entrance and wiggle animations.
+- Keep the object stationary during hiding and revealing, as established in Bug-002.
+- Do not modify the box flip, lowering or raising animations.
+- Preserve the final success animation where the object grows to a maximum of 600px wide and 600px tall.
+- The new 240px width restriction should only apply to the object during the hiding and guessing stages.
+
+4. Reusability
+- Update the existing central object sizing constants or shared styles.
+- Do not introduce duplicate hardcoded image dimensions.
+- Ensure the change applies consistently to all Animals, Food and Clothes images.
+
+Acceptance Criteria:
+- Object images have a maximum width of 240px during hiding and guessing.
+- The maximum height remains 200px.
+- Images maintain their original aspect ratios.
+- Objects no longer protrude from the sides of their boxes.
+- Box sizes and positions remain unchanged.
+- Existing animations continue working correctly.
+- The success image can still grow to a maximum of 600x600px.
+
+
+## Bug-004 - Prevent Consecutive Repetition of Object Hiding Position
+
+Status: complete
+Notes: Stored each round's correct horizontal position and made the central generator exclude that position from the next equal-box-count round before its uniform random selection. The prior position is resolved independently of regenerated box colours and IDs, resets when box count changes, and is validated against the mapped correct box.
+
+Currently, when Play Again is selected, the object can be hidden beneath a box in the same horizontal position as the previous game.
+
+For example, when playing with three boxes, the object might be hidden beneath the left box three times in a row.
+
+Although this is technically possible through random selection, it makes the game appear repetitive or broken.
+
+Requirements:
+
+1. Prevent Consecutive Position Repetition
+- When Play Again is selected, the object must not be hidden beneath a box occupying the same horizontal position as the previous game.
+- The correct box must always occupy a different position from the previous round.
+- This restriction applies regardless of the box's colour.
+- Compare the actual box position or index, not its colour or unique identifier.
+- For example, if the object was hidden beneath the leftmost box, the next game must use a different position.
+- The restriction should work with 2, 3 or 4 boxes.
+
+2. Random Position Selection
+- Continue selecting the correct hiding position randomly.
+- Exclude the previous game's correct position from the available positions.
+- Randomly select from the remaining valid positions.
+- Do not simply alternate between fixed positions unless only two boxes are available.
+- Every eligible position should have an equal chance of being selected.
+
+Examples:
+
+With 3 boxes:
+Previous position: Left
+Next position: Middle or Right
+
+With 4 boxes:
+Previous position: Second
+Next position: First, Third or Fourth
+
+With 2 boxes:
+Previous position: Left
+Next position: Right
+
+3. Previous Game Tracking
+- Store the previous game's correct box position.
+- Preserve this information when Play Again is selected.
+- Pass the previous position into the existing central game-generation utility.
+- Generate the new correct position before assigning the object to its box.
+- Map the selected position to the correct box's unique identifier.
+- Do not confuse the previous box identifier with its position, as box identifiers and colours are regenerated each round.
+- Do not reset the previous position before generating the next game.
+
+4. New Games
+- When starting Boxes mode for the first time, allow any valid hiding position.
+- The position restriction applies when a previous round exists with the same number of boxes.
+- If the number of boxes changes, reset the previous position restriction and allow all positions.
+- Do not make the game predictable beyond preventing immediate repetition.
+
+5. Preserve Existing Randomisation
+- Continue generating a new random object for every round.
+- Continue preventing the same object from appearing in consecutive rounds within the same category.
+- Continue generating new box colours and arrangements.
+- Continue generating a new random object entrance position.
+- Do not change the existing box animations or object movement.
+- Preserve all settings when Play Again is selected.
+
+6. Implementation
+- Update the existing game-generation utility rather than adding position-selection logic directly to the React components.
+- Use the previous correct position as an optional input.
+- Filter that position out of the available choices before making the random selection.
+- Ensure the logic remains reusable and independently testable.
+- Do not regenerate random values during ordinary component re-renders.
+
+Acceptance Criteria:
+- Play Again never places the object in the same horizontal box position as the immediately previous round.
+- The restriction works correctly with 2, 3 and 4 boxes.
+- Box colour changes do not affect position comparison.
+- The first game allows all available positions.
+- Changing the number of boxes resets the restriction.
+- All remaining valid positions are selected randomly.
+- Existing object and box randomisation continues working.
+- All existing animations and gameplay behaviour remain unchanged.
+
+
+## Bug-005 - Reduce Hidden Object Image Maximum Width to 210px
+
+Status: complete
+Notes: Reduced the shared pre-success object cap to 210px wide by the unchanged 200px high and applied responsive max dimensions directly to the rendered image. Intrinsic sizing avoids enlarging smaller images, while centred containment preserves aspect ratios and the unconstrained celebration image continues growing within its existing 600x600px region.
+
+Bug-003 has not completely resolved the issue. Some wider object images can still be seen protruding from the sides of their boxes when they should be completely hidden.
+
+The maximum width of the hidden object images needs to be reduced to 210px.
+
+Requirements:
+
+1. Object Image Dimensions
+- Set the maximum width of hidden object images to 210px.
+- Keep the existing maximum height of 200px.
+- Preserve the original aspect ratio of every image.
+- Scale images proportionally to fit within these limits.
+- Do not stretch, distort or crop the images.
+- Apply the width restriction to the actual rendered image, not just its parent container.
+- Do not unnecessarily enlarge smaller images.
+
+2. Object Concealment
+- Ensure the object is completely hidden when its assigned box is lowered.
+- No part of the object should remain visible at either side of the box.
+- Check whether CSS transforms, scaling or parent container dimensions are overriding the maximum width.
+- Account for transparent regions within the box PNG assets.
+- Ensure the 210px restriction applies consistently to wider images.
+- Do not change the box images, dimensions or positioning.
+
+3. Preserve Existing Animations
+- Keep the existing object entrance and wiggle animations.
+- Keep the object completely stationary during hiding and revealing, as established in Bug-002.
+- Preserve the box flip, lowering and raising animations.
+- Preserve the final success animation where the object grows to a maximum of 600px wide and 600px tall.
+- The 210px width restriction should apply only during the object entrance, hiding and guessing stages.
+- Do not modify animation durations or easing.
+
+4. Reusability
+- Update the existing shared object sizing constants or SCSS.
+- Do not introduce duplicate hardcoded image dimensions.
+- Apply the change consistently across Animals, Food and Clothes.
+- Ensure responsive scaling continues working correctly.
+
+Acceptance Criteria:
+- Hidden object images have a maximum rendered width of 210px.
+- Maximum height remains 200px.
+- Images preserve their original aspect ratios.
+- No object images protrude from the sides of their boxes.
+- Box dimensions and positions remain unchanged.
+- Existing animations continue working correctly.
+- Success images can still enlarge to a maximum of 600x600px.
+
+
+## Bug-006 - Random Object Selection Without Repetition Until All Objects Have Been Used
+
+Status: complete
+Notes: Added a category-scoped Fisher-Yates object bag to generated game data, consuming and preserving one remaining ID per Play Again round until the cycle is empty. New cycles avoid both source-list order and a boundary repeat without disturbing first-object fairness, while pool validation keeps rendering separate and existing box, position and entrance randomisation unchanged.
+
+The objects in Boxes mode are currently being selected in a predictable order rather than randomly.
+
+We want random object selection, but every object in the selected category must be used once before any object can be repeated when using Play Again.
+
+Requirements:
+
+1. Random Object Selection
+- Objects must be selected randomly from the chosen category.
+- Do not select objects in their original list order.
+- Do not cycle through objects alphabetically or sequentially.
+- Preserve the existing categories: Animals, Food and Clothes.
+- Each category contains 10 objects.
+- Every object must have an equal chance of being selected at the beginning of a new selection cycle.
+
+2. Prevent Repetition
+- When Play Again is selected, do not select an object that has already appeared during the current selection cycle.
+- Continue selecting randomly from the remaining unused objects.
+- Every object in the category must appear once before any object can repeat.
+- The first 10 games in a continuous Play Again session must therefore contain 10 different objects.
+- Do not exclude objects permanently once they have been used.
+
+3. Random Selection Pool
+- Implement a shuffled selection pool or random bag system.
+- When a new game session starts, create a randomly shuffled list containing all 10 objects from the selected category.
+- Each new game consumes the next unused object from the shuffled pool.
+- Preserve the randomly generated order throughout the current cycle.
+- Do not reshuffle the remaining items partway through a cycle.
+- Do not reintroduce previously used items before the cycle is complete.
+- Use a reliable shuffle algorithm such as Fisher-Yates.
+
+4. Completing a Selection Cycle
+- Once all 10 objects have been used, generate a new shuffled selection pool.
+- All 10 objects become eligible again.
+- The new pool should have a newly randomised order.
+- Continue using each object exactly once per cycle.
+- Repeat this process indefinitely while the user continues selecting Play Again.
+
+5. Prevent Consecutive Repetition Between Cycles
+- When generating a new shuffled pool, ensure its first object differs from the final object of the previous cycle.
+- This prevents an object appearing twice consecutively at the boundary between two cycles.
+- Preserve randomness for the remaining objects.
+- Do not introduce a predictable fixed order to avoid consecutive duplicates.
+
+6. Session Management
+- Preserve the current shuffled pool and its progress when Play Again is selected.
+- Do not reset the pool when starting another round through Play Again.
+- Do not reset the pool during normal React re-renders.
+- Associate the selection pool with the selected object category.
+- When starting a completely new game session from the options page, a new shuffled pool may be generated.
+- Do not accidentally reuse an incomplete pool from an unrelated session.
+- Starting a new round must consume exactly one object from the pool.
+
+7. Preserve Other Randomisation
+- Continue randomly selecting the box colours for each game.
+- Continue using unique box colours within each round.
+- Continue randomising box arrangements.
+- Continue generating a random object entrance position.
+- Continue preventing the correct hiding position from repeating in consecutive rounds, as established in Bug-004.
+- Preserve the selected number of boxes and object category when Play Again is selected.
+- Do not modify the existing box or object animations.
+
+8. Implementation
+- Implement the shuffled pool within the existing game-generation system or a dedicated reusable utility.
+- Keep the pool separate from the React rendering logic.
+- Track the current position within the pool or maintain a list of remaining objects.
+- Ensure Play Again consumes exactly one new object.
+- Avoid generating a new object during component re-renders, animation callbacks or unrelated state updates.
+- Ensure object selection remains independent of box colour and hiding-position randomisation.
+- Keep the logic reusable and independently testable.
+
+Acceptance Criteria:
+- Objects are selected in a randomised order.
+- Objects are not selected in the original category list order.
+- The first 10 games in a continuous Play Again session use all 10 different objects.
+- No object repeats before all 10 objects have been used.
+- A new shuffled cycle begins once all 10 objects have appeared.
+- The first object of a new cycle differs from the final object of the previous cycle.
+- Play Again preserves the existing selection pool and its progress.
+- Each new round consumes exactly one object.
+- Normal React re-renders do not affect the selection pool.
+- Box colours and arrangements continue to be randomly generated.
+- The correct hiding position never repeats in consecutive rounds.
+- Existing gameplay animations and navigation remain unchanged.
+
+
+## Bug-007 - Restrict Object Images to a Maximum of 200px in Both Dimensions
+
+Status: complete
+Notes: Consolidated normal-play object sizing into one shared 200px maximum dimension used for both width and height. The existing centred image rules apply intrinsic auto sizing with simultaneous max-width/max-height constraints, preserving aspect ratios and smaller natural sizes while leaving the separate 600x600px success growth unchanged.
+
+Bug-005 appears to have broken the height restriction on object images. Some portrait images are now appearing too tall.
+
+To simplify image sizing, all object images should have a maximum width and height of 200px while maintaining their original aspect ratio.
+
+The longest dimension of any object image must never exceed 200px.
+
+Requirements:
+
+1. Object Image Dimensions
+- Set the maximum width of object images to 200px.
+- Set the maximum height of object images to 200px.
+- Both restrictions must apply simultaneously.
+- The largest dimension of the rendered image must never exceed 200px.
+- Preserve the original aspect ratio of every image.
+- Scale images proportionally without stretching, distorting or cropping.
+- Do not force images into a square shape.
+- Do not enlarge images that are naturally smaller than 200px in both dimensions.
+
+2. Landscape Images
+- Landscape images should be constrained primarily by their width.
+- Their height should be calculated automatically to preserve the aspect ratio.
+
+Examples:
+- Original 800x400 -> Display 200x100.
+- Original 600x450 -> Display 200x150.
+- Original 400x200 -> Display 200x100.
+
+3. Portrait Images
+- Portrait images should be constrained primarily by their height.
+- Their width should be calculated automatically to preserve the aspect ratio.
+
+Examples:
+- Original 400x800 -> Display 100x200.
+- Original 450x600 -> Display 150x200.
+- Original 200x400 -> Display 100x200.
+
+4. Square Images
+- Square images should have a maximum display size of 200x200px.
+
+Examples:
+- Original 800x800 -> Display 200x200.
+- Original 150x150 -> Display 150x150.
+
+5. Implementation
+- Apply both maximum dimensions to the actual image element.
+- Use a consistent sizing strategy that preserves intrinsic aspect ratios.
+- CSS max-width and max-height can be used together with width: auto and height: auto.
+- Use object-fit: contain where appropriate.
+- Check for existing width, height, transform or scaling rules that could override these restrictions.
+- Ensure entrance and wiggle animations do not leave the object larger than its intended maximum resting size.
+- Do not simply apply a 200x200px size to every image.
+- Keep image sizing centralised and reusable.
+- Remove or update conflicting sizing rules introduced in Bugs 003 and 005.
+
+6. Object Positioning
+- Keep all object images horizontally centred beneath their assigned boxes.
+- Preserve their existing vertical centre position.
+- Use a consistent image container so objects of different aspect ratios remain centred.
+- Changing between portrait, landscape and square images must not shift the box positions.
+- The thumbs-down icon should remain vertically aligned with the centre of the object area, as established in Bug-002.
+
+7. Preserve Existing Behaviour
+- Apply the 200px restriction during object entrance, hiding and guessing stages.
+- Preserve the object's initial entrance animation and wiggle.
+- Keep the object stationary during hiding and revealing.
+- Do not modify the box flip, lowering or raising animations.
+- Preserve the existing success animation.
+- During the success animation, the object may still enlarge to a maximum of 600x600px while preserving its aspect ratio.
+- Do not change the box dimensions or positions.
+- Do not modify randomisation, guessing or navigation logic.
+
+Acceptance Criteria:
+- No object image exceeds 200px in width during normal gameplay.
+- No object image exceeds 200px in height during normal gameplay.
+- Landscape images scale correctly.
+- Portrait images scale correctly.
+- Square images scale correctly.
+- All images retain their original aspect ratios.
+- Smaller images are not unnecessarily enlarged.
+- Images are never cropped, stretched or distorted.
+- Objects remain correctly centred beneath their boxes.
+- Objects remain fully concealed when boxes are lowered.
+- Thumbs-down alignment remains correct.
+- The success animation still supports images up to 600x600px.
+- All existing animations and gameplay functionality continue working.
+
+
+## Bug-008 - Ensure Object Images Never Exceed Their Container Dimensions
+
+Status: complete
+Notes: Replaced state-specific image sizing with one intrinsic, centred object-image rule capped at 100% of both container dimensions, and made the grid tracks explicitly shrinkable. Centralised the responsive success container's 600px maximum and capped it to the scene, preserving the existing 200px gameplay container, smooth growth animation, positioning and gameplay behaviour.
+
+The changes made while fixing Bug-005 have broken the existing responsive image sizing.
+
+Previously, object images were correctly constrained by their parent containers. Now, images are being allowed to grow larger than their containers, causing problems both when objects are hidden beneath boxes and when they enlarge after a successful guess.
+
+The fundamental requirement is that object images must ALWAYS fit entirely within their allocated containers.
+
+Requirements:
+
+1. Container-Based Image Sizing
+- Object images must never exceed the width or height of their parent container.
+- The container's available dimensions must determine the maximum rendered image size.
+- If a container is smaller than the image's maximum permitted dimensions, the image must scale down to fit.
+- Both width and height constraints must be respected simultaneously.
+- Preserve the original image aspect ratio at all times.
+- Do not stretch, distort or crop images.
+- Images must remain horizontally and vertically centred within their containers.
+- Do not allow image dimensions or transforms to cause visual overflow beyond the container.
+
+2. Normal Gameplay Image Sizing
+- During object entrance, hiding and guessing, the object image must have an absolute maximum width of 200px and height of 200px.
+- These are maximum dimensions, not fixed dimensions.
+- If the parent container is smaller than 200px in either dimension, scale the image down proportionally to fit.
+- The image must never exceed the dimensions of its gameplay container.
+- Ensure portrait, landscape and square images all scale correctly.
+- Preserve the object's existing position beneath its assigned box.
+- Ensure the object remains completely hidden when the box is lowered.
+
+3. Success Animation Image Sizing
+- During the success animation, the object image may grow to a maximum width of 600px and height of 600px.
+- These are maximum dimensions, not fixed dimensions.
+- The image must never exceed the available width or height of its success container.
+- For example, if the success container is only 400px high, the image must not exceed 400px in height.
+- If the container is only 350px wide, the image must not exceed 350px in width.
+- Both restrictions must apply together.
+- The image must scale proportionally to fit whichever dimension is most restrictive.
+- Keep the image centred throughout the animation.
+- Maintain the existing smooth enlargement effect.
+
+4. Container Responsiveness
+- Ensure both gameplay and success containers have properly defined responsive dimensions.
+- Containers should scale according to available viewport space.
+- Account for padding, the global menu, success messages and completion buttons.
+- Do not allow containers to grow beyond their allocated layout regions.
+- Do not use fixed image dimensions that override the container's available space.
+- Ensure images remain contained on mobile, tablet, desktop and television screens.
+
+5. CSS and Animation Investigation
+- Inspect the changes introduced in Bugs 003, 005 and 007.
+- Identify any CSS rules that allow images to exceed their containers.
+- Check for conflicting width, height, min-width, min-height, max-width or max-height declarations.
+- Check whether CSS transforms or animation scaling are visually enlarging images beyond their container boundaries.
+- Check whether flexbox or grid sizing is allowing image containers to expand unexpectedly.
+- Ensure child elements can shrink within flex or grid layouts where necessary.
+- Fix the underlying sizing issue rather than simply hiding overflowing image content.
+- Do not rely solely on overflow: hidden as a workaround.
+- Remove or correct conflicting sizing rules instead of adding more competing overrides.
+
+6. Shared Image Sizing
+- Use a consistent image-sizing approach for gameplay and success states.
+- Keep the sizing logic centralised and reusable.
+- Separate the maximum allowed image size from the actual container dimensions.
+- The effective image dimensions must always be the smaller of:
+  - The image's natural dimensions.
+  - The maximum dimensions allowed for the current game state.
+  - The available dimensions of its parent container.
+- Preserve the image's aspect ratio when applying these constraints.
+- Avoid duplicating hardcoded sizing rules across components.
+
+7. Stable Layout and Positioning
+- Images must remain centred within their containers.
+- Images must not cause their containers to expand beyond their intended dimensions.
+- Images must not overlap neighbouring elements.
+- The object must remain stationary while boxes hide and reveal it.
+- The success enlargement must not cause the message or buttons to move unexpectedly.
+- Preserve the existing fixed layout regions.
+- Avoid sudden jumps when switching from gameplay sizing to success sizing.
+
+8. Preserve Existing Behaviour
+- Do not change the box dimensions or animations.
+- Do not change the object entrance or wiggle animations.
+- Do not change the object's hiding position.
+- Do not change the thumbs-down icon positioning.
+- Do not change the success message bounce animation.
+- Do not change the completion delay or buttons.
+- Do not change the randomisation or gameplay logic.
+- Preserve the global Options menu functionality.
+
+Acceptance Criteria:
+- Object images never exceed their parent container's width.
+- Object images never exceed their parent container's height.
+- Both dimensions are constrained simultaneously.
+- Images preserve their original aspect ratios.
+- Gameplay images never exceed 200x200px.
+- Success images never exceed 600x600px.
+- Images scale down correctly when containers are smaller than these limits.
+- Portrait, landscape and square images all display correctly.
+- Images remain fully contained during animations.
+- Objects remain completely hidden beneath their boxes.
+- Success images enlarge smoothly without breaking their containers.
+- Containers do not expand unexpectedly because of their images.
+- Images remain centred throughout gameplay and success animations.
+- No clipping, distortion or layout shifts occur.
+- Existing animations and game functionality remain unchanged.
+
+
+## Bug-009 - Prevent Consecutive Repetition of the Correct Box Colour
+
+Status: complete
+Notes: The central generator now selects the correct position and correct colour independently, excluding the respective previous values, then assigns that colour to the selected position and fills all other positions from a unique shuffled colour pool. The prior correct colour remains eligible as an incorrect box, exact arrangement repetition is still prevented, and generated games store and validate `correctBoxColor`.
+
+Currently, when Play Again is selected, the object can be hidden inside a box of the same colour as the previous game.
+
+Although box colours are randomly generated each round, the box containing the object must never have the same colour in two consecutive games.
+
+Requirements:
+
+1. Prevent Correct Box Colour Repetition
+- When Play Again is selected, the correct box must have a different colour from the previous game's correct box.
+- This restriction applies regardless of the box's horizontal position.
+- Compare the actual colour of the correct box, not its identifier or position.
+- The restriction must work with 2, 3 or 4 boxes.
+- Do not allow the previous correct box colour to be selected as the new correct box colour.
+
+2. Allow Other Colour Repetition
+- Box colours may still appear in consecutive games.
+- The previous correct box colour may appear again as an incorrect box.
+- Only the colour of the box containing the object is restricted.
+- Do not exclude the previous correct colour from the entire selection pool.
+- Continue selecting from all six available colours:
+  - Red
+  - Blue
+  - Yellow
+  - Green
+  - Orange
+  - Purple
+- Continue ensuring every box within a single game has a unique colour.
+
+Example:
+
+Previous Game:
+- 3 boxes: Red, Blue, Green.
+- Object hidden in Red.
+
+Next Game:
+- 3 boxes: Yellow, Red, Purple.
+- Object may be hidden in Yellow or Purple.
+- Object must not be hidden in Red.
+
+3. Previous Game Tracking
+- Store the colour of the correct box from the previous round.
+- Preserve this information when Play Again is selected.
+- Pass the previous correct box colour into the existing central game-generation utility.
+- Do not reset this information before generating the new round.
+- Use the colour value rather than the previous box identifier, since box identifiers are regenerated each game.
+
+4. Random Correct Box Colour Selection
+- Continue selecting the correct box colour randomly.
+- Exclude the previous correct colour from eligible correct box colours.
+- Every remaining eligible colour should have an equal chance of being selected.
+- Do not introduce a fixed rotation or predictable colour sequence.
+- Ensure the selected correct colour is included in the newly generated box arrangement.
+- Select the remaining box colours randomly without duplication.
+
+5. Compatibility With Bug-004
+Bug-004 already prevents the object from appearing in the same horizontal box position in consecutive games.
+
+Both restrictions must work together.
+
+When Play Again is selected:
+- The correct box must occupy a different horizontal position.
+- The correct box must also have a different colour.
+- Neither restriction should override the other.
+- Generate the new box arrangement so both conditions are satisfied before starting the game.
+- Do not rely on repeated uncontrolled rerolls that could produce conflicting results.
+
+Example:
+
+Previous Game:
+- Correct position: Left.
+- Correct colour: Red.
+
+Next Game:
+- Correct position: Middle or Right.
+- Correct colour: Any colour except Red.
+
+With 2 boxes:
+- The correct position must alternate between Left and Right.
+- The correct colour must still differ from the previous round.
+
+6. Game Generation
+- Update the existing central game-generation utility.
+- Accept the previous correct position and previous correct colour as optional inputs.
+- Generate a valid correct position excluding the previous position.
+- Generate a valid correct colour excluding the previous correct colour.
+- Assign that colour to the newly selected correct position.
+- Randomly populate the remaining positions with unique colours from the remaining colour pool.
+- Preserve randomness in the resulting box arrangements.
+- Ensure exactly one box contains the object.
+- Do not regenerate random selections during ordinary React re-renders.
+
+7. First Game and Session Management
+- When starting a completely new game session from the options page, allow any correct box colour.
+- Apply the colour restriction when Play Again is selected.
+- Preserve the previous correct colour throughout the continuous Play Again session.
+- Update the tracked previous colour only when generating a new round.
+- Ensure previous-round animation callbacks cannot overwrite the current game's colour assignment.
+
+8. Preserve Existing Functionality
+- Preserve the shuffled object selection system from Bug-006.
+- Continue ensuring every object is used before repetition.
+- Continue generating new box colour arrangements for every round.
+- Preserve the restriction on repeating the correct box position from Bug-004.
+- Preserve the random object entrance position.
+- Do not modify box dimensions, positioning or animations.
+- Do not modify the object hiding or revealing animations.
+- Do not change the guessing or success logic.
+- Preserve all existing navigation and Play Again behaviour.
+
+Acceptance Criteria:
+- Play Again never uses the same correct box colour as the immediately previous game.
+- Colours may still repeat as incorrect boxes.
+- All six box colours remain available across games.
+- Box colours remain unique within each game.
+- Correct box positions do not repeat consecutively.
+- Correct box colours do not repeat consecutively.
+- Both restrictions work simultaneously with 2, 3 and 4 boxes.
+- The correct position and colour remain randomly selected from eligible options.
+- The first game of a new session allows any colour.
+- The shuffled object selection system remains unaffected.
+- Existing animations, gameplay and navigation remain unchanged.
