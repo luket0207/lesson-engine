@@ -8,7 +8,6 @@ import SpellingDisplay from './spellingDisplay';
 import {
   SPELLING_COMPLETION_ANIMATION_MS,
   SPELLING_IMAGE_ANIMATION_MS,
-  SPELLING_ITEM_TRANSITION_LOCK_MS,
   SPELLING_LETTER_ANIMATION_MS,
 } from './spellingTimings';
 import useSpellingSequence from './useSpellingSequence';
@@ -93,26 +92,6 @@ function SpellingPlaybackSession({ category, orderedItems, playbackMode }) {
   useEffect(() => {
     playAreaRef.current?.focus({ preventScroll: true });
   }, [sequence.currentItemIndex]);
-
-  useEffect(() => {
-    if (
-      !sequence.isAnimationRunning ||
-      sequence.transitionKind !== 'item'
-    ) {
-      return undefined;
-    }
-
-    const transitionTimer = window.setTimeout(
-      sequence.completeAnimation,
-      SPELLING_ITEM_TRANSITION_LOCK_MS,
-    );
-
-    return () => window.clearTimeout(transitionTimer);
-  }, [
-    sequence.completeAnimation,
-    sequence.isAnimationRunning,
-    sequence.transitionKind,
-  ]);
 
   const requestForwardProgression = () => {
     if (sequence.completionButtonsVisible) {

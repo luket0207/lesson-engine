@@ -1,6 +1,8 @@
 export const BOXES_INTRODUCTION_BOUNCE_MS = 1100;
 export const BOXES_INTRODUCTION_EXIT_MS = 350;
 export const BOXES_ENTRANCE_MS = 550;
+export const BOXES_LABEL_ENTRANCE_MS = 400;
+export const BOXES_LABEL_EXIT_MS = 300;
 export const BOXES_START_FADE_MS = 300;
 export const BOXES_OBJECT_ENTRANCE_MS = 900;
 export const BOXES_OBJECT_WIGGLE_MS = 650;

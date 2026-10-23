@@ -67,7 +67,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
     gap: clamp(0.75rem, 2vw, 1.25rem);
-    width: min(100%, 72rem);
+    width: min(100%, 60rem);
     margin: 0 auto;
 
     .navigation-pod {
@@ -76,6 +76,10 @@
       min-height: clamp(9rem, 17vw, 12rem);
       padding: clamp(0.75rem, 2vw, 1.25rem);
     }
+  }
+
+  &__items + &__start-row {
+    margin-top: clamp(1rem, 3vw, 2rem);
   }
 
   &__item-image {

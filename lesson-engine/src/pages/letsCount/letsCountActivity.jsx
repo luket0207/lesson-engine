@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppShell } from '../../components/appShell/appShell';
 import Button from '../../components/button/button';
 import CountingMessage from './countingMessage';
@@ -44,6 +44,8 @@ const SEQUENCE_STYLE = {
 function LetsCountActivity() {
   const { isOptionsOpen } = useAppShell();
   const [configuration, setConfiguration] = useState(INITIAL_CONFIGURATION);
+  const [isStarting, setIsStarting] = useState(false);
+  const startRequestedRef = useRef(false);
   const {
     completePhase,
     currentIndex,
@@ -94,7 +96,19 @@ function LetsCountActivity() {
   };
 
   const handleStartCounting = () => {
+    if (startRequestedRef.current) {
+      return;
+    }
+
+    startRequestedRef.current = true;
+    setIsStarting(true);
     startSequence(configuration);
+  };
+
+  const handleReturnToOptions = () => {
+    startRequestedRef.current = false;
+    setIsStarting(false);
+    returnToOptions();
   };
 
   if (phase !== COUNTING_PHASES.OPTIONS) {
@@ -139,7 +153,7 @@ function LetsCountActivity() {
           >
             {phase === COUNTING_PHASES.FINISHED_DISPLAYED && (
               <div className="lets-count-page__completion-actions">
-                <Button onClick={returnToOptions} variant="secondary">
+                <Button onClick={handleReturnToOptions} variant="secondary">
                   Back to Let's Count
                 </Button>
                 <Button to="/" variant="secondary">
@@ -159,6 +173,7 @@ function LetsCountActivity() {
 
       <Button
         className="lets-count-page__start"
+        disabled={isStarting}
         onClick={handleStartCounting}
         size="large"
       >
@@ -254,6 +269,15 @@ function LetsCountActivity() {
           </label>
         </div>
       </section>
+
+      <Button
+        className="lets-count-page__start"
+        disabled={isStarting}
+        onClick={handleStartCounting}
+        size="large"
+      >
+        Start Counting
+      </Button>
 
       <Button className="lets-count-page__back" to="/" variant="secondary">
         Back to Home

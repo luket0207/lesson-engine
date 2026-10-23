@@ -52,4 +52,22 @@
       flex: 1 1 6rem;
     }
   }
+
+  &__checkbox {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    width: fit-content;
+    min-height: 3rem;
+    margin: 0 auto;
+    font-size: 1.125rem;
+    cursor: pointer;
+
+    input {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin: 0;
+      accent-color: var(--color-theme-secondary);
+    }
+  }
 }

@@ -35,6 +35,7 @@
 
   &.theme--lets-find {
     --color-text: #{variables.$color-find-text};
+    --color-find-object-highlight: #{variables.$color-find-object-highlight};
     --color-theme-primary: #{variables.$color-find-white};
     --color-theme-primary-rgb: #{variables.$color-find-white-rgb};
     --color-theme-secondary: #{variables.$color-find-light-blue};

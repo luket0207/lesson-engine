@@ -43,11 +43,11 @@ export function createSpellingSequenceState({
     playbackMode,
     orderedItems: [...items],
     currentItemIndex: 0,
-    revealStage: 0,
+    revealStage: 1,
     completionButtonsVisible: false,
-    isAnimationRunning: false,
-    transitionDirection: null,
-    transitionKind: null,
+    isAnimationRunning: true,
+    transitionDirection: 'forward',
+    transitionKind: 'reveal',
   };
 }
 
@@ -100,7 +100,7 @@ export function spellingSequenceReducer(state, action) {
         };
       }
 
-      if (state.revealStage > 0) {
+      if (state.revealStage > 1) {
         return {
           ...state,
           revealStage: state.revealStage - 1,
@@ -136,11 +136,11 @@ export function spellingSequenceReducer(state, action) {
       return {
         ...state,
         currentItemIndex: state.currentItemIndex + 1,
-        revealStage: 0,
+        revealStage: 1,
         completionButtonsVisible: false,
         isAnimationRunning: true,
         transitionDirection: 'forward',
-        transitionKind: 'item',
+        transitionKind: 'reveal',
       };
 
     default:

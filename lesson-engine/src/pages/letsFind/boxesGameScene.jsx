@@ -14,6 +14,8 @@ import {
   BOXES_INSTRUCTION_FADE_MS,
   BOXES_INTRODUCTION_BOUNCE_MS,
   BOXES_INTRODUCTION_EXIT_MS,
+  BOXES_LABEL_ENTRANCE_MS,
+  BOXES_LABEL_EXIT_MS,
   BOXES_OBJECT_ENTRANCE_MS,
   BOXES_OBJECT_WIGGLE_MS,
   BOXES_LOWER_MS,
@@ -87,6 +89,23 @@ function BoxesGameScene({
       : gameState.phase === BOXES_GAME_PHASES.START_EXITING
         ? 'exiting'
         : 'hidden';
+  const boxLabelsPhase = !gameState.boxNames
+    ? 'hidden'
+    : gameState.phase === BOXES_GAME_PHASES.BOX_LABELS_ENTERING
+      ? 'entering'
+      : gameState.phase === BOXES_GAME_PHASES.CORRECT_GUESS_REVEAL
+        ? 'exiting'
+        : [
+              BOXES_GAME_PHASES.BOXES_READY,
+              BOXES_GAME_PHASES.START_EXITING,
+              BOXES_GAME_PHASES.OBJECT_ENTERING,
+              BOXES_GAME_PHASES.OBJECT_WIGGLING,
+              BOXES_GAME_PHASES.BOXES_HIDING_OBJECT,
+              BOXES_GAME_PHASES.GUESSING_READY,
+              BOXES_GAME_PHASES.INCORRECT_GUESS_FEEDBACK,
+            ].includes(gameState.phase)
+          ? 'visible'
+          : 'hidden';
   const objectPhase =
     gameState.phase === BOXES_GAME_PHASES.CORRECT_GUESS_REVEAL
       ? 'revealing'
@@ -141,6 +160,8 @@ function BoxesGameScene({
     '--boxes-introduction-bounce-duration': `${BOXES_INTRODUCTION_BOUNCE_MS}ms`,
     '--boxes-introduction-exit-duration': `${BOXES_INTRODUCTION_EXIT_MS}ms`,
     '--boxes-introduction-fit-size': `${100 / introductionText.length}vw`,
+    '--boxes-label-entrance-duration': `${BOXES_LABEL_ENTRANCE_MS}ms`,
+    '--boxes-label-exit-duration': `${BOXES_LABEL_EXIT_MS}ms`,
     '--boxes-object-entrance-duration': `${BOXES_OBJECT_ENTRANCE_MS}ms`,
     '--boxes-object-max-height': `${OBJECT_HIDING_MAX_DIMENSION_PX}px`,
     '--boxes-object-max-width': `${OBJECT_HIDING_MAX_DIMENSION_PX}px`,
@@ -341,7 +362,11 @@ function BoxesGameScene({
             className={`lets-find-boxes-game__introduction lets-find-boxes-game__introduction--${introductionPhase}`}
             onAnimationEnd={handleIntroductionAnimationEnd}
           >
-            {introductionText}
+            {"Let's find the "}
+            <span className="lets-find-boxes-game__object-name-highlight">
+              {gameState.object.displayName}
+            </span>
+            {'!'}
           </h1>
         </section>
 
@@ -478,6 +503,40 @@ function BoxesGameScene({
           </div>
         </section>
 
+        {gameState.boxNames && (
+          <div
+            className={`lets-find-boxes-game__box-labels-region lets-find-boxes-game__box-labels-region--${boxLabelsPhase}`}
+            aria-hidden="true"
+          >
+            <div className="lets-find-boxes-game__box-labels-row">
+              {gameState.boxes.map((box) => (
+                <div
+                  key={box.id}
+                  className="lets-find-boxes-game__box-label-slot"
+                >
+                  <span
+                    className="lets-find-boxes-game__box-label"
+                    onAnimationEnd={(event) => {
+                      if (
+                        event.target === event.currentTarget &&
+                        gameState.phase ===
+                          BOXES_GAME_PHASES.BOX_LABELS_ENTERING &&
+                        box.position === gameState.boxCount - 1
+                      ) {
+                        gameState.completePhase(
+                          BOXES_GAME_PHASES.BOX_LABELS_ENTERING,
+                        );
+                      }
+                    }}
+                  >
+                    {box.displayName}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div
           className={`lets-find-boxes-game__object-region lets-find-boxes-game__object-region--${objectPhase}`}
           aria-hidden="true"
@@ -518,7 +577,11 @@ function BoxesGameScene({
           }`}
           aria-hidden={!instructionVisible}
         >
-          Find the {gameState.object.displayName}!
+          {'Find the '}
+          <span className="lets-find-boxes-game__object-name-highlight">
+            {gameState.object.displayName}
+          </span>
+          {'!'}
         </div>
 
         <div

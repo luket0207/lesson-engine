@@ -746,3 +746,732 @@ Acceptance Criteria:
 - The first game of a new session allows any colour.
 - The shuffled object selection system remains unaffected.
 - Existing animations, gameplay and navigation remain unchanged.
+
+
+## Bug-010 - Highlight Object Names in Introduction and Guessing Instructions
+
+Status: complete
+Notes: Added a reusable dark-gold Let’s Find theme token and a scoped inline object-name highlight used only by the introduction and guessing instruction. The spans inherit their parents’ typography, sizing and animations, while punctuation, success messaging and all other object-name uses retain their existing dark-blue styling.
+
+Currently, the object's name is displayed in the same dark blue colour as the rest of the text.
+
+I want the object name to stand out more during the introduction and when prompting the player to select the correct box.
+
+The object name should use a dark yellow colour that complements the existing white and light blue background.
+
+Requirements:
+
+1. Introduction Text Highlighting
+
+When the introduction displays:
+
+"Let's find the [Object]!"
+
+- Highlight only the object's name.
+- Use a dark yellow or golden colour for the object name.
+- Keep the remaining text in the existing dark blue colour.
+- Preserve the DynaPuff font for the entire sentence.
+- Preserve the existing font size and responsive behaviour.
+- Preserve the existing bounce animation.
+- The highlighted object name must animate together with the rest of the sentence.
+- Do not animate the highlighted word separately.
+- Do not introduce additional spacing or layout changes.
+
+Example:
+
+"Let's find the Dog!"
+
+- "Let's find the" remains dark blue.
+- "Dog" appears in dark yellow.
+- The exclamation mark remains dark blue.
+
+2. Guessing Instruction Highlighting
+
+When the player is prompted to select a box, the instruction displays:
+
+"Find the [Object]!"
+
+- Highlight only the object's name.
+- Use the same dark yellow colour as the introduction.
+- Keep the remaining text in the existing dark blue.
+- Preserve the existing DynaPuff font.
+- Preserve the existing font size and positioning.
+- Preserve the existing entrance animation.
+- The highlighted word must animate with the rest of the instruction.
+- Do not introduce layout shifts.
+
+3. Highlight Colour
+
+- Choose a dark yellow or golden colour that complements the existing white and light blue gradient.
+- The colour must remain clearly readable over the entire animated background.
+- Avoid bright yellow colours that would have insufficient contrast against white or light blue.
+- Suggested starting colour: #8A640B.
+- Define the colour in the central SCSS theme variables.
+- Keep the colour reusable for future features if required.
+
+4. Highlight Scope
+
+IMPORTANT:
+The highlighting should only apply to these two messages:
+
+- "Let's find the [Object]!"
+- "Find the [Object]!"
+
+Do not apply this highlighting to:
+- "We found the [Object]!"
+- Object names elsewhere in the application.
+- Category selection screens.
+- Buttons.
+- Box colour names.
+- Other activity instructions.
+
+The success message must retain its existing styling.
+
+5. Implementation
+
+- Use a separate span or equivalent element around the object's name.
+- Apply a reusable, scoped CSS class to the highlighted word.
+- Avoid hardcoding individual object names.
+- The highlighting must work dynamically with every object from Animals, Food and Clothes.
+- Ensure the highlighted span inherits the parent text's typography and animations.
+- Do not implement separate animations for the highlighted text.
+- Preserve the application's global text-selection prevention.
+
+Acceptance Criteria:
+- The object name appears in dark yellow during the introduction.
+- The object name appears in dark yellow during the guessing instruction.
+- The rest of each sentence remains dark blue.
+- The highlight colour is readable against the animated background.
+- Existing animations remain unchanged.
+- Highlighting works with all object names.
+- No layout shifts occur.
+- The success message remains unchanged.
+- No other text receives this highlighting.
+
+
+## Bug-011 - Add Optional Box Colour Names
+
+Status: complete
+Notes: Added a default-enabled Box Names setting to the Boxes configuration and round settings. Enabled games now enter a dedicated label-animation phase after all boxes settle, render responsive Short Stack colour names from the generated box data in an independent fixed layer, delay Start until label entry completes, and fade labels during the existing correct-answer reveal; disabled games retain the original phase timing.
+
+Add a new checkbox option to the Boxes mode configuration screen called "Box Names".
+
+When enabled, the colour of each box should be displayed as text above its image.
+
+The labels should appear after all boxes have completed their initial entrance animations and remain in their original upper positions while the boxes move around.
+
+Requirements:
+
+1. New Configuration Option
+
+On the Boxes mode options page:
+
+/letsFind/boxes
+
+Add a checkbox labelled:
+
+Box Names
+
+- Use the existing checkbox styling.
+- Default value: Checked (true).
+- Allow the user to enable or disable the option.
+- Store the setting alongside Amount of Boxes and Objects.
+- Changing this setting must not reset the other options.
+- Include the new option within the existing options panel.
+- Preserve the existing responsive options layout.
+- Do not add this setting to the global Options modal.
+
+2. Box Names Enabled
+
+When Box Names is enabled:
+- Display the colour name above each box image.
+- Use the actual colour assigned to each box.
+- Support all six available colours:
+  - Red
+  - Blue
+  - Yellow
+  - Green
+  - Orange
+  - Purple
+- Every label must correspond to the box directly beneath it.
+- Use the existing randomly generated box arrangement.
+- Do not create a separate random selection for the labels.
+
+3. Box Names Disabled
+
+When Box Names is disabled:
+- Do not display colour names during the activity.
+- Do not run the colour-name entrance animations.
+- All existing box animations and gameplay should behave exactly as before.
+- Disabling the option must not affect box colour selection or guessing logic.
+
+4. Label Appearance
+
+Each colour label should:
+- Use the Short Stack font.
+- Have a target font size of 5rem.
+- Use the existing dark blue text colour.
+- Be horizontally centred above its associated box.
+- Have appropriate spacing between the label and box image.
+- Remain clearly readable against the background.
+- Scale down responsively when necessary.
+- Never overlap neighbouring labels.
+- Avoid wrapping individual colour names onto multiple lines.
+
+5. Label Entrance Animation
+
+- Do not display the labels immediately when the boxes begin entering.
+- Wait until all boxes have completed their entrance animations and settled into their initial horizontal row.
+- Once every box has settled, animate the colour names into view.
+- All labels may animate in simultaneously.
+- Each label should grow from its own centre point.
+- Each label should fade from transparent to fully visible.
+- Combine the scale and opacity animations smoothly.
+- Use consistent timing and easing for all labels.
+- Keep the labels in their final positions throughout the animation.
+- Do not cause the boxes to move when labels appear.
+- The gameplay Start button should appear after the label entrance animations have completed, when Box Names is enabled.
+- When Box Names is disabled, preserve the existing Start button timing.
+
+6. Fixed Label Positioning
+
+IMPORTANT:
+The colour labels must remain in their original upper positions throughout the game.
+
+- Position the labels above the boxes' initial resting row.
+- Keep the labels horizontally aligned with their corresponding boxes.
+- Once the labels have appeared, they must remain stationary.
+- When boxes flip upside down, the labels must not rotate.
+- When boxes travel downwards to hide the object, the labels must not follow them.
+- When boxes rise to reveal their contents, the labels must not move.
+- When incorrect guesses occur, the labels must remain stationary.
+- Use fixed scene positioning or an independent label layer rather than placing the labels inside the animated box elements.
+- The labels must not inherit the boxes' transforms or animations.
+
+7. Label Visibility During Gameplay
+
+Once the labels have appeared, they should remain visible throughout:
+- The gameplay Start phase.
+- The object's entrance animation.
+- The object's wiggle animation.
+- The boxes flipping upside down.
+- The boxes lowering to hide the object.
+- The guessing phase.
+- Incorrect guesses.
+- Thumbs-down feedback.
+- Incorrect boxes returning to their hiding positions.
+
+The labels must remain visible until the correct box has been selected.
+
+8. Correct Answer Behaviour
+
+When the player selects the correct box:
+- Begin hiding the colour labels.
+- Fade all labels out smoothly.
+- Do not move or scale them during their exit.
+- Ensure the labels disappear before the main success celebration.
+- Preserve the existing correct-box reveal animation.
+- Do not delay or interfere with the existing success sequence unnecessarily.
+- Do not allow labels to reappear after a correct answer.
+
+9. Play Again Behaviour
+
+When Play Again is selected:
+- Preserve the Box Names setting.
+- If Box Names was enabled, it must remain enabled for the new game.
+- If Box Names was disabled, it must remain disabled.
+- Generate fresh box colours and positions according to the existing randomisation rules.
+- Generate labels based on the newly selected box colours.
+- Do not reuse labels from the previous game's arrangement.
+- Reset label visibility and animation state.
+- Animate the new labels after the new boxes have completed their entrances.
+
+10. Returning to Options
+
+When returning to the Boxes options page:
+- Preserve the previously selected Box Names setting where practical.
+- Allow the user to change it before starting another game.
+- For a completely new session, the default should be true.
+
+11. Responsive Layout
+
+- Colour labels must work with 2, 3 or 4 boxes.
+- Maintain horizontal alignment with the box images.
+- Ensure the labels fit above the initial box row.
+- Reduce the font size where necessary on smaller screens.
+- Keep sufficient spacing between neighbouring labels.
+- Prevent labels from overlapping the global menu.
+- Avoid horizontal or vertical overflow.
+- Preserve the existing box dimensions and positioning.
+- Labels must not push other elements around when they appear or disappear.
+
+12. Reusability
+
+- Use the existing Short Stack font configuration.
+- Keep the label styling in the appropriate shared or activity SCSS.
+- Use the existing box colour data to generate the labels.
+- Avoid hardcoding labels separately from their box definitions.
+- Reuse existing scale and fade animations where appropriate.
+- Keep label presentation separate from box movement.
+- Ensure the Box Names option is included in the existing game configuration structure.
+
+13. Preserve Existing Functionality
+
+- Do not modify box entrance animations.
+- Do not modify box flip or movement animations.
+- Do not change object hiding or revealing.
+- Do not change incorrect-answer feedback.
+- Do not modify correct-answer detection.
+- Preserve all existing randomisation restrictions from Bugs 004, 006 and 009.
+- Preserve existing image sizing restrictions.
+- Preserve all existing navigation.
+- Keep the global Options menu functional.
+- Maintain keyboard, mouse, touchscreen and TV remote compatibility.
+- Respect prefers-reduced-motion.
+
+Acceptance Criteria:
+- A Box Names checkbox appears on the Boxes options page.
+- The checkbox is enabled by default.
+- Users can enable or disable Box Names.
+- Colour names appear only when the option is enabled.
+- Labels correctly match the randomly selected box colours.
+- Labels use Short Stack at a target size of 5rem.
+- Labels grow and fade in after all boxes have entered.
+- The gameplay Start button appears after the labels have finished entering.
+- Labels remain horizontally aligned with their boxes.
+- Labels remain in their original upper positions while boxes move.
+- Labels do not rotate or move downwards with boxes.
+- Labels remain visible during incorrect guesses.
+- Labels fade out when the correct answer is selected.
+- Labels do not appear during the success celebration.
+- Play Again preserves the Box Names setting.
+- New games generate labels matching the newly randomised boxes.
+- The layout works with 2, 3 and 4 boxes.
+- No other elements shift when labels appear or disappear.
+- All existing animations and gameplay continue working correctly.
+
+
+## Bug-012 - Remove Houses Mode and Mode Selection Screen
+
+Status: complete
+Notes: Removed the obsolete Houses/Boxes mode-selection page and its dedicated styles. The canonical /letsFind route now renders the existing Boxes options directly, legacy /letsFind/boxes and /letsFind/setup URLs redirect there, and Boxes completion or invalid-session navigation returns to /letsFind while preserving settings on the explicit completion path.
+
+We no longer need the Houses mode within Let's Find.
+
+Boxes will now be the only activity available in Let's Find, so the intermediate mode selection screen is no longer necessary.
+
+When users click Let's Find from the homepage, they should go directly to the Boxes options screen.
+
+Requirements:
+
+1. Remove Houses Mode
+- Remove all references to Houses within the Let's Find activity.
+- Remove the Houses navigation pod.
+- Remove any Coming Soon labels or placeholders associated with Houses.
+- Remove unused Houses-specific components, routes, styles and configuration.
+- Remove any unused imports or assets referenced exclusively by the Houses mode.
+- Do not remove shared components or assets used elsewhere in the application.
+- Do not retain unnecessary code intended for a future Houses mode.
+
+2. Remove Mode Selection Screen
+- Remove the existing Let's Find mode selection screen.
+- Users should no longer need to choose between Houses and Boxes.
+- Remove the grid containing the two mode options.
+- Remove any components or styling used exclusively by this screen.
+- Do not replace it with another intermediate navigation page.
+
+3. Update Let's Find Routing
+- The existing /letsFind route should now display the Boxes options screen directly.
+- Keep the existing /letsFind/boxes route working for compatibility.
+- Both routes should provide access to the same Boxes configuration functionality.
+- Prefer using /letsFind as the canonical route.
+- If appropriate, redirect /letsFind/boxes to /letsFind.
+- Avoid duplicating the Boxes options page component.
+- Remove any Houses-specific routes.
+
+4. Update Homepage Navigation
+- Preserve the existing Let's Find pod on the homepage.
+- Clicking Let's Find must navigate directly to the Boxes options screen.
+- Do not display the previous mode selection screen.
+- Preserve the homepage pod's existing icon, styling and hover effects.
+
+5. Update Activity Navigation
+- Update the "Back to Let's Find" button displayed after successfully completing a Boxes game.
+- This button should navigate to /letsFind.
+- It should return the user directly to the Boxes options screen.
+- Do not navigate to the removed mode selection screen.
+- Preserve the previous game settings where practical.
+- Keep the "Back to Home" button navigating to /.
+- Preserve the existing Play Again functionality.
+
+6. Simplify Activity Structure
+- Remove unnecessary mode-selection state.
+- Remove any logic that checks whether Houses or Boxes is selected.
+- Boxes should now be treated as the default and only Let's Find activity.
+- Keep the existing Boxes gameplay implementation.
+- Avoid unnecessary changes to its internal components.
+- Keep the code structure clean and suitable for future maintenance.
+
+7. Preserve Existing Functionality
+- Preserve all Boxes options:
+  - Amount of Boxes.
+  - Objects.
+  - Box Names.
+- Preserve all existing option defaults.
+- Preserve all animations.
+- Preserve object and box randomisation.
+- Preserve the shuffled object selection system.
+- Preserve the restrictions on consecutive box positions and colours.
+- Preserve object image sizing and container constraints.
+- Preserve the global Options menu.
+- Preserve the Let's Find white and light blue theme.
+- Preserve keyboard, mouse, touchscreen and TV remote functionality.
+
+8. Cleanup
+- Remove unused imports, components and styles related to Houses and mode selection.
+- Remove references to the removed mode from navigation configuration.
+- Update any relevant route definitions.
+- Update existing tests that expect the old mode selection screen.
+- Ensure no broken links remain.
+- Do not modify unrelated activities.
+- Follow the project's AGENTS.md rollback and change-tracking rules.
+
+Acceptance Criteria:
+- Houses is completely removed from the Let's Find interface.
+- No Houses navigation pods or placeholders remain.
+- The mode selection screen no longer appears.
+- Clicking Let's Find on the homepage opens the Boxes options directly.
+- /letsFind displays the Boxes options screen.
+- /letsFind/boxes remains functional or redirects to /letsFind.
+- "Back to Let's Find" returns to the Boxes options screen.
+- "Back to Home" continues returning to /.
+- Play Again continues working correctly.
+- All Boxes options and gameplay functionality remain unchanged.
+- The Let's Find theme remains intact.
+- No unused Houses-specific code or broken routes remain.
+
+
+## Bug-013 - Add Start Buttons Above and Below Options Throughout the Application
+
+Status: complete
+Notes: Added matching lower Start buttons to the Let’s Count, Let’s Spell category and Let’s Find options screens using each screen’s existing Button styling and start handler. Each screen now applies a synchronous one-shot guard plus disabled state to both Start buttons to prevent duplicate launches; Let’s Count resets the guard when returning to options, and the new spacing preserves the existing responsive layouts and image grid.
+
+Currently, the activity options screens display a single Start button above their configuration options.
+
+I want all activity options screens to have two Start buttons: one above the options and another below them.
+
+This change should apply consistently to Let's Find, Let's Spell and Let's Count.
+
+Requirements:
+
+1. Start Button Placement
+- Display a Start button above the options section.
+- Display an identical Start button below the options section.
+- Both buttons must be visible on the same options screen.
+- Keep the options panel and its contents between the two buttons.
+- Maintain appropriate spacing above and below the options.
+- Centre both buttons horizontally.
+- Do not remove or replace the existing top Start button.
+
+2. Affected Activities
+
+Let's Count:
+- Display "Start Counting" above the options panel.
+- Display another "Start Counting" below the options panel.
+- Both buttons must start the counting sequence.
+
+Let's Spell:
+- On each category options page, display "Start" above the selection controls.
+- Display another "Start" below the selection controls.
+- The lower button should appear between the options and the image selection grid.
+- Both buttons must start the spelling sequence using the currently selected settings.
+- Preserve the ability to select individual items from the image grid.
+
+Let's Find:
+- Display "Start" above the Boxes options panel.
+- Display another "Start" below the options panel.
+- Both buttons must start the Boxes activity using the currently selected settings.
+- This applies to the updated /letsFind options page established in Bug-012.
+
+3. Shared Button Styling
+- Use the existing reusable Button component.
+- Both buttons must use the primary variant.
+- Both buttons should have identical styling and dimensions within their respective activity.
+- Preserve the existing larger Start button styling where applicable.
+- Do not introduce separate custom styling for the second button.
+- Use shared SCSS classes or reusable layout styles where appropriate.
+
+4. Button Behaviour
+- Both Start buttons must trigger exactly the same action.
+- Both must use the current selected options.
+- Changing an option must affect both buttons equally.
+- Do not maintain separate configuration states for the two buttons.
+- Starting an activity must happen only once per interaction.
+- Prevent duplicate starts caused by rapid clicking or keyboard activation.
+- Both buttons should become unavailable once the activity has started.
+
+5. Responsive Layout
+- Maintain the existing responsive options layouts.
+- Keep both buttons centred.
+- Ensure the additional button does not cause horizontal overflow.
+- Preserve comfortable spacing on mobile, tablet, desktop and television screens.
+- Keep the options screens as compact as practical.
+- Allow vertical scrolling on smaller screens rather than clipping controls.
+- Do not reduce the size of the buttons simply to accommodate both.
+
+6. Accessibility
+- Both buttons must be keyboard accessible.
+- Preserve natural Tab order from top to bottom.
+- Both buttons must support Enter and Space activation.
+- Maintain visible focus indicators.
+- Preserve existing TV remote navigation.
+- Ensure both buttons have meaningful accessible labels.
+
+7. Preserve Existing Functionality
+- Do not change any activity options or their default values.
+- Do not modify counting, spelling or finding gameplay.
+- Do not change existing activity animations.
+- Do not modify the image selection grids.
+- Preserve the global Options menu.
+- Preserve existing themes and typography.
+- Do not change the existing Back to Home navigation controls.
+- Avoid duplicating activity start logic.
+
+8. Reusability
+- Where appropriate, create a reusable options-page layout pattern supporting Start buttons above and below the options.
+- Reuse the existing button components and styling.
+- Keep both Start buttons connected to the same activity start handler.
+- Avoid implementing separate start logic for each button.
+- Apply the same layout principle to future activity options screens where appropriate.
+
+Acceptance Criteria:
+- Let's Count displays Start Counting above and below its options.
+- Let's Spell category pages display Start above and below their selection controls.
+- Let's Find displays Start above and below its options.
+- Both buttons on each page have identical styling.
+- Both buttons start their respective activities correctly.
+- Both buttons use the current selected settings.
+- Rapid interactions cannot start duplicate activities.
+- The Let's Spell image selection grid remains functional.
+- All options retain their existing defaults and behaviour.
+- Responsive layouts continue working correctly.
+- Keyboard and TV remote navigation remain functional.
+- No existing gameplay or animations are affected.
+
+
+## Bug-014 - Move Lower Start Button Below Let's Spell Items Grid
+
+Status: complete
+Notes: Moved the existing lower Let’s Spell Start button after the complete items grid and updated its adjacent spacing rule. The top button, shared handler, duplicate-start guard, individual item selection, responsive grid and other activity layouts remain unchanged.
+
+Bug-013 was mostly implemented correctly. However, on the Let's Spell category pages, the second Start button has been positioned above the items grid.
+
+The second Start button should instead appear below the entire items grid.
+
+Requirements:
+
+1. Start Button Placement
+- Keep the existing top Start button in its current position above the options.
+- Move the lower Start button so it appears beneath the lets-spell-category__items section.
+- The lower Start button must appear after all item pods in the grid.
+- Do not place the lower Start button between the options panel and the items grid.
+
+2. Correct Page Layout
+
+The Let's Spell category page should follow this order:
+
+- Top Start button.
+- Selection options (All, 3 Random, 5 Random).
+- Shuffle checkbox.
+- Let's Spell items grid (lets-spell-category__items).
+- Bottom Start button.
+- Any existing navigation controls.
+
+3. Button Styling
+- Both Start buttons must continue using the existing primary Button component.
+- Both buttons must have identical styling and dimensions.
+- Keep the lower Start button horizontally centred.
+- Maintain appropriate spacing between the items grid and the lower button.
+- Reuse existing button styles without introducing unnecessary overrides.
+
+4. Button Functionality
+- Both Start buttons must trigger the same activity start handler.
+- Both buttons must use the currently selected options.
+- Preserve all existing selection behaviour.
+- Do not change individual item selection from the image grid.
+- Prevent duplicate activity starts.
+
+5. Responsive Layout
+- The lower Start button must remain below the entire items grid at all screen sizes.
+- Preserve the existing responsive grid layout.
+- Ensure the button does not overlap any image pods.
+- Allow normal vertical scrolling where necessary.
+- Maintain keyboard and TV remote navigation.
+
+6. Scope
+- This change applies only to Let's Spell category pages.
+- Do not modify Start button placement in Let's Count or Let's Find.
+- Do not change the existing options or gameplay functionality.
+- Preserve all existing styling, animations and navigation.
+
+Acceptance Criteria:
+- The top Start button remains above the options.
+- The items grid appears below the options.
+- The bottom Start button appears below the entire lets-spell-category__items section.
+- Both Start buttons look and behave identically.
+- Individual image pods remain clickable.
+- Responsive layouts continue working correctly.
+- Let's Count and Let's Find remain unchanged.
+
+
+## Bug-015 - Limit Let's Spell Items Grid to a Maximum of 5 Columns
+
+Status: complete
+Notes: Reduced only the centred Let’s Spell items-grid container cap to 60rem. Combined with the existing 10rem responsive minimum and unchanged gaps, this limits wide layouts to five balanced columns while retaining automatic four-to-one-column collapse, pod sizing, item interactions and the lower Start-button position.
+
+On the Let's Spell category options pages, the grid within .lets-spell-category__items currently allows too many items to appear on a single row.
+
+I want to limit the grid to a maximum of 5 items per row while preserving its responsive behaviour.
+
+Requirements:
+
+1. Maximum Grid Columns
+- Set the maximum number of columns in .lets-spell-category__items to 5.
+- Never display more than 5 items on a single row.
+- When sufficient horizontal space is available, display exactly 5 items per row.
+- Since each category contains 10 items, this should result in 2 rows of 5 items on sufficiently wide screens.
+- Do not change the number of items in any category.
+
+2. Responsive Behaviour
+- Maintain the existing responsive grid layout.
+- Reduce the number of columns automatically when the available width becomes smaller.
+- Allow 4, 3, 2 or 1 columns depending on the viewport width.
+- Do not force 5 columns when there is insufficient space.
+- Ensure image pods remain appropriately sized and readable.
+- Prevent horizontal overflow.
+- Maintain consistent spacing between rows and columns.
+
+3. Grid Alignment
+- Keep the grid horizontally centred within its parent container.
+- Maintain consistent pod dimensions.
+- Preserve the existing spacing and alignment between pods.
+- Do not stretch individual pods excessively on wider screens.
+- Use an appropriate maximum container width if necessary to maintain a balanced layout.
+
+4. Preserve Existing Styling
+- Keep the existing frosted-glass styling.
+- Preserve the hover glint animations.
+- Preserve image sizing and aspect ratios.
+- Keep all images centred within their pods.
+- Do not display item names beneath or inside the pods.
+- Preserve existing focus states and selection effects.
+
+5. Preserve Existing Functionality
+- All item pods must remain clickable.
+- Clicking an item must continue to start its individual spelling activity.
+- Do not change the All, 3 Random, 5 Random or Shuffle options.
+- Preserve the top Start button.
+- Keep the bottom Start button below the entire items grid, as established in Bug-014.
+- Do not modify any spelling animations or gameplay functionality.
+- Preserve keyboard and TV remote navigation.
+
+6. Implementation
+- Update the existing .lets-spell-category__items SCSS rules.
+- Prefer CSS Grid with responsive column definitions.
+- Avoid introducing unnecessary JavaScript for layout calculations.
+- Keep the maximum column count configurable through the existing styling structure where appropriate.
+- Do not modify unrelated grids elsewhere in the application.
+
+Acceptance Criteria:
+- The items grid never displays more than 5 columns.
+- On sufficiently wide screens, all 10 items display in 2 rows of 5.
+- The number of columns decreases appropriately on smaller screens.
+- The grid remains horizontally centred.
+- Image pods retain their existing appearance and functionality.
+- No horizontal scrolling or overlapping occurs.
+- The bottom Start button remains below the complete grid.
+- Other application grids remain unchanged.
+ 
+## Bug-016 - Automatically Animate Image When Let's Spell Starts
+
+Status: complete
+Notes: Each Let’s Spell item now initializes directly in the existing image-only reveal stage with the image entrance transition running, including after Next. The animation lock discards progression input until entrance completes, manual input then starts with the first letter, and backward navigation stops at the visible image; the obsolete blank-stage item timer was removed.
+
+Currently, when starting a Let's Spell activity, the screen initially appears blank and waits for the user to click before the item's image animates into view.
+
+I want the image to animate in automatically as soon as the activity begins, without requiring any user interaction.
+
+This should also apply when moving to the next item in a multi-item sequence.
+
+Requirements:
+
+1. Automatic Image Entrance
+- When a Let's Spell activity starts, immediately begin the image entrance animation.
+- Do not wait for the user to click or press a key.
+- Remove the initial blank waiting stage.
+- Preserve the existing image entrance animation, including its growth and fade-in effects.
+- Do not change the animation duration or easing.
+- The image should appear automatically whether the activity was started using a Start button or by selecting an individual item from the grid.
+
+2. Multi-Item Sequences
+- When the user selects Next after completing an item, automatically begin the next item's image entrance animation.
+- Do not display a blank screen that requires another click.
+- Reset the previous item's letters and completion controls before displaying the next image.
+- Ensure the previous item's content has been cleared before the new image animates in.
+- Preserve the existing item order and randomisation settings.
+
+3. Letter Progression
+- Only the image entrance should happen automatically.
+- Once the image has finished animating, wait for the user to advance.
+- The first valid click or Right Arrow press should reveal the first letter.
+- Subsequent interactions should continue revealing one letter at a time.
+- Preserve the existing letter animations.
+- Do not automatically reveal any letters.
+- The final additional interaction should still reveal the completion buttons.
+
+4. Backward Navigation
+- Preserve existing backward navigation using Left Arrow and right-click.
+- Users should still be able to hide previously revealed letters one at a time.
+- When all letters have been hidden, the image should remain visible.
+- The image-only stage should now be the earliest stage of the activity.
+- Do not allow backward navigation to return to the removed blank stage.
+- Further backward input at the image-only stage should do nothing.
+
+5. Animation and Input Handling
+- Ignore progression inputs while the automatic image entrance animation is running.
+- Do not queue clicks or key presses made during the animation.
+- Once the image entrance finishes, enable normal manual letter progression.
+- Prevent rapid interactions from skipping letters.
+- Ensure the image entrance animation runs exactly once per item.
+- Avoid duplicate animations caused by React re-renders or state updates.
+
+6. Preserve Existing Layout
+- Keep the image horizontally centred.
+- Preserve existing responsive image sizing and maximum dimensions.
+- Maintain the fixed layout regions for the image, letters and completion buttons.
+- Do not introduce layout shifts when the image appears.
+- Preserve the existing Let's Spell colour theme and typography.
+
+7. Global Menu Compatibility
+- Keep the global Options menu accessible during the image entrance.
+- Opening the menu must not trigger letter progression.
+- Closing the menu must not restart the image entrance animation.
+- Navigating away must properly clean up active animations and event listeners.
+
+8. Scope
+- Apply this change only to Let's Spell.
+- Do not change the manual progression behaviour of Let's Count or Let's Find.
+- Do not change the category selection screens or Start buttons.
+- Do not introduce automatic letter progression.
+
+Acceptance Criteria:
+- Starting a Let's Spell activity automatically animates in the first image.
+- Selecting an individual item automatically animates in its image.
+- Clicking Next automatically animates in the next item's image.
+- No user interaction is required to reveal the image.
+- The first valid interaction after image entrance reveals the first letter.
+- All subsequent letters remain manually controlled.
+- Backward navigation stops at the image-only stage.
+- The image entrance animation runs exactly once per item.
+- No blank waiting screen appears between items.
+- Existing animations, responsive layout and navigation remain unchanged.

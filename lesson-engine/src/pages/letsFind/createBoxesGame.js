@@ -252,7 +252,7 @@ function createObjectEntrancePosition(previousGame, random) {
 }
 
 export function createBoxesGame(settings, previousGame = null, random = Math.random) {
-  const { boxCount, objectCategory } = settings;
+  const { boxCount, boxNames = true, objectCategory } = settings;
   const category = getFindObjectCategory(objectCategory);
 
   if (!category) {
@@ -304,6 +304,7 @@ export function createBoxesGame(settings, previousGame = null, random = Math.ran
     roundId,
     settings: {
       boxCount,
+      boxNames,
       objectCategory,
     },
     object,

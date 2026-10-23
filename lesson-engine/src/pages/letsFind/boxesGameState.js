@@ -3,6 +3,7 @@ export const BOXES_GAME_PHASES = Object.freeze({
   INTRODUCTION_READY: 'introduction-ready',
   INTRODUCTION_EXITING: 'introduction-exiting',
   BOXES_ENTERING: 'boxes-entering',
+  BOX_LABELS_ENTERING: 'box-labels-entering',
   BOXES_READY: 'boxes-ready',
   START_EXITING: 'start-exiting',
   OBJECT_ENTERING: 'object-entering',
@@ -27,6 +28,7 @@ const ANIMATED_PHASES = new Set([
   BOXES_GAME_PHASES.INTRODUCTION_ENTERING,
   BOXES_GAME_PHASES.INTRODUCTION_EXITING,
   BOXES_GAME_PHASES.BOXES_ENTERING,
+  BOXES_GAME_PHASES.BOX_LABELS_ENTERING,
   BOXES_GAME_PHASES.START_EXITING,
   BOXES_GAME_PHASES.OBJECT_ENTERING,
   BOXES_GAME_PHASES.OBJECT_WIGGLING,
@@ -48,6 +50,7 @@ const COMPLETED_PHASE_TRANSITIONS = Object.freeze({
     BOXES_GAME_PHASES.INTRODUCTION_READY,
   [BOXES_GAME_PHASES.INTRODUCTION_EXITING]: BOXES_GAME_PHASES.BOXES_ENTERING,
   [BOXES_GAME_PHASES.BOXES_ENTERING]: BOXES_GAME_PHASES.BOXES_READY,
+  [BOXES_GAME_PHASES.BOX_LABELS_ENTERING]: BOXES_GAME_PHASES.BOXES_READY,
   [BOXES_GAME_PHASES.START_EXITING]: BOXES_GAME_PHASES.OBJECT_ENTERING,
   [BOXES_GAME_PHASES.OBJECT_ENTERING]: BOXES_GAME_PHASES.OBJECT_WIGGLING,
   [BOXES_GAME_PHASES.OBJECT_WIGGLING]: BOXES_GAME_PHASES.BOXES_HIDING_OBJECT,
@@ -77,6 +80,7 @@ export function createBoxesGameState(game) {
       object: { ...game.object },
       objectCategory: game.settings.objectCategory,
       boxCount: game.settings.boxCount,
+      boxNames: game.settings.boxNames,
       boxes: game.boxes.map((box) => ({ ...box })),
       correctBoxId: game.correctBoxId,
       objectEntrancePosition: { ...game.objectEntrancePosition },
@@ -97,7 +101,10 @@ export function boxesGameReducer(state, action) {
         return state;
       }
 
-      const nextPhase = COMPLETED_PHASE_TRANSITIONS[state.phase];
+      const nextPhase =
+        state.phase === BOXES_GAME_PHASES.BOXES_ENTERING && state.boxNames
+          ? BOXES_GAME_PHASES.BOX_LABELS_ENTERING
+          : COMPLETED_PHASE_TRANSITIONS[state.phase];
 
       if (!nextPhase) {
         return state;

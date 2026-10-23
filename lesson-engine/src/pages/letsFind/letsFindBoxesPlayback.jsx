@@ -22,6 +22,7 @@ function isValidGame(game) {
     categoryObject.word !== game.object.displayName ||
     categoryObject.image !== game.object.image ||
     !SUPPORTED_BOX_COUNTS.includes(boxCount) ||
+    typeof game.settings.boxNames !== 'boolean' ||
     !Array.isArray(boxes) ||
     boxes.length !== boxCount
   ) {
@@ -97,7 +98,7 @@ function BoxesGameSession({ game }) {
       }}
       onBackToLetsFind={() => {
         runCompletionAction(() =>
-          navigate('/letsFind/boxes', {
+          navigate('/letsFind', {
             state: { settings: game.settings },
           }),
         );
@@ -121,7 +122,7 @@ function LetsFindBoxesPlayback() {
   const game = location.state?.game;
 
   if (!isValidGame(game)) {
-    return <Navigate replace to="/letsFind/boxes" />;
+    return <Navigate replace to="/letsFind" />;
   }
 
   return <BoxesGameSession key={game.roundId} game={game} />;

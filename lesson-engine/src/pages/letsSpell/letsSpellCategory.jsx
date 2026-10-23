@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/button/button';
 import NavigationPod from '../../components/navigationPod/navigationPod';
@@ -20,8 +20,10 @@ function LetsSpellCategory() {
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const handleDirectionalNavigation = useDirectionalNavigation();
+  const [isStarting, setIsStarting] = useState(false);
   const [selectionMode, setSelectionMode] = useState(PLAYBACK_MODES.ALL);
   const [shuffle, setShuffle] = useState(true);
+  const startRequestedRef = useRef(false);
   const category = SPELLING_CATEGORIES.find(({ id }) => id === categoryId);
 
   if (!category) {
@@ -29,6 +31,12 @@ function LetsSpellCategory() {
   }
 
   const beginPlayback = (items, playbackMode) => {
+    if (startRequestedRef.current) {
+      return;
+    }
+
+    startRequestedRef.current = true;
+    setIsStarting(true);
     navigate(`/letsSpell/${category.id}/play`, {
       state: {
         categoryId: category.id,
@@ -64,6 +72,7 @@ function LetsSpellCategory() {
         <Button
           className="lets-spell-category__start"
           data-directional-navigation-item=""
+          disabled={isStarting}
           onClick={handleStart}
           size="large"
         >
@@ -129,6 +138,18 @@ function LetsSpellCategory() {
           </NavigationPod>
         ))}
       </section>
+
+      <div className="lets-spell-category__start-row">
+        <Button
+          className="lets-spell-category__start"
+          data-directional-navigation-item=""
+          disabled={isStarting}
+          onClick={handleStart}
+          size="large"
+        >
+          Start
+        </Button>
+      </div>
 
       <div className="lets-spell-category__back">
         <Button

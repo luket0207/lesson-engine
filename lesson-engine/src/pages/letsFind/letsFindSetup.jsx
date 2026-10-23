@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/button/button';
 import useDirectionalNavigation from '../../hooks/useDirectionalNavigation';
@@ -8,6 +8,7 @@ import './letsFindSetup.scss';
 
 const DEFAULT_SETTINGS = {
   boxCount: 3,
+  boxNames: true,
   objectCategory: 'animals',
 };
 
@@ -16,6 +17,10 @@ function getInitialSettings(routeSettings) {
     boxCount: SUPPORTED_BOX_COUNTS.includes(routeSettings?.boxCount)
       ? routeSettings.boxCount
       : DEFAULT_SETTINGS.boxCount,
+    boxNames:
+      typeof routeSettings?.boxNames === 'boolean'
+        ? routeSettings.boxNames
+        : DEFAULT_SETTINGS.boxNames,
     objectCategory: FIND_OBJECT_CATEGORIES.some(
       (category) => category.id === routeSettings?.objectCategory,
     )
@@ -28,9 +33,11 @@ function LetsFindSetup() {
   const location = useLocation();
   const navigate = useNavigate();
   const handleDirectionalNavigation = useDirectionalNavigation();
+  const [isStarting, setIsStarting] = useState(false);
   const [settings, setSettings] = useState(() =>
     getInitialSettings(location.state?.settings),
   );
+  const startRequestedRef = useRef(false);
 
   const updateSetting = (name, value) => {
     setSettings((currentSettings) => ({
@@ -40,6 +47,12 @@ function LetsFindSetup() {
   };
 
   const handleStart = () => {
+    if (startRequestedRef.current) {
+      return;
+    }
+
+    startRequestedRef.current = true;
+    setIsStarting(true);
     navigate('/letsFind/boxes/play', {
       state: { game: createBoxesGame(settings) },
     });
@@ -54,6 +67,7 @@ function LetsFindSetup() {
       <div className="lets-find-boxes-options__start">
         <Button
           data-directional-navigation-item=""
+          disabled={isStarting}
           onClick={handleStart}
           size="large"
         >
@@ -126,7 +140,36 @@ function LetsFindSetup() {
             })}
           </div>
         </div>
+
+        <div className="lets-find-boxes-options__group">
+          <label
+            className="lets-find-boxes-options__checkbox"
+            htmlFor="box-names"
+          >
+            <input
+              checked={settings.boxNames}
+              data-directional-navigation-item=""
+              id="box-names"
+              onChange={(event) =>
+                updateSetting('boxNames', event.target.checked)
+              }
+              type="checkbox"
+            />
+            Box Names
+          </label>
+        </div>
       </section>
+
+      <div className="lets-find-boxes-options__start">
+        <Button
+          data-directional-navigation-item=""
+          disabled={isStarting}
+          onClick={handleStart}
+          size="large"
+        >
+          Start
+        </Button>
+      </div>
 
       <div className="lets-find-boxes-options__back">
         <Button data-directional-navigation-item="" to="/" variant="secondary">
