@@ -1,0 +1,957 @@
+
+# Epic-007 - Mobile Responsiveness Improvements
+
+## Overview
+
+This epic focuses on fixing three mobile responsiveness issues in the Let's Spell and Let's Find activities.
+
+The application already works correctly on desktop, and the existing desktop appearance must be preserved.
+
+A previous attempt at this epic was rolled back because the fixes introduced several new bugs.
+
+The previous implementation suffered from:
+- Let's Spell images being clipped by the spelling word container.
+- Let's Spell images not shrinking sufficiently on mobile.
+- Let's Spell images being moved too far down the page.
+- Let's Spell images becoming even more severely clipped after layout changes.
+- Let's Find thumbs-down icons remaining oversized on mobile.
+- Let's Find thumbs-down icons becoming oversized on desktop after the mobile fix.
+- Let's Find completion text overlapping its navigation buttons.
+
+The previous attempt was rolled back, and the following requirements constitute a fresh implementation.
+
+IMPORTANT:
+Do not restore or repeat the previous implementation without examining why it failed.
+
+The primary goal is to make the existing mobile interface work correctly without introducing any visual or functional regressions on desktop.
+
+Follow AGENTS.md and all existing project conventions.
+
+
+## Feature-001 - Fix Let's Spell Image Resizing and Clipping on Mobile
+
+Status: complete
+Notes: Mobile clipping was caused by the image's percentage max-height not resolving against the stretched auto-height grid region. The actual image now uses an explicit dynamic-viewport height budget after reserving the word, completion, gaps and padding; sub-400px-high mobile layouts use a scrollable minimum image track. Headless Chrome verified positive gaps, preserved ratios and stable revealed-letter geometry across the required mobile/landscape sizes, while 1366x768 and 1920x1080 retained their original rectangles.
+
+### Problem
+
+In the Let's Spell activity, object images do not fit correctly within the available vertical space on mobile devices.
+
+Although the images already shrink to some extent, the bottom of the image is visibly cut off.
+
+The clipping appears to be caused by the element containing the spelling word animation beneath the image.
+
+Previous attempts to fix this problem failed because:
+- The image did not shrink enough.
+- The spelling word container continued overlapping or clipping the image.
+- Layout changes pushed the image unnecessarily far down the page.
+- The image remained partially hidden despite changes to maximum dimensions.
+
+This feature must resolve the underlying layout problem rather than simply adding another image size restriction.
+
+### Requirements
+
+1. Desktop Preservation
+
+Before making any changes:
+- Inspect the current desktop Let's Spell gameplay layout.
+- Identify how the image and word containers are positioned.
+- Identify the current desktop image dimensions.
+- Identify the current desktop vertical alignment.
+- Identify the current spacing between the image and letters.
+- Identify the current animation behaviour.
+
+Treat the existing desktop layout as the reference implementation.
+
+Do not change:
+- Desktop image positioning.
+- Desktop image dimensions.
+- Desktop container positioning.
+- Desktop letter positioning.
+- Desktop spacing.
+- Desktop animation timing.
+- Desktop animation effects.
+
+Mobile changes should be isolated through appropriate responsive styles.
+
+Do not restructure working desktop layout rules unnecessarily.
+
+2. Investigate the Actual Clipping
+
+Before implementing the fix, inspect the rendered mobile layout.
+
+Specifically investigate:
+- The image element.
+- The image's immediate wrapper.
+- The image's ancestor containers.
+- The element containing the spelling letters.
+- The spelling word animation container.
+- The overall gameplay container.
+
+Check:
+- Computed heights.
+- Fixed heights.
+- Minimum heights.
+- Maximum heights.
+- Overflow settings.
+- Flexbox sizing.
+- Grid sizing.
+- Absolute positioning.
+- Positioning offsets.
+- Margins and padding.
+- CSS transforms.
+- Stacking contexts.
+- Animation transforms.
+
+Determine whether:
+- The image is physically extending into the word container.
+- The word container is positioned over the image.
+- An ancestor container is clipping the image.
+- The image is being rendered larger than the available space.
+- The image wrapper has an incorrectly calculated height.
+- The image animation is changing its final dimensions or position.
+
+IMPORTANT:
+The word animation container must not cover or clip the image.
+
+Do not treat this as a z-index problem unless investigation confirms that stacking order is the actual cause.
+
+Do not attempt to solve the issue simply by moving the image upwards or adding extra margins.
+
+3. Establish Separate Mobile Layout Regions
+
+On mobile screens, organise the gameplay into three distinct vertical regions:
+
+Region 1:
+Object image.
+
+Region 2:
+Spelling letters.
+
+Region 3:
+Completion controls.
+
+The regions must remain in this order.
+
+Requirements:
+- Each region must have clearly defined boundaries.
+- The image region must sit above the spelling region.
+- The spelling region must have sufficient allocated height.
+- The completion controls must have their own allocated space.
+- The regions must not overlap.
+- No element should cover another region's content.
+- The spelling container must not obscure the image.
+- Letter animations must remain within their allocated region.
+- Displaying completion controls must not reposition the image.
+
+Use an appropriate mobile-specific Flexbox or CSS Grid layout.
+
+Prefer normal document flow where practical.
+
+Avoid absolute positioning between these primary layout regions if it causes overlap.
+
+4. Reserve Space for the Spelling Word First
+
+This is a critical requirement.
+
+The existing problem has persisted because the object image has been allowed to occupy space needed by the spelling letters.
+
+The mobile layout must work in the opposite direction.
+
+First:
+- Reserve the space required for the spelling word.
+- Account for the existing responsive letter font size.
+- Account for the height of the letter animation.
+- Account for necessary spacing.
+- Preserve the existing stationary letter slots.
+
+Then:
+- Determine how much vertical space remains available for the image.
+- Shrink the image to fit inside that remaining space.
+
+The image must adapt to the word container.
+
+The word container must not overlap the image to accommodate an oversized image.
+
+Do not reduce the spelling font size unnecessarily.
+
+5. Actual Image Scaling
+
+Apply responsive sizing to the actual rendered image element.
+
+Requirements:
+- Preserve the original aspect ratio.
+- Scale the width and height together.
+- Never stretch the image.
+- Never crop the image.
+- Never distort the image.
+- Never enlarge an image beyond its natural dimensions.
+- Preserve the existing absolute maximum dimensions of 750px by 750px.
+- Respect the available width of the image container.
+- Respect the available height of the image container.
+- Use whichever constraint is more restrictive.
+- Keep the image horizontally centred.
+- Keep the entire image visible.
+
+Ensure that height restrictions actually work.
+
+For example:
+- Do not depend on max-height: 100% when the parent has no definite height.
+- Correct the containing layout so height constraints can be resolved.
+- Allow flex/grid children to shrink where necessary.
+- Use min-height: 0 where appropriate.
+- Avoid inherited minimum sizes forcing images beyond their allocated region.
+
+The final rendered image must fit completely inside the available image region.
+
+6. Correct Vertical Positioning
+
+Previous fixes caused the image to appear much lower than intended.
+
+Do not repeat this behaviour.
+
+Requirements:
+- Keep images towards the upper portion of the gameplay area.
+- Avoid excessive empty space above images.
+- Do not vertically centre the image within the entire viewport if this pushes it down.
+- Do not introduce large top margins.
+- Do not use arbitrary translation offsets to compensate for incorrect container sizing.
+- Centre the image horizontally within its own region.
+- Maintain a sensible, consistent gap between the image and spelling letters.
+
+The image should shrink to fit the space rather than being pushed down into the spelling word.
+
+7. Prevent Word Container Clipping
+
+The spelling word container must not cause a hard cut across the bottom of the image.
+
+Requirements:
+- Ensure the word region starts below the visible image.
+- Remove unintended overlap between image and word regions.
+- Check whether overflow clipping on the word container or its ancestors extends into the image region.
+- Correct conflicting positioning or overflow rules.
+- Ensure no background or stacking layer from the word region covers the image.
+- Preserve clipping only where legitimately required for the letter animations themselves.
+
+Do not use z-index alone to conceal overlapping layout regions.
+
+Do not use overflow: hidden on the image region to hide an image that is too large.
+
+The actual content geometry must be correct.
+
+8. Preserve Image Entrance Animation
+
+Images must continue animating in automatically when each item begins.
+
+Preserve:
+- Existing fade-in animation.
+- Existing growth animation.
+- Existing timing.
+- Existing easing.
+- Automatic image entrance.
+- Automatic image entrance when moving to the next item.
+
+The animation must use the responsive image dimensions as its final size.
+
+Ensure:
+- Animation transforms do not override the image's final responsive dimensions.
+- The image does not jump when its entrance animation finishes.
+- The image never remains permanently enlarged.
+- The animation does not move the image into the spelling word region.
+
+Keep the animation visually identical on desktop.
+
+9. Preserve Spelling Letters
+
+Do not modify the existing spelling mechanics.
+
+Preserve:
+- Manual letter-by-letter progression.
+- Existing letter rotation animations.
+- Existing letter growth and fade effects.
+- Fixed letter positions.
+- Backward navigation.
+- Multiword spelling behaviour.
+- Completion controls.
+
+Revealing letters must not:
+- Move the image.
+- Resize the image.
+- Move the word container.
+- Change the allocated layout regions.
+
+All spelling positions should remain stable throughout the activity.
+
+10. Viewport Responsiveness
+
+Support mobile screens with different heights and widths.
+
+Account for:
+- Mobile browser toolbars.
+- Dynamic viewport height.
+- The persistent Home button.
+- Safe-area insets where relevant.
+- Portrait orientation.
+- Landscape orientation.
+
+Use dynamic viewport measurements where appropriate.
+
+On unusually short screens:
+- Reduce the available image size further.
+- Maintain the separation between image and word regions.
+- If the viewport is too short to accommodate all content at usable sizes, allow vertical scrolling rather than overlapping or clipping content.
+
+Do not introduce unnecessary scrolling on normal desktop layouts.
+
+11. Different Image Types
+
+Verify correct behaviour for:
+- Square images.
+- Portrait images.
+- Landscape images.
+- Small natural-resolution images.
+- Large natural-resolution images.
+
+Test several categories, including:
+- Animals.
+- Food.
+- Sports.
+- Clothes.
+
+Include short and long spelling words.
+
+Test examples:
+- Cat.
+- Bread.
+- Swimming.
+- Ping Pong.
+
+12. Implementation Constraints
+
+- Do not simply append additional contradictory media queries.
+- Inspect existing responsive rules and consolidate conflicting declarations.
+- Keep one clear source of truth for mobile image sizing.
+- Keep one clear source of truth for mobile vertical layout.
+- Avoid modifying global image styles.
+- Avoid modifying unrelated shared components.
+- Do not add JavaScript calculations unless CSS cannot reliably satisfy the layout requirements.
+- If JavaScript measurements are unavoidable, keep them scoped to Let's Spell and ensure they update correctly when the viewport changes.
+- Preserve all existing desktop styles.
+
+13. Required Verification
+
+Before considering the feature complete, inspect the actual rendered layout.
+
+Check the image's visible bounding rectangle and the spelling word region's bounding rectangle.
+
+The following conditions must be satisfied:
+- The image's visible bottom edge is above the spelling region's top edge.
+- A visible gap remains between the image and spelling letters.
+- The image's top edge is within its allocated region.
+- The image does not extend outside the horizontal viewport.
+- The image's proportions remain correct.
+- The image is not unnecessarily low on the screen.
+- The image is not clipped by an ancestor.
+- The same conditions remain true after all letters are revealed.
+
+Where animation transforms temporarily change bounding rectangles, inspect both the completed animation state and the intended animation movement.
+
+Test mobile viewports including:
+- 320px wide.
+- 375px wide.
+- 390px wide.
+- 430px wide.
+- Short-height mobile screens.
+- Mobile landscape.
+
+Also test desktop viewports at:
+- 1366x768.
+- 1920x1080.
+
+Compare the desktop appearance with its original state.
+
+### Acceptance Criteria
+
+- Images are fully visible on mobile.
+- Images shrink to fit above spelling letters.
+- The word animation container no longer clips the image.
+- No hard horizontal cut appears across images.
+- Image and spelling regions never overlap.
+- Images do not appear unnecessarily low.
+- There is appropriate spacing between images and words.
+- Portrait, landscape and square images work correctly.
+- Existing image animations work correctly.
+- Letter animations do not affect image placement.
+- Mobile layouts work in portrait and landscape.
+- Desktop layouts remain visually unchanged.
+- Desktop image dimensions remain unchanged.
+- No new clipping or layout regressions are introduced.
+
+
+## Feature-002 - Fix Let's Find Thumbs-Down Icon Responsiveness
+
+Status: complete
+
+Implementation notes: Scoped the actual incorrect-feedback SVG to a 150px desktop/tablet maximum and a 75px phone/short-landscape maximum. The existing centred wrapper retains the two-bounce sequence, with a proportional mobile bounce distance.
+
+### Problem
+
+In Let's Find, selecting an incorrect box displays a thumbs-down icon.
+
+The original icon appears disproportionately large on mobile devices.
+
+In the previous attempt at this epic:
+- The icon initially remained too large on mobile.
+- A later change successfully reduced the mobile size.
+- However, that change accidentally made the desktop icon extremely large.
+
+This feature must explicitly control the icon size on both mobile and desktop.
+
+### Requirements
+
+1. Explicit Size Limits
+
+Use the existing Font Awesome icon:
+
+<FontAwesomeIcon icon={faThumbsDown} />
+
+The intended maximum sizes are:
+
+Desktop:
+150px tall.
+
+Mobile:
+75px tall.
+
+Requirements:
+- Apply these limits to the actual SVG element.
+- Preserve the SVG's aspect ratio.
+- Allow the SVG width to scale naturally.
+- Do not stretch the icon.
+- Do not allow inherited font-size values to enlarge the SVG.
+- Do not allow parent container styling to override its final size.
+- Do not rely on the parent container alone to control the SVG dimensions.
+
+The mobile icon should be approximately 50% of the desktop height.
+
+2. Mobile Behaviour
+
+On mobile devices:
+- Target a maximum icon height of 75px.
+- Scale down further if the available feedback region is smaller.
+- Preserve the SVG aspect ratio.
+- Keep the icon proportional to the object images and boxes.
+- Ensure the icon fits completely inside its allocated container.
+- Prevent horizontal and vertical overflow.
+
+The icon must not appear disproportionately larger than the surrounding objects.
+
+3. Desktop Behaviour
+
+On desktop devices:
+- Preserve the existing 150px target height.
+- Never allow the icon to exceed 150px in its resting state.
+- Preserve the existing desktop positioning.
+- Preserve the existing desktop animation behaviour.
+- Do not introduce unnecessary new scale transforms.
+- Do not change the surrounding box or object image dimensions.
+
+IMPORTANT:
+The desktop size must be explicitly constrained.
+
+Do not assume that removing the mobile restriction will automatically produce the correct desktop size.
+
+4. CSS Implementation
+
+Inspect:
+- Existing Font Awesome icon styling.
+- Inherited font-size values.
+- SVG width and height.
+- Existing class selectors.
+- Parent container sizing.
+- Responsive media queries.
+- Animation transforms.
+
+Establish a single predictable sizing rule for each viewport range.
+
+Avoid:
+- Conflicting width and height declarations.
+- Uncontrolled font-size inheritance.
+- Relative dimensions that unexpectedly scale with large text.
+- Multiple competing SVG size rules.
+- Global changes to all Font Awesome icons.
+
+Keep these sizing rules scoped to the Let's Find incorrect-answer icon.
+
+5. Separate Sizing From Animation
+
+If the existing thumbs-down animation uses transforms:
+- Keep icon sizing separate from its movement animation.
+- Apply the animation to an appropriate wrapper where necessary.
+- Keep the SVG's base dimensions stable.
+- Do not let the animation permanently change its size.
+- Preserve the existing animation timing and easing.
+
+The icon must return to the same intended size after the animation.
+
+6. Preserve Icon Alignment
+
+The icon should continue appearing beneath the incorrectly selected box.
+
+Requirements:
+- Keep the icon horizontally centred beneath the selected box.
+- Preserve vertical alignment with the hidden object's centre.
+- Do not position the icon based on the raised box's temporary location.
+- Use the existing object positioning reference.
+- Preserve alignment for 2, 3 and 4 boxes.
+
+Reducing the icon size must not change its centre point.
+
+7. Preserve Incorrect-Guess Animation
+
+Preserve the existing sequence:
+- The incorrect box rises.
+- The thumbs-down icon appears.
+- The thumbs-down icon bounces up and down twice.
+- The incorrect box lowers.
+- The player may make another guess.
+
+Requirements:
+- Preserve the sequence order.
+- Preserve the number of bounces.
+- Preserve existing animation timing where practical.
+- Keep the motion proportional to the smaller mobile icon.
+- Prevent animation movement from causing clipping.
+- Do not allow multiple overlapping feedback animations.
+
+8. Preserve Existing Functionality
+
+Do not modify:
+- Box entrance animations.
+- Box flipping animations.
+- Object placement.
+- Correct-answer logic.
+- Wrong-answer selection handling.
+- Box colour randomisation.
+- Correct box position randomisation.
+- Box colour labels.
+- Success animations.
+- Global Home navigation.
+
+9. Verification
+
+Test:
+- Mobile portrait.
+- Mobile landscape.
+- Tablet widths.
+- Desktop at 1366x768.
+- Desktop at 1920x1080.
+- Games with 2 boxes.
+- Games with 3 boxes.
+- Games with 4 boxes.
+
+Inspect the actual rendered SVG dimensions.
+
+Confirm:
+- Mobile icon height is no greater than 75px.
+- Desktop icon height is no greater than 150px.
+- The aspect ratio is preserved.
+- The icon does not enlarge unexpectedly during animation.
+- Alignment remains correct.
+
+### Acceptance Criteria
+
+- The thumbs-down icon is appropriately sized on mobile.
+- Mobile maximum height is 75px.
+- Desktop maximum height is 150px.
+- Both sizes are applied directly to the actual SVG.
+- The icon does not inherit unexpectedly large dimensions.
+- The icon remains correctly centred.
+- The existing bounce animation is preserved.
+- The animation does not cause permanent scaling.
+- Games with all available box counts work correctly.
+- The desktop appearance is preserved apart from any correction needed to enforce its original 150px size.
+- No other Font Awesome icons are affected.
+
+
+## Feature-003 - Fix Let's Find Completion Layout on Mobile
+
+Status: complete
+
+Implementation notes: Mobile success holding and completion states use normal image-message-button flow, reserve the stacked button area before fade-in, and enable vertical scrolling only once completion is interactive. Desktop completion positioning remains unchanged.
+
+### Problem
+
+When the player successfully finds the object in Let's Find, the activity displays:
+- The enlarged object image.
+- The message "We found the [Object]!"
+- Three completion buttons.
+
+On smaller mobile screens, the available vertical space is insufficient.
+
+The completion buttons overlap the success message, particularly the Play Again button.
+
+We need to prevent this overlap and allow vertical scrolling when the content cannot fit.
+
+### Requirements
+
+1. Correct Content Order
+
+The completion screen should display its content in this order:
+
+1. Enlarged object image.
+2. "We found the [Object]!" message.
+3. Play Again button.
+4. Back to Let's Find button.
+5. Back to Home button.
+
+The image and message should remain horizontally centred.
+
+The buttons must appear below the success message.
+
+No elements should overlap.
+
+2. Use Normal Document Flow on Mobile
+
+On mobile, the completion content must use a layout that can expand vertically.
+
+Requirements:
+- Place the image, success message and buttons in the correct layout order.
+- Allow the completion container to grow taller than the viewport.
+- Avoid absolute positioning for the buttons if it causes overlap.
+- Avoid fixed-height containers that clip completion content.
+- Keep appropriate gaps between elements.
+- Preserve horizontal centring.
+- Do not force all content to remain visible without scrolling.
+
+The priority is readability rather than forcing everything into one screen.
+
+3. Scrollable Completion State
+
+Allow vertical scrolling when the completed content exceeds the viewport height.
+
+Requirements:
+- Enable scrolling specifically for the completed state.
+- Keep scrolling disabled where appropriate during normal box gameplay.
+- Do not alter box entrance or guessing-stage layouts.
+- Prevent horizontal scrolling.
+- Ensure the final navigation button is fully reachable.
+- Provide appropriate bottom padding.
+- Respect mobile safe-area insets.
+
+Do not allow a fixed-height ancestor or global overflow rule to prevent scrolling.
+
+If a parent or global gameplay container disables overflow, apply the necessary state-specific adjustment so that the completed content can scroll normally.
+
+4. Success Image
+
+Preserve the existing success image animation.
+
+Requirements:
+- Preserve image enlargement.
+- Preserve fade effects.
+- Preserve existing timing.
+- Preserve the maximum dimensions of 600px by 600px.
+- Respect the actual available container dimensions.
+- Preserve the object's aspect ratio.
+- Do not crop or distort the image.
+- Keep the image horizontally centred.
+
+On smaller screens:
+- Scale the image proportionally.
+- Ensure it fits the available width.
+- Allow vertical scrolling if its height contributes to content overflow.
+- Do not make the image unnecessarily tiny simply to fit every button within the viewport.
+
+5. Success Message
+
+Preserve the existing message:
+
+"We found the [Object]!"
+
+Requirements:
+- Preserve DynaPuff.
+- Preserve existing colours.
+- Preserve the existing bounce animation.
+- Preserve existing timing.
+- Keep the message horizontally centred.
+- Allow responsive text sizing.
+- Allow line wrapping when necessary.
+- Prevent text from extending outside the viewport.
+- Keep a visible gap below the message.
+
+The message must never appear behind a button.
+
+6. Completion Buttons
+
+Preserve all three buttons:
+- Play Again.
+- Back to Let's Find.
+- Back to Home.
+
+Requirements:
+- Use the existing shared Button component.
+- Preserve existing primary and secondary styling.
+- Preserve existing button labels.
+- Preserve button functionality.
+- On narrow screens, stack buttons vertically.
+- Maintain consistent spacing between buttons.
+- Keep buttons horizontally centred.
+- Ensure buttons fit within the available width.
+- Preserve accessible touchscreen target sizes.
+
+The Play Again button must appear clearly below the success message.
+
+7. Button Entrance Animation
+
+Preserve the existing completion timing.
+
+The buttons should appear after the existing two-second hold following the completed success message animation.
+
+Requirements:
+- Preserve the existing button fade-in animation.
+- Preserve the delay.
+- Ensure the buttons appear in their final intended positions.
+- Do not position them over the success text while they animate.
+- Avoid sudden movement of the success image or message.
+- Reserve the required button layout space where practical.
+- Keep the success message stable while the buttons appear.
+
+8. Desktop Preservation
+
+The existing desktop completion screen is working correctly.
+
+Requirements:
+- Preserve desktop image dimensions.
+- Preserve desktop success message positioning.
+- Preserve desktop typography.
+- Preserve desktop button layout.
+- Preserve desktop animation timing.
+- Preserve existing desktop alignment.
+- Avoid introducing unnecessary desktop scrolling.
+
+Scope any changes necessary for mobile to mobile-specific styling.
+
+Do not redesign the desktop completion screen.
+
+9. Navigation and Gameplay
+
+Preserve:
+- Play Again using the current selected options.
+- Existing shuffled object bag behaviour.
+- Correct box position restrictions.
+- Correct box colour restrictions.
+- Back to Let's Find navigation.
+- Back to Home navigation.
+- Global Home button.
+- Keyboard navigation.
+- TV remote navigation.
+
+Do not modify gameplay state or randomisation.
+
+10. Mobile Viewport Support
+
+Test on:
+- 320px-wide screens.
+- 375px-wide screens.
+- 390px-wide screens.
+- 430px-wide screens.
+- Short mobile screens.
+- Mobile landscape.
+
+Verify:
+- The entire success message is readable.
+- Buttons appear below the message.
+- All buttons can be reached by scrolling.
+- The success image remains fully visible.
+- No horizontal overflow occurs.
+- Content does not appear behind fixed elements.
+- The completion animation remains smooth.
+
+### Acceptance Criteria
+
+- The success message never overlaps the buttons.
+- The Play Again button appears below the message.
+- There is visible spacing between text and buttons.
+- The completion container can expand vertically on mobile.
+- Vertical scrolling works when necessary.
+- Every completion button is reachable.
+- The success image remains responsive.
+- The success message remains readable.
+- Existing success animations are preserved.
+- The two-second delay remains unchanged.
+- Play Again and navigation remain functional.
+- Desktop appearance and behaviour remain unchanged.
+- No unwanted clipping or layout shifts occur.
+
+
+## Epic-007 - Regression Prevention Rules
+
+These rules apply to every feature in this epic.
+
+### 1. Desktop Must Remain Unchanged
+
+The existing desktop application is the reference.
+
+Before implementing each feature:
+- Inspect the affected desktop page.
+- Identify the current dimensions and positions.
+- Establish the existing appearance.
+
+After implementing each feature:
+- Compare the same desktop layout.
+- Confirm there are no unexpected differences.
+- Correct any desktop regression before completing the feature.
+
+Do not declare a feature complete based only on mobile testing.
+
+### 2. Avoid Repeating Previous Failed Fixes
+
+Do not:
+- Add arbitrary image margins to hide clipping.
+- Move Let's Spell images downwards to compensate for container sizing.
+- Use z-index as the only solution to overlapping layout regions.
+- Set percentage image heights without properly constrained parents.
+- Apply font-relative thumbs-down sizing without explicit limits.
+- Apply mobile icon dimensions globally.
+- Force completion content into a fixed mobile viewport height.
+- Add repeated CSS overrides without consolidating conflicting rules.
+
+Investigate the underlying layout before modifying styles.
+
+### 3. Make Small, Isolated Changes
+
+- Complete features in numerical order.
+- Restrict changes to the affected activity.
+- Prefer existing SCSS files.
+- Use clear, specific class selectors.
+- Do not modify global image styles.
+- Do not modify global SVG styles.
+- Do not modify global typography.
+- Do not change shared components unless absolutely necessary.
+- Do not modify unrelated activities.
+
+### 4. Preserve Visual Design
+
+Preserve:
+- All existing colour values.
+- Existing font families.
+- Existing button styles.
+- Existing glass styling.
+- Existing animated backgrounds.
+- Existing activity animations.
+- Existing desktop layouts.
+- Existing Home button.
+- Existing page transitions.
+
+Do not perform additional visual redesign work.
+
+### 5. Preserve Gameplay
+
+Do not change:
+- Let's Spell item selection.
+- Let's Spell randomisation.
+- Let's Spell image entrance behaviour.
+- Let's Spell letter progression.
+- Let's Spell backward navigation.
+- Let's Find object selection.
+- Let's Find box randomisation.
+- Let's Find box animation sequences.
+- Let's Find correct-answer detection.
+- Let's Find completion logic.
+
+Only change the layout and sizing behaviour explicitly requested.
+
+### 6. Mobile Testing
+
+Test each affected activity using realistic mobile viewport dimensions.
+
+Include:
+- 320x568.
+- 375x667.
+- 390x844.
+- 430x932.
+- Mobile landscape orientations.
+
+Do not assume mobile layouts work simply because the CSS media query is applied.
+
+Inspect the actual rendered content.
+
+### 7. Desktop Testing
+
+Test each affected activity at:
+- 1366x768.
+- 1920x1080.
+
+Verify that:
+- Images retain their existing dimensions.
+- Images retain their existing positions.
+- Icons retain their intended sizes.
+- Animations behave as before.
+- Existing completion layouts remain unchanged.
+
+### 8. Verification Evidence
+
+For each feature:
+- Identify the original cause of the problem.
+- Describe the layout or styling change made.
+- Confirm the actual computed dimensions where relevant.
+- Confirm the mobile result.
+- Confirm the desktop result.
+- Report any test environments that could not be verified.
+
+Do not claim visual verification if the rendered page was not actually inspected.
+
+If browser testing is available, use it to inspect the affected views.
+
+If browser testing is unavailable, clearly state this limitation rather than assuming the fix works.
+
+### 9. Failed Changes and Rollbacks
+
+Follow the rollback rules in AGENTS.md.
+
+Previous implementations of Epic-007 were rolled back because they introduced regressions.
+
+Do not automatically restore those changes.
+
+Use the previous failures only to understand what must be avoided.
+
+If an implementation causes desktop regressions:
+- Correct the regression before completing the feature.
+- Do not leave a known broken desktop layout.
+- Do not repeatedly reapply a failed approach.
+
+
+## Epic-007 - Overall Acceptance Criteria
+
+Feature-001:
+- Let's Spell images scale correctly on mobile.
+- Images never cover spelling letters.
+- The word container never clips the image.
+- Images remain appropriately positioned near the top of the gameplay area.
+- No excessive blank space is introduced.
+- Desktop Let's Spell remains visually unchanged.
+
+Feature-002:
+- Let's Find thumbs-down icon is no larger than 75px on mobile.
+- Let's Find thumbs-down icon is no larger than 150px on desktop.
+- Icon dimensions are explicitly constrained.
+- Existing animation and alignment are preserved.
+- No mobile or desktop sizing regressions occur.
+
+Feature-003:
+- Let's Find completion buttons never overlap the success message.
+- Completion content can scroll vertically on mobile.
+- All three buttons remain accessible.
+- Success image and text remain readable.
+- Desktop completion behaviour remains unchanged.
+
+General:
+- All three features work on supported mobile viewports.
+- Desktop appearance and functionality are preserved.
+- No new clipping or overlapping occurs.
+- All gameplay mechanics remain unchanged.
+- All animations remain functional.
+- Existing fonts, colours and styling remain unchanged.
+- No new dependencies are introduced unnecessarily.
+- Changes are verified before each feature is marked complete.

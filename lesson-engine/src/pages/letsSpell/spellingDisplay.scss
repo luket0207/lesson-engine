@@ -1,23 +1,44 @@
 @use '../../assets/scss/mixins' as mixins;
 
 .lets-spell-playback {
+  --spelling-completion-region-height: clamp(8.5rem, 18dvh, 9rem);
+  --spelling-image-region-padding: clamp(0.25rem, 1.5vmin, 1rem);
+  --spelling-layout-gap: clamp(0.5rem, 1.5vmin, 1rem);
+  --spelling-padding-top: max(
+    clamp(4.75rem, 10vmin, 6rem),
+    calc(env(safe-area-inset-top) + 4.75rem)
+  );
+  --spelling-padding-right: max(
+    clamp(1rem, 3vmin, 2rem),
+    env(safe-area-inset-right)
+  );
+  --spelling-padding-bottom: max(
+    clamp(1rem, 3vmin, 2rem),
+    env(safe-area-inset-bottom)
+  );
+  --spelling-padding-left: max(
+    clamp(1rem, 3vmin, 2rem),
+    env(safe-area-inset-left)
+  );
+  --spelling-word-region-height: clamp(4.5rem, 18dvh, 11rem);
+
   position: fixed;
   display: grid;
   grid-template-rows:
     minmax(0, 1fr)
-    clamp(4.5rem, 18dvh, 11rem)
-    clamp(8.5rem, 18dvh, 9rem);
-  gap: clamp(0.5rem, 1.5vmin, 1rem);
+    var(--spelling-word-region-height)
+    var(--spelling-completion-region-height);
+  gap: var(--spelling-layout-gap);
   align-items: stretch;
   width: 100%;
   height: 100vh;
   height: 100dvh;
   inset: 0;
   padding:
-    max(clamp(4.75rem, 10vmin, 6rem), calc(env(safe-area-inset-top) + 4.75rem))
-    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-right))
-    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-bottom))
-    max(clamp(1rem, 3vmin, 2rem), env(safe-area-inset-left));
+    var(--spelling-padding-top)
+    var(--spelling-padding-right)
+    var(--spelling-padding-bottom)
+    var(--spelling-padding-left);
   overflow: hidden;
   cursor: pointer;
 
@@ -49,7 +70,7 @@
   }
 
   &__image-region {
-    padding: clamp(0.25rem, 1.5vmin, 1rem);
+    padding: var(--spelling-image-region-padding);
   }
 
   &__image {
@@ -169,6 +190,43 @@
       animation: spelling-completion-fade-out
         var(--spelling-completion-animation-duration, 350ms) ease-in both;
     }
+  }
+
+  @media (max-width: 40rem), (max-height: 40rem) and (max-width: 64rem) {
+    --spelling-image-max-height: max(
+      0px,
+      calc(
+        100dvh - var(--spelling-padding-top) -
+          var(--spelling-padding-bottom) -
+          var(--spelling-word-region-height) -
+          var(--spelling-completion-region-height) -
+          var(--spelling-layout-gap) - var(--spelling-layout-gap) -
+          var(--spelling-image-region-padding) -
+          var(--spelling-image-region-padding)
+      )
+    );
+
+    &__image {
+      max-height: min(750px, var(--spelling-image-max-height));
+    }
+  }
+
+  @media (max-height: 25rem) and (max-width: 64rem) {
+    --spelling-short-image-region-height: clamp(5rem, 24dvh, 7rem);
+    --spelling-image-max-height: calc(
+      var(--spelling-short-image-region-height) -
+        var(--spelling-image-region-padding) -
+        var(--spelling-image-region-padding)
+    );
+
+    grid-template-rows:
+      var(--spelling-short-image-region-height)
+      var(--spelling-word-region-height)
+      var(--spelling-completion-region-height);
+    align-content: start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
 
   @include mixins.reduced-motion {

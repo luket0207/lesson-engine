@@ -1,0 +1,241 @@
+
+## Bug-001 - Fix Local Development Homepage Routing
+
+Status: complete
+
+Implementation notes: Added a development-only `PUBLIC_URL=/` override so CRA opens and serves localhost from `/`, while the unchanged production `homepage`, router basename, build, SPA fallback and deploy scripts continue using `/lesson-engine/`.
+
+When starting the application locally using:
+
+npm start
+
+The browser currently opens at:
+
+http://localhost:3000/lesson-engine
+
+Instead, it should open directly at:
+
+http://localhost:3000/
+
+The /lesson-engine path is required for the GitHub Pages deployment, but should not be applied to local development.
+
+IMPORTANT:
+The existing GitHub Pages deployment is working correctly. Do not break production routing while fixing localhost.
+
+### Requirements
+
+1. Local Development URL
+- Running npm start must open the application at http://localhost:3000/.
+- The homepage must display immediately.
+- The user should not need to click through to the homepage.
+- Do not redirect local users to /lesson-engine.
+- Preserve the existing local development port of 3000.
+
+2. Investigate Existing Configuration
+- Inspect package.json scripts.
+- Inspect the existing build tool configuration.
+- Inspect the React Router configuration.
+- Inspect any basename or base path settings.
+- Inspect any redirects or navigation logic.
+- Check whether the development server is configured to open a specific path.
+- Identify why /lesson-engine is being used during local development.
+
+3. Environment-Specific Routing
+- Separate development and production base paths correctly.
+- In local development, the application should use / as its root.
+- On GitHub Pages, the application should continue using /lesson-engine/ as its production base path.
+- Use the existing build system's environment configuration where appropriate.
+- Avoid hardcoding the production base path globally.
+- Avoid duplicating routing configuration unnecessarily.
+
+4. Preserve GitHub Pages
+- Preserve the existing deployment configuration.
+- Preserve the npm run deploy command.
+- Preserve the gh-pages publishing branch.
+- Preserve the production asset base path.
+- Preserve production React Router compatibility.
+- Ensure the deployed application still loads correctly.
+- Ensure assets, fonts and images continue loading.
+- Ensure direct navigation and refresh behaviour remain functional.
+
+5. Preserve Application Navigation
+- The global Home button must navigate to the correct homepage in both environments.
+- All activity routes must continue working.
+- Preserve Let's Count navigation.
+- Preserve Let's Spell navigation.
+- Preserve Let's Find navigation.
+- Preserve the Teachers Page route.
+- Preserve existing page transition animations.
+
+6. Verification
+Test both environments separately.
+
+Local Development:
+- Run npm start.
+- Confirm the browser opens at http://localhost:3000/.
+- Confirm the homepage displays immediately.
+- Confirm the Home button navigates to /.
+- Confirm activity navigation works.
+- Confirm refreshing local activity pages works.
+
+Production:
+- Run the production build.
+- Verify the production base path remains /lesson-engine/.
+- Verify generated asset URLs are correct.
+- Verify application navigation remains compatible with GitHub Pages.
+- Do not change the working production deployment unnecessarily.
+
+### Acceptance Criteria
+- npm start opens http://localhost:3000/.
+- The homepage displays immediately.
+- No unwanted redirect to /lesson-engine occurs locally.
+- All local routes work correctly.
+- The global Home button works correctly.
+- GitHub Pages continues using /lesson-engine/.
+- npm run deploy remains functional.
+- No production routing regressions are introduced.
+
+
+## Bug-002 - Fix Let's Find Success Text Snapping After Animation
+
+Status: complete
+
+Implementation notes: The mobile responsive font size and line height now apply during the success animation as well as the hold and completed phases, eliminating the phase-change size jump while preserving the shared transform-only bounce and completion timing.
+
+At the end of the Let's Find activity, the success message:
+
+"We found the [Object]!"
+
+is displaying an incorrect animation transition.
+
+The text performs its existing bounce animation, but when the animation finishes, it suddenly snaps to a larger font size.
+
+This produces a harsh and noticeable visual jump.
+
+The completion screen is now responsive, so we need to correct this animation without breaking the responsive layout.
+
+### Requirements
+
+1. Investigate the Animation
+- Inspect the existing success message animation.
+- Inspect the CSS keyframes controlling the bounce effect.
+- Inspect the final resting styles of the success message.
+- Inspect the mobile responsive typography rules.
+- Check whether font-size differs between the animated and completed states.
+- Check whether CSS transforms are being removed or replaced at the end of the animation.
+- Check whether a responsive rule is overriding the animated font size.
+- Check for conflicting classes or inline styles applied when the animation finishes.
+- Identify the exact cause of the sudden size change.
+
+2. Consistent Text Size
+- The success message must retain a consistent underlying font size throughout the animation.
+- The animation should use transforms to produce the existing bounce effect.
+- The final animation frame must match the normal resting appearance.
+- When the animation finishes, the text must remain at exactly the same visible size.
+- No sudden enlargement or reduction should occur.
+- Do not change the intended final font size unnecessarily.
+
+3. Preserve the Existing Bounce
+The success message currently uses a cartoon-style bounce animation.
+
+Preserve the existing sequence:
+- Text grows to approximately 130%.
+- Text shrinks to approximately 70%.
+- Text returns to 100%.
+
+Requirements:
+- Preserve the existing bounce effect.
+- Preserve its duration and easing.
+- The animation should end at scale(1).
+- The normal resting state must also use scale(1).
+- Ensure no inherited transform causes additional scaling when the animation ends.
+- The final frame and resting state must look identical.
+
+4. Responsive Typography
+- Preserve the responsive text sizing established in Feature-003.
+- The message must continue fitting on mobile screens.
+- Allow line wrapping when necessary.
+- Prevent text from extending beyond the viewport.
+- Keep the message horizontally centred.
+- Preserve the existing DynaPuff font.
+- Preserve existing text colours.
+- Preserve the current desktop font size and appearance.
+
+IMPORTANT:
+Do not solve the snapping by forcing the mobile text to use the larger desktop font size.
+
+The responsive font size must remain stable before, during and after the animation.
+
+5. Animation and Layout Separation
+- Keep the text's responsive sizing separate from its bounce transforms.
+- Avoid animating font-size unnecessarily.
+- Use transforms for the existing scale animation.
+- Ensure responsive font-size rules continue applying throughout the animation.
+- Ensure no class changes cause the font size to jump after animation completion.
+- Ensure line-height and text wrapping remain consistent.
+- If necessary, separate the animation wrapper from the element responsible for responsive typography.
+- Avoid introducing additional transforms that conflict with the existing animation.
+
+6. Preserve Completion Layout
+- Preserve the mobile responsive completion layout.
+- The object image must remain above the success message.
+- The completion buttons must remain below the success message.
+- Preserve the existing padding between elements.
+- Preserve vertical scrolling when the completed content exceeds the viewport.
+- Do not reintroduce overlapping text and buttons.
+- Do not cause the success image to move when the text animation finishes.
+
+7. Preserve Completion Timing
+- Preserve the existing two-second hold after the success message bounce animation.
+- Preserve the completion button fade-in.
+- Preserve the current sequence timing.
+- Do not trigger the buttons earlier.
+- Do not restart the bounce animation when the buttons appear.
+- The success message must remain visually stable throughout the hold and button entrance.
+
+8. Desktop Preservation
+- Preserve the existing desktop completion layout.
+- Preserve existing desktop typography.
+- Preserve the desktop bounce animation.
+- Avoid changing desktop element positioning.
+- Ensure the fix does not introduce new desktop animation issues.
+
+9. Preserve Gameplay
+- Do not change object selection.
+- Do not change box randomisation.
+- Do not change correct-answer detection.
+- Do not modify box raising or lowering animations.
+- Do not change object enlargement.
+- Preserve Play Again functionality.
+- Preserve both Back buttons.
+- Preserve the global Home button.
+
+10. Verification
+Test the completion sequence on:
+- Mobile portrait.
+- Mobile landscape.
+- Desktop at 1366x768.
+- Desktop at 1920x1080.
+
+Check the success message:
+- Before the animation.
+- During the bounce.
+- On the final animation frame.
+- Immediately after the animation finishes.
+- During the two-second hold.
+- When the completion buttons fade in.
+
+Verify the computed font-size, line-height and transform values where appropriate.
+
+### Acceptance Criteria
+- The success message animates smoothly.
+- The existing bounce effect remains intact.
+- The text finishes at its intended responsive size.
+- No sudden size change occurs after animation completion.
+- The final animation frame matches the resting state.
+- The message remains stable during the two-second hold.
+- Completion buttons fade in without changing the text size.
+- Mobile responsive typography remains correct.
+- Desktop typography and animations remain unchanged.
+- No overlap or layout regression is introduced.
+- All completion buttons continue working.

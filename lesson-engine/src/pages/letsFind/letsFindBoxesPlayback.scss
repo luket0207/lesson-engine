@@ -17,6 +17,8 @@
   );
   --boxes-label-gap: calc(clamp(0.25rem, 1dvh, 0.75rem) + 5px);
   --boxes-label-responsive-font-size: 10vw;
+  --boxes-incorrect-feedback-bounce: 1.25rem;
+  --boxes-incorrect-feedback-icon-height: 9.375rem;
   --boxes-upper-position: clamp(4.5rem, 15dvh, 9rem);
 
   position: fixed;
@@ -351,8 +353,12 @@
       var(--boxes-incorrect-feedback-duration, 1600ms) ease-in-out both;
 
     svg {
+      display: block;
       width: auto;
-      height: min(9.375rem, 20dvh);
+      height: min(var(--boxes-incorrect-feedback-icon-height), 100%);
+      max-width: 100%;
+      max-height: 100%;
+      overflow: hidden;
     }
   }
 
@@ -555,14 +561,88 @@
     flex: 0 1 15rem;
   }
 
-  @media (max-width: 40rem) {
+  @media (max-width: 40rem), (max-height: 40rem) and (max-width: 64rem) {
     --boxes-completion-space: min(14rem, 36dvh);
+    --boxes-incorrect-feedback-bounce: 0.625rem;
+    --boxes-incorrect-feedback-icon-height: 4.6875rem;
     --boxes-success-object-height: min(
-      34dvh,
-      100%,
+      80vw,
+      60dvh,
       var(--boxes-success-object-max-dimension)
     );
     --boxes-success-object-top: 28%;
+    --boxes-success-object-width: min(
+      80vw,
+      60dvh,
+      var(--boxes-success-object-max-dimension)
+    );
+
+    &[data-phase='completed'] {
+      padding-bottom: max(
+        1rem,
+        calc(env(safe-area-inset-bottom) + 1rem)
+      );
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    &[data-phase='success-holding'] &__scene,
+    &[data-phase='completed'] &__scene {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.75rem, 3dvh, 1.5rem);
+      align-items: center;
+      height: auto;
+      min-height: 100%;
+    }
+
+    &[data-phase='success-holding'] &__object-region--celebrated,
+    &[data-phase='completed'] &__object-region--celebrated {
+      position: relative;
+      top: auto;
+      left: auto;
+      flex: 0 0 auto;
+      transform: none;
+    }
+
+    &[data-phase='success-holding'] &__success-region--visible,
+    &[data-phase='completed'] &__success-region--visible {
+      position: relative;
+      flex: 0 0 auto;
+      width: 100%;
+      padding: 0;
+      align-items: center;
+      inset: auto;
+    }
+
+    &[data-phase='success-animation'] &__success-message,
+    &[data-phase='success-holding'] &__success-message,
+    &[data-phase='completed'] &__success-message {
+      padding-inline: 0.25rem;
+      font-size: clamp(1.75rem, 10vw, 4rem);
+      line-height: 1.15;
+      overflow-wrap: break-word;
+    }
+
+    &[data-phase='success-holding'] &__completion-region,
+    &[data-phase='completed'] &__completion-region {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      flex: 0 0 auto;
+      flex-flow: column nowrap;
+      width: 100%;
+      height: auto;
+      padding: 0;
+      align-content: normal;
+      transform: none;
+    }
+
+    &[data-phase='success-holding'] &__completion-button,
+    &[data-phase='completed'] &__completion-button {
+      flex: none;
+      width: min(100%, 15rem);
+    }
   }
 
   @include mixins.reduced-motion {
@@ -768,7 +848,10 @@
   35%,
   65% {
     opacity: 1;
-    transform: translate(-50%, calc(-50% - 1.25rem));
+    transform: translate(
+      -50%,
+      calc(-50% - var(--boxes-incorrect-feedback-bounce, 1.25rem))
+    );
   }
 }
 
