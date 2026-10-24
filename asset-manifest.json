@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/lesson-engine/static/css/main.3258ab9f.css",
+    "main.css": "/lesson-engine/static/css/main.aa58535d.css",
     "main.js": "/lesson-engine/static/js/main.0077a620.js",
     "static/media/pizza.png": "/lesson-engine/static/media/pizza.0d9433980a83444f1204.png",
     "static/media/tennis.png": "/lesson-engine/static/media/tennis.af2ac4857ea699d305c2.png",
@@ -49,11 +49,11 @@
     "static/media/orange.png": "/lesson-engine/static/media/orange.c20a8c2b5fa1c1ef127a.png",
     "static/media/blue.png": "/lesson-engine/static/media/blue.c56634408a3af295e58e.png",
     "index.html": "/lesson-engine/index.html",
-    "main.3258ab9f.css.map": "/lesson-engine/static/css/main.3258ab9f.css.map",
+    "main.aa58535d.css.map": "/lesson-engine/static/css/main.aa58535d.css.map",
     "main.0077a620.js.map": "/lesson-engine/static/js/main.0077a620.js.map"
   },
   "entrypoints": [
-    "static/css/main.3258ab9f.css",
+    "static/css/main.aa58535d.css",
     "static/js/main.0077a620.js"
   ]
 }
