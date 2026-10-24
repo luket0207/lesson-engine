@@ -1,0 +1,752 @@
+
+# Epic-006 - Final Cleanup and GitHub Pages Deployment
+
+## Overview
+
+This epic focuses on cleaning up the application's existing interface, making several small usability improvements, and preparing the application for public deployment through GitHub Pages.
+
+The epic includes:
+- Replacing the global Options menu button with a Home button.
+- Changing the Let's Spell category selection grid.
+- Renaming SCSS colour variables to reflect their purpose.
+- Adding animated transitions between pages.
+- Changing the default Let's Spell selection mode.
+- Increasing spacing between box colour labels and images.
+- Configuring and performing the initial GitHub Pages deployment.
+
+All changes must preserve existing activity functionality.
+
+Follow the existing project architecture, design system and instructions in AGENTS.md.
+
+
+## Feature-001 - Replace Global Menu Button With Home Button
+
+Status: complete
+Notes: The shared shell now uses the existing styled button with faHouse and guarded React Router navigation to `/`; route unmounting retains existing activity cleanup while the modal components and Teachers route remain intact.
+
+Replace the existing persistent menu button in the top-left corner of the application with a Home button.
+
+Requirements:
+
+1. Button Appearance
+- Replace the existing menu icon with the Font Awesome house icon.
+- Use:
+
+<FontAwesomeIcon icon={faHouse} />
+
+- Preserve the existing button's position in the top-left corner.
+- Preserve its existing dimensions.
+- Preserve the current glass styling.
+- Preserve its rounded corners, background, hover and focus effects.
+- Do not introduce a new visual design for this button.
+
+2. Button Behaviour
+- Clicking the button should immediately navigate to the homepage at /.
+- Do not open the Options modal.
+- Do not display a confirmation dialog.
+- Do not require any additional user interaction.
+- Use the existing application routing system.
+- Avoid unnecessary full-page browser reloads.
+- If already on the homepage, remain there without resetting the page unnecessarily.
+
+3. Activity Cleanup
+- Navigating Home must exit any running activity.
+- Properly clean up activity timers and animation callbacks.
+- Remove activity-specific event listeners.
+- Ensure no activity continues running after navigation.
+- Preserve the existing cleanup behaviour established in previous epics.
+
+4. Preserve Existing Components
+- Do not delete the reusable Modal component.
+- Do not delete the existing Options modal component.
+- Do not delete the Teachers Page.
+- Preserve the /teachers route.
+- These components may be used again in future development.
+- The Home button should simply no longer open the Options modal.
+
+5. Global Implementation
+- Make the change within the existing shared application layout.
+- Do not add individual Home buttons to every page.
+- The persistent Home button must remain available throughout the application.
+- Ensure future pages automatically receive the same button.
+
+6. Accessibility
+- Give the button an accessible name such as "Go to Home".
+- Preserve keyboard and TV remote compatibility.
+- Enter and Space must activate the button.
+- Maintain a visible focus state.
+- Ensure the button remains accessible during fullscreen-style activities.
+
+Acceptance Criteria:
+- The menu icon is replaced with faHouse.
+- The button retains its existing styling and position.
+- Clicking the button immediately navigates Home.
+- No modal opens when clicking the Home button.
+- Active activities terminate correctly.
+- The Modal and Options modal components remain in the project.
+- The Teachers Page remains intact.
+- Keyboard and TV remote navigation continue working.
+
+
+## Feature-002 - Change Let's Spell Category Grid to Two Columns
+
+Status: complete
+Notes: The existing responsive category grid is now centred and capped at two 20rem columns plus its current gap, while auto-fit continues to collapse it to one column when space is limited.
+
+Update the category selection grid on the Let's Spell landing page.
+
+This applies to the grid containing:
+- Animals
+- Food
+- Sports
+- Clothes
+
+Requirements:
+
+1. Grid Layout
+- Display the four category pods in a two-column grid.
+- On sufficiently wide screens, display two rows with two pods per row.
+
+Expected layout:
+
+Animals       Food
+Sports        Clothes
+
+- Maintain the current category order.
+- Keep the complete grid horizontally centred.
+- Preserve consistent spacing between rows and columns.
+
+2. Pod Styling
+- Continue using the existing shared NavigationPod component.
+- Preserve the frosted-glass styling.
+- Preserve the hover glint animation.
+- Preserve the existing hover and focus effects.
+- Keep pod dimensions consistent.
+- Do not change the fonts or category labels.
+
+3. Responsiveness
+- Display two columns where sufficient space exists.
+- Allow the layout to reduce to one column on narrow screens where necessary.
+- Do not introduce horizontal scrolling.
+- Preserve comfortable interaction sizes.
+- Ensure the grid remains visually balanced on desktop and television screens.
+
+4. Scope
+- Apply this change only to the Let's Spell category selection grid.
+- Do not change the item selection grid within individual categories.
+- Preserve the maximum five-column item grid established in Epic-005 Bug-015.
+- Do not modify the homepage or Let's Find grids.
+- Do not change category navigation behaviour.
+
+Acceptance Criteria:
+- Four category pods display in a 2x2 grid on sufficiently wide screens.
+- The grid remains centred.
+- Responsive behaviour is preserved.
+- Existing glass styling and animations remain unchanged.
+- All category navigation links continue working.
+- The individual category item grids remain unchanged.
+
+
+## Feature-003 - Rename SCSS Colour Variables by Purpose
+
+Status: complete
+Notes: Central SCSS palette variables and the exposed default-theme custom properties now use theme-role names; every existing colour literal, opacity, gradient stop and animation remains unchanged, and all references were updated.
+
+Refactor the application's existing SCSS colour variable names so that they describe the purpose of each colour rather than its actual appearance.
+
+IMPORTANT:
+I have manually adjusted some of the application's colours.
+
+DO NOT modify, correct, replace or restore any current colour values.
+
+This feature is a naming refactor only.
+
+Requirements:
+
+1. Semantic Variable Naming
+- Rename colour variables so their names describe how they are used.
+- Avoid including specific colour names such as orange, yellow, blue or teal where those names only describe the current value.
+- Prefer naming based on theme, purpose and relative appearance.
+
+Example:
+
+Current:
+$color-spell-orange
+
+Preferred:
+$color-spell-darker
+
+The actual colour value assigned to the variable must remain exactly the same.
+
+2. Gradient Colours
+- Use consistent naming conventions for background gradient colours.
+- Prefer names such as:
+  - lighter
+  - light
+  - base
+  - dark
+  - darker
+- Only use the number of variations actually required by the existing theme.
+- Do not introduce unnecessary new variables.
+- Ensure the new names correctly represent the existing colours' roles.
+
+3. Theme Consistency
+Apply the naming approach to all relevant themes, including:
+- The default application theme.
+- Let's Spell.
+- Let's Find.
+- Any other existing theme-specific colours.
+
+4. Other Colour Variables
+- Review other SCSS colour variables for names that are unnecessarily tied to their current colour values.
+- Where appropriate, rename them to reflect their purpose.
+
+Examples of useful semantic names:
+- text-primary
+- text-secondary
+- background-primary
+- border
+- glass-background
+- button-primary
+- hover
+- focus
+
+- Follow the project's existing SCSS naming conventions.
+- Avoid creating duplicate variables unnecessarily.
+
+5. Preserve Existing Values
+- Do not change hexadecimal values.
+- Do not change RGB or RGBA values.
+- Do not change HSL values.
+- Do not change opacity.
+- Do not change gradient stops.
+- Do not change colour contrast intentionally.
+- Do not alter the visual appearance of any page.
+
+6. Update References
+- Update every reference to renamed variables.
+- Check SCSS files, mixins, component styles and theme definitions.
+- Update any dependent CSS custom properties where appropriate.
+- Ensure no references remain to removed variable names.
+- Preserve the existing centralised theme structure.
+
+7. Preserve Animation
+- Do not change the animated background's movement.
+- Do not change animation speed.
+- Do not change gradient positioning.
+- Do not change the existing background artefact fixes.
+
+8. Verification
+- Compare the application before and after the refactor.
+- Confirm that colours remain visually identical.
+- Check that every existing theme still works.
+- Verify that all SCSS compiles successfully.
+- Confirm that no undefined variable errors are introduced.
+
+Acceptance Criteria:
+- Colour variables use meaningful, purpose-based names.
+- Variable names are no longer unnecessarily tied to specific colours.
+- Every existing colour value remains unchanged.
+- All references are updated.
+- Gradients and glass effects look identical to before.
+- All themes continue working.
+- The SCSS builds successfully.
+- No visual changes are introduced by this refactor.
+
+
+## Feature-004 - Add Page Transition Animations
+
+Status: complete
+Notes: A shared route transition boundary now holds and disables the outgoing route for a 250ms fade, swaps to the latest pending location, fades the incoming route in and restores focus; displayed-route theme synchronization prevents background flashes, with 1ms reduced-motion fades.
+
+Add a subtle transition animation when navigating between pages.
+
+The intention is to make navigation feel smoother and more polished.
+
+Requirements:
+
+1. Transition Behaviour
+- When navigating away from a page, fade the current page out.
+- After the outgoing page has faded out, transition to the new page.
+- Fade the new page into view.
+- The effect should be smooth and relatively quick.
+- Avoid excessively long transitions.
+
+Suggested durations:
+- Fade out: 0.25 seconds.
+- Fade in: 0.25 seconds.
+
+These are starting values and may be adjusted slightly for visual quality.
+
+2. Global Implementation
+- Implement page transitions through the shared application layout or routing system.
+- Do not manually add transitions to every page.
+- Future pages should automatically inherit the same transition behaviour.
+- Use a reusable route transition component or equivalent approach.
+- Avoid duplicating animation code.
+
+3. Background Behaviour
+- Preserve the existing animated gradient backgrounds.
+- The background animation must continue working.
+- Do not reset or restart the background unnecessarily during navigation.
+- When transitioning between differently themed pages, ensure the background colour transition looks natural.
+- Avoid brief flashes of an incorrect theme or plain white background.
+- Preserve the current theme values.
+
+4. Activity Navigation
+- Page transitions should work when navigating:
+  - From Home to an activity.
+  - Between Let's Spell category pages.
+  - From activity options into gameplay routes.
+  - Back to Home.
+  - Back to an activity's options page.
+  - To the Teachers Page.
+- Preserve all existing routing functionality.
+- Browser Back and Forward navigation should also work correctly.
+
+5. Activity Cleanup
+- When transitioning away from a running activity, properly terminate the activity.
+- Clean up timers, animation callbacks and event listeners.
+- Prevent the outgoing activity from responding to input during the fade-out.
+- Do not allow activity animations to continue affecting the incoming page.
+- Preserve correct cleanup even if navigation happens rapidly.
+
+6. Interaction During Transitions
+- Prevent duplicate navigation caused by rapid clicking.
+- Do not allow users to interact with elements on an outgoing page once its transition has started.
+- Avoid keyboard focus remaining on invisible outgoing elements.
+- Ensure the incoming page receives an appropriate focus state.
+- Preserve keyboard and TV remote accessibility.
+
+7. Responsive Behaviour
+- Transitions must work on mobile, tablet, desktop and television screens.
+- Avoid horizontal or vertical layout shifts.
+- Avoid scrollbars appearing temporarily during transitions.
+- Do not change the dimensions of page containers during fades.
+
+8. Performance
+- Prefer CSS opacity transitions.
+- Avoid unnecessary JavaScript animation loops.
+- Use existing routing or animation dependencies where practical.
+- Do not add a large animation library solely for this feature.
+- Respect prefers-reduced-motion by removing or significantly reducing page transition animations.
+
+9. Reliability
+- Handle rapid navigation safely.
+- Do not leave the screen blank if navigation is interrupted.
+- Ensure pages eventually become fully visible.
+- Do not break direct route access or page refreshing.
+- Do not interfere with future GitHub Pages deployment.
+
+Acceptance Criteria:
+- The outgoing page fades out.
+- The incoming page fades in.
+- Transitions are smooth and unobtrusive.
+- Transitions apply consistently across the application.
+- Different page themes continue working correctly.
+- No unwanted background flashes occur.
+- Activity cleanup remains reliable.
+- Keyboard and TV remote navigation work.
+- Reduced-motion preferences are respected.
+- Existing application navigation remains functional.
+
+
+## Feature-005 - Change Let's Spell Default to 3 Random
+
+Status: complete
+Notes: Every Let's Spell category now initializes with 3 Random selected and Shuffle unchecked; the existing shared mode handler continues to enable/check Shuffle only for All and both Start buttons use the same selection state.
+
+Update the default selection mode on Let's Spell category options pages.
+
+Requirements:
+
+1. Default Selection
+- Change the default selected option from All to 3 Random.
+- When opening a Let's Spell category page for a new selection session, 3 Random should be selected.
+- The selected button must use the existing active styling.
+- All and 5 Random must remain available.
+
+2. Activity Behaviour
+- Pressing either Start button with the default options must select 3 random unique items.
+- Preserve the existing random selection behaviour.
+- Do not select the same item twice within one sequence.
+- Continue using the current category's items.
+- Do not change the behaviour of individual image selection.
+
+3. Shuffle Checkbox
+- Because 3 Random is now selected by default, Shuffle must initially be unchecked and disabled.
+- Preserve the checkbox's existing disabled appearance.
+- Keep the checkbox visible.
+- When All is selected, enable Shuffle and automatically set it to checked.
+- When switching back to 3 Random or 5 Random, disable and uncheck Shuffle again.
+- Preserve the existing behaviour established in Epic-004.
+
+4. Start Buttons
+- Both Start buttons must use the same selected mode.
+- Preserve the top and bottom Start buttons.
+- Preserve the bottom button's position beneath the items grid.
+- Do not modify button styling.
+
+5. Scope
+- Apply the change to all four Let's Spell categories.
+- Do not change the default options in Let's Count or Let's Find.
+- Do not modify spelling animations.
+- Do not change category or item data.
+
+Acceptance Criteria:
+- 3 Random is selected by default.
+- Shuffle is disabled and unchecked by default.
+- Selecting All enables and checks Shuffle.
+- Both Start buttons use the selected settings.
+- Default playback includes exactly 3 unique random items.
+- Individual item selection continues working.
+- All existing gameplay remains unchanged.
+
+
+## Feature-006 - Increase Let's Find Box Label Spacing
+
+Status: complete
+Notes: The independent Let's Find label layer now uses one responsive gap variable equal to its previous spacing plus exactly 5px; label alignment, typography, fixed positioning and animations are unchanged.
+
+Increase the vertical spacing between box colour names and their corresponding box images.
+
+Requirements:
+
+1. Label Spacing
+- Add exactly 5px of additional vertical spacing between the colour names and the top of the box images.
+- Preserve the existing label font size.
+- Preserve the Short Stack font.
+- Preserve the existing dark blue text colour.
+- Keep each label horizontally centred over its corresponding box.
+
+2. Fixed Label Position
+- Preserve the existing fixed positioning of colour labels.
+- Labels must remain in their upper positions when boxes move downwards.
+- Labels must not rotate with the boxes.
+- Labels must not move when boxes are raised.
+- Maintain the existing independent label layer.
+
+3. Animation
+- Preserve the label entrance animation.
+- Preserve the grow and fade-in effects.
+- Preserve the existing fade-out after the correct answer.
+- Do not change animation timings.
+
+4. Implementation
+- Adjust the existing spacing variable, margin or positioning value.
+- Do not introduce unnecessary additional wrappers or layout elements.
+- Avoid duplicate hardcoded spacing values.
+- Preserve the existing responsive scaling behaviour.
+
+5. Scope
+- Apply the change only to Let's Find box colour labels.
+- Do not modify object image positioning.
+- Do not change box dimensions.
+- Do not change box animations.
+- Do not alter gameplay or randomisation.
+
+Acceptance Criteria:
+- Box colour labels have 5px more spacing from the boxes.
+- Labels remain horizontally aligned.
+- Labels remain stationary during box movement.
+- No layout shifts occur.
+- All existing animations and gameplay remain unchanged.
+
+
+## Feature-007 - GitHub Pages Deployment
+
+Status: complete
+Notes: CRA now builds for `/lesson-engine`, generates a SPA `404.html`, and deploys fresh `build` output with gh-pages; remote commit 023c75a contains the compiled root, and the public homepage, JS, CSS, image, font stylesheet and direct-route fallback documents were verified.
+
+Configure the application for deployment to GitHub Pages.
+
+The repository is now public.
+
+I want to be able to publish the application directly from the terminal by running:
+
+npm run deploy
+
+This command must build the application and publish the production files to a branch called:
+
+gh-pages
+
+IMPORTANT:
+As part of this feature, perform the initial successful deployment so the gh-pages branch is created in the remote repository.
+
+Do not stop after simply configuring the deployment scripts.
+
+Requirements:
+
+1. Inspect Existing Project Configuration
+- Inspect package.json.
+- Identify the existing build system.
+- Identify the production build output folder.
+- Inspect the existing Git remote.
+- Determine the GitHub repository name and owner from the actual repository configuration.
+- Do not invent a repository name or URL.
+- Check the current routing implementation.
+- Preserve the existing development workflow.
+
+2. Deployment Dependency
+- Use the established gh-pages npm package for branch-based deployment.
+- Install gh-pages as a development dependency if it is not already installed.
+- Do not install the package globally.
+- Keep the dependency recorded in package.json and the existing lockfile.
+
+3. NPM Deployment Scripts
+- Add the necessary scripts to package.json.
+- Running npm run deploy must build the latest application and publish the resulting production files.
+- Use the npm predeploy lifecycle script where appropriate.
+- Ensure deployment cannot accidentally publish an outdated build.
+- Publish to the gh-pages branch.
+- Publish the contents of the build output folder to the root of that branch.
+
+For a Vite project using the default dist output, the expected scripts would be equivalent to:
+
+"predeploy": "npm run build"
+"deploy": "gh-pages -d dist -b gh-pages"
+
+Adapt the scripts to the actual project configuration where necessary.
+
+- Preserve all existing npm scripts.
+- Do not replace the normal development or build commands.
+
+4. GitHub Pages Base Path
+- Configure the production asset base path correctly.
+- Determine the correct base path from the actual GitHub repository.
+- For a standard GitHub Pages project site, use the repository name as the base path.
+- Do not hardcode an unrelated username or repository name.
+
+For example, if the repository is hosted at:
+
+https://USERNAME.github.io/REPOSITORY/
+
+The application's production assets must resolve correctly beneath:
+
+/REPOSITORY/
+
+- Preserve normal local development behaviour.
+- Ensure CSS, JavaScript, fonts and images load correctly.
+- Ensure assets imported from src/assets work correctly in production.
+
+5. Client-Side Routing
+The application contains multiple React routes.
+
+GitHub Pages must support navigation throughout the application.
+
+Requirements:
+- Ensure the homepage loads correctly.
+- Ensure navigation to Let's Count works.
+- Ensure navigation to Let's Spell works.
+- Ensure the Let's Spell category routes work.
+- Ensure navigation to Let's Find works.
+- Ensure the Teachers Page works.
+- Ensure the global Home button works.
+- Ensure the new page transitions work.
+
+IMPORTANT:
+GitHub Pages does not provide the same automatic SPA routing fallback as a typical development server.
+
+Inspect the existing routing system and implement a compatible solution.
+
+Possible solutions include:
+- Correct router basename configuration with a suitable 404 fallback.
+- Hash-based routing if necessary.
+
+Prefer preserving the existing route structure where practical.
+
+Do not introduce broken routes or incorrect asset paths.
+
+Ensure refreshing or directly opening an activity URL works correctly on the deployed site.
+
+6. Static Asset Handling
+- Ensure all activity images are included in the production build.
+- Verify Animals, Food, Sports and Clothes images.
+- Verify box images used by Let's Find.
+- Ensure asset URLs work beneath the GitHub Pages repository path.
+- Do not use root-relative paths that incorrectly point to the github.io domain root.
+- Preserve existing image dimensions and sizing behaviour.
+
+7. Deployment Branch
+- The deployment branch must be named gh-pages.
+- The branch should contain the compiled production website.
+- Do not copy the entire development source tree into the deployment branch.
+- Do not manually maintain duplicate source code in gh-pages.
+- Keep source development on the existing development branch.
+- Preserve the existing Git history.
+- Do not force-push or overwrite unrelated branches.
+
+8. Initial Deployment
+This feature must include the initial deployment.
+
+Steps:
+- Confirm the correct Git remote is configured.
+- Confirm Git authentication and push permissions are available.
+- Run the production build.
+- Resolve any build errors.
+- Execute npm run deploy.
+- Allow the deployment tool to create the gh-pages branch if it does not already exist.
+- Ensure the deployment creates a commit containing the compiled site.
+- Push the deployment branch to the configured GitHub remote.
+- Verify that the gh-pages branch exists remotely.
+- Verify that it contains index.html and the required production assets.
+- Confirm the deployment command exits successfully.
+
+Do not create an unrelated empty gh-pages branch simply to satisfy this requirement.
+
+The initial branch should contain the actual built application.
+
+9. GitHub Pages Configuration
+- Configure GitHub Pages to publish from the gh-pages branch where permitted.
+- The publishing folder should be the branch root (/).
+- Use branch-based deployment rather than introducing an unrelated GitHub Actions deployment workflow.
+- Ensure the Pages configuration matches the npm deployment command.
+- Do not unintentionally create two competing deployment methods.
+
+If GitHub Pages settings cannot be changed from the available environment:
+- Report the exact remaining manual step.
+- Do not claim the website is publicly deployed until it has been verified.
+
+10. Production Validation
+After the initial deployment:
+- Verify that the public website loads.
+- Verify the homepage displays correctly.
+- Verify fonts load successfully.
+- Verify the animated backgrounds work.
+- Verify images are displayed correctly.
+- Verify navigation between activities.
+- Verify the global Home button.
+- Verify Let's Count.
+- Verify Let's Spell.
+- Verify Let's Find.
+- Verify that page transitions work.
+- Verify that refreshing an activity route does not break the site.
+- Check for missing assets and console errors.
+
+11. Future Deployments
+After the initial setup, publishing future updates should require only:
+
+npm run deploy
+
+- This must build the latest local project.
+- Publish the updated build to gh-pages.
+- Update the existing deployment branch.
+- Trigger the configured GitHub Pages publication process.
+- Do not require manually creating another branch.
+- Do not require manually copying build files.
+- Do not require repeating initial setup steps.
+- Do not change the user's current development branch during deployment.
+
+12. Documentation
+- Add a short deployment section to the existing README or appropriate project documentation.
+- Explain how to deploy using npm run deploy.
+- Explain which branch contains the public website.
+- Document the deployed URL once verified.
+- Document any necessary GitHub Pages settings.
+- Avoid including credentials, access tokens or private information.
+
+13. Security and Repository Hygiene
+- Do not commit node_modules.
+- Do not commit environment secrets.
+- Do not embed GitHub credentials in deployment scripts.
+- Preserve the existing .gitignore.
+- Keep generated build output out of the normal source branch where appropriate.
+- Ensure deployment uses the existing authenticated Git workflow.
+- Do not modify unrelated Git branches or remotes.
+
+Acceptance Criteria:
+- gh-pages is installed as a development dependency.
+- package.json contains the necessary deployment scripts.
+- npm run deploy builds the application.
+- npm run deploy publishes the production build to gh-pages.
+- Production assets use the correct GitHub Pages base path.
+- React routing works on GitHub Pages.
+- Direct navigation and page refreshing work.
+- All activity images and fonts load correctly.
+- The initial deployment has been performed successfully.
+- The remote gh-pages branch exists and contains the compiled site.
+- GitHub Pages is configured to publish that branch, or exact remaining manual settings are reported.
+- The public website has been verified where deployment access permits.
+- Future deployments require only npm run deploy.
+- Existing development scripts continue working.
+- No unrelated branches or files are modified.
+
+
+## Epic-006 - General Implementation Rules
+
+1. Follow all instructions in AGENTS.md.
+
+2. Follow the existing project architecture and naming conventions.
+
+3. Reuse shared components, hooks, utilities and SCSS styles.
+
+4. Preserve the existing DynaPuff and Short Stack typography system.
+
+5. Do not change any existing colour values.
+
+6. Rename colour variables only where appropriate.
+
+7. Preserve existing animated gradient backgrounds.
+
+8. Preserve existing glass-style components and animations.
+
+9. Keep the global Home button in the shared application layout.
+
+10. Preserve the reusable Modal component and Teachers Page.
+
+11. Apply page transitions globally rather than individually.
+
+12. Keep page transitions subtle and responsive.
+
+13. Ensure activity cleanup remains reliable during navigation.
+
+14. Preserve keyboard and TV remote compatibility.
+
+15. Preserve global text-selection prevention.
+
+16. Respect prefers-reduced-motion.
+
+17. Do not change existing game mechanics.
+
+18. Do not modify the randomisation systems in Let's Spell or Let's Find.
+
+19. Do not change object image constraints or box animations.
+
+20. Preserve all existing routes unless compatibility adjustments are required for GitHub Pages.
+
+21. Keep the project deployable through npm run deploy.
+
+22. Preserve the existing Git development branch and source history.
+
+23. Perform the initial gh-pages deployment where repository access permits.
+
+24. Avoid unnecessary dependencies.
+
+25. Complete features in numerical order.
+
+26. Do not modify unrelated functionality.
+
+27. If a feature is rolled back, follow the rollback rules in AGENTS.md and do not automatically reintroduce it.
+
+
+## Epic-006 - Overall Acceptance Criteria
+
+The completed epic should provide:
+
+- A persistent Home button instead of the Options menu button.
+- Direct navigation to Home using the faHouse icon.
+- Preservation of the existing modal and Teachers Page components.
+- A two-column Let's Spell category selection grid.
+- Purpose-based SCSS colour variable names.
+- No changes to existing colour values.
+- Smooth fade-out and fade-in page transitions.
+- 3 Random selected by default in Let's Spell.
+- Shuffle disabled by default when 3 Random is selected.
+- An additional 5px gap between Let's Find box labels and images.
+- All existing activities functioning as before.
+- A working npm run deploy command.
+- A production build published to the gh-pages branch.
+- An initial deployment commit on the remote gh-pages branch.
+- Correct GitHub Pages asset paths and React routing.
+- A publicly accessible website once Pages publishing is configured.
+- Future deployments through the same npm command.

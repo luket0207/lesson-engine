@@ -18,6 +18,9 @@
     grid-auto-rows: 1fr;
     gap: clamp(1rem, 2.5vw, 1.75rem);
     justify-content: center;
+    width: 100%;
+    max-width: 42rem;
+    margin-inline: auto;
   }
 
   &__back {

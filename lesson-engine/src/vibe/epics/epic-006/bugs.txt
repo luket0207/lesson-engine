@@ -1,0 +1,409 @@
+
+## Bug-001 - Fix GitHub Pages Deployment and Ensure npm run deploy Publishes Successfully
+
+Status: complete
+Notes: The deployment configuration was not duplicated or targeting the wrong repository; unchanged builds were creating no commit while the gh-pages CLI still printed “Published.” The repaired wrapper validates build output, reports the exact target and remote commit change, propagates errors, clearly reports unchanged builds, and publishes `.nojekyll`. Test commit 863d62a triggered successful Pages run 40071099997 and is live.
+
+The GitHub Pages deployment configured in Epic-006 Feature-007 is not working correctly.
+
+Currently, running:
+
+npm run deploy
+
+appears to complete successfully in the terminal.
+
+However, GitHub does not appear to register a new deployment, and the published website is not reliably updating.
+
+Additional context:
+- The gh-pages branch was originally created during Feature-007.
+- The changes from Feature-007 were accidentally deleted.
+- Feature-007 was subsequently implemented again.
+- This may have introduced conflicting or duplicated deployment configuration.
+- The existing gh-pages branch may contain files from the previous configuration.
+
+We need to investigate and repair the existing deployment setup.
+
+IMPORTANT:
+Do not simply reinstall the gh-pages package or create another deployment configuration without first identifying the underlying problem.
+
+The intended workflow remains:
+
+npm run deploy
+
+This must build the current application, update the remote gh-pages branch, and trigger publication through GitHub Pages.
+
+
+### 1. Investigate Existing Deployment Configuration
+
+Before changing anything, inspect the existing deployment setup.
+
+Check:
+- package.json scripts.
+- Installed gh-pages dependency.
+- Existing build configuration.
+- Build output directory.
+- Git remote configuration.
+- Current Git branch.
+- Remote gh-pages branch.
+- Any local gh-pages branch.
+- Existing deployment-related scripts.
+- GitHub Pages configuration where accessible.
+- Existing GitHub Actions workflows.
+- GitHub Pages deployment history.
+
+Identify whether Feature-007 has been configured more than once.
+
+Look for:
+- Duplicate deployment scripts.
+- Duplicate deployment dependencies.
+- Conflicting build configurations.
+- Incorrect deployment branch names.
+- Incorrect Git remotes.
+- Conflicting GitHub Actions workflows.
+- Outdated gh-pages configuration.
+- Stale deployment caches.
+- Incorrect output directories.
+
+Determine the actual reason the deployment is not working before applying a fix.
+
+
+### 2. Verify Git Remote and Branch Configuration
+
+Confirm that the deployment is targeting the correct GitHub repository.
+
+Requirements:
+- Inspect the configured origin remote.
+- Identify the correct repository owner and name.
+- Verify that npm run deploy publishes to that repository.
+- Verify that the deployment branch is named gh-pages.
+- Verify that the remote gh-pages branch exists.
+- Check whether a local branch with the same name exists.
+- Check whether the deployment tool is using stale local or cached branch information.
+- Ensure the deployment is not accidentally publishing to another remote or repository.
+
+IMPORTANT:
+Do not delete or recreate the existing remote gh-pages branch unless absolutely necessary and explicitly justified.
+
+Preserve existing branch history wherever possible.
+
+Do not modify the main development branch's history.
+
+
+### 3. Repair npm Deployment Scripts
+
+Review the existing deployment scripts in package.json.
+
+The deployment process must:
+
+1. Build the latest version of the application.
+2. Publish the resulting production files.
+3. Push those files to the remote gh-pages branch.
+4. Return a failure exit code if the build or publishing operation fails.
+
+For a standard Vite project using dist as its build directory, the scripts should be equivalent to:
+
+"predeploy": "npm run build",
+"deploy": "gh-pages -d dist -b gh-pages"
+
+Adapt these commands to the actual project configuration.
+
+Requirements:
+- Ensure predeploy runs automatically.
+- Ensure the build completes before publishing begins.
+- Ensure the correct build output directory is used.
+- Ensure the deployed branch is gh-pages.
+- Ensure deployment uses the correct remote repository.
+- Ensure a failed Git push is not reported as a successful deployment.
+- Do not suppress deployment errors.
+- Preserve all existing development scripts.
+- Do not introduce unnecessary duplicate deployment commands.
+
+Do not create a new deployment system if the existing gh-pages package can be repaired.
+
+
+### 4. Verify Production Build Output
+
+Confirm that the build process generates the expected files.
+
+Requirements:
+- Verify that the build output contains index.html.
+- Verify that compiled JavaScript files exist.
+- Verify that compiled CSS files exist.
+- Verify that the required images and fonts are included or correctly referenced.
+- Confirm that the build output represents the current source code.
+- Ensure the build directory is not stale.
+- Confirm that the correct production base path is used.
+- Preserve existing React routing compatibility with GitHub Pages.
+
+The deployment must publish the actual contents of the production build directory.
+
+Do not publish the entire React source project to gh-pages.
+
+
+### 5. Ensure the Remote gh-pages Branch Is Updated
+
+This is a critical requirement.
+
+When npm run deploy is executed after a change that affects the production build:
+
+- The latest production files must be committed to gh-pages.
+- The deployment commit must be pushed to the remote GitHub repository.
+- The remote branch must contain the updated production files.
+- The remote branch's latest commit should reflect the new deployment.
+- The deployment must not finish successfully while leaving an outdated production build on the remote branch.
+
+Verify this using the actual remote branch rather than relying only on the terminal success message.
+
+Compare:
+- The local production build.
+- The files published to gh-pages.
+- The latest remote gh-pages commit.
+
+Confirm that the files are consistent.
+
+If the production build is identical to the already published files:
+- A new commit is not required.
+- Report clearly that no deployment file changes were necessary.
+- Do not generate meaningless commits simply to create deployment activity.
+
+If the production build has changed:
+- A new deployment commit must be created and pushed.
+- A successful command must not silently leave the remote branch unchanged.
+
+
+### 6. Investigate Previous gh-pages Setup
+
+Because Feature-007 was configured, accidentally removed and implemented again, investigate whether the two implementations have left conflicting configuration.
+
+Requirements:
+- Check for stale gh-pages package caches.
+- Check for duplicate deployment-related settings.
+- Check for conflicting GitHub Actions workflows.
+- Check whether the original gh-pages branch is compatible with the current deployment package.
+- Check whether the current scripts target the same branch as the original setup.
+- Verify that the current configuration is not creating deployment commits on another branch.
+
+If an outdated gh-pages cache is confirmed to cause problems:
+- Clean the relevant gh-pages package cache using its supported cleanup procedure.
+- Allow the deployment package to refresh its working copy.
+- Preserve the remote gh-pages branch.
+- Retry the deployment.
+
+Do not delete caches or Git history indiscriminately.
+
+There should ultimately be one clear, working deployment configuration.
+
+
+### 7. Verify GitHub Pages Publishing Settings
+
+Check the repository's GitHub Pages configuration where access permits.
+
+The intended configuration is:
+
+Source:
+Deploy from a branch
+
+Branch:
+gh-pages
+
+Folder:
+/ (root)
+
+Requirements:
+- Verify that GitHub Pages is enabled.
+- Verify that the publishing source is the gh-pages branch.
+- Verify that the folder is the branch root.
+- Ensure GitHub Pages is not still configured to publish from main or another branch.
+- Ensure no temporary rollback branch remains selected as the publishing source.
+- Check whether an alternative GitHub Actions deployment configuration is conflicting with the intended approach.
+- Preserve any existing legitimate custom domain configuration.
+
+If repository settings cannot be accessed programmatically, report the exact settings that need to be checked manually.
+
+Do not claim these settings have been verified unless they actually have been.
+
+
+### 8. Ensure GitHub Pages Deployment Is Triggered
+
+Updating the gh-pages branch and publishing the website are separate stages.
+
+Requirements:
+- Confirm that pushing an updated commit to gh-pages triggers GitHub Pages deployment.
+- Check the repository's Actions tab for the relevant Pages deployment workflow.
+- Inspect failed, skipped or cancelled deployment runs.
+- Identify any publishing errors.
+- Check whether GitHub Pages is using the correct publishing source.
+- Check whether the push authentication method prevents the expected publishing trigger.
+- Check for branch protection or environment restrictions that block deployment.
+- Check whether the relevant GitHub account has sufficient permissions.
+- Check for verified-email requirements where applicable.
+
+IMPORTANT:
+GitHub Pages may use a GitHub Actions deployment workflow even when the publishing source is configured as "Deploy from a branch".
+
+Do not assume that a successful Git push means the site has finished publishing.
+
+Do not assume that the absence of a custom workflow means Pages is not deploying.
+
+Investigate the actual Pages deployment history.
+
+If an additional workflow is genuinely necessary, explain why before introducing it.
+
+Prefer repairing the existing branch-based deployment system rather than creating a competing deployment process.
+
+
+### 9. GitHub Pages Static File Handling
+
+Ensure the production files are compatible with GitHub Pages.
+
+Requirements:
+- Verify that index.html exists at the root of gh-pages.
+- Verify that all assets use the correct repository base path.
+- Verify the existing React Router compatibility solution.
+- Preserve direct access to activity routes.
+- Preserve page refresh functionality.
+- Ensure CSS and JavaScript assets load correctly.
+- Ensure all Let's Spell and Let's Find images load.
+- Ensure web fonts load correctly.
+- Preserve the existing animated gradients.
+
+Include a .nojekyll file at the published branch root if appropriate for the existing static build.
+
+Do not introduce unnecessary Jekyll processing.
+
+Do not modify the application's gameplay or visual design.
+
+
+### 10. Perform a Test Deployment
+
+After repairing the configuration, perform an actual deployment test.
+
+Requirements:
+
+1. Run the production build.
+2. Confirm the build succeeds.
+3. Run npm run deploy.
+4. Confirm the deployment command succeeds.
+5. Verify the remote gh-pages branch.
+6. Compare remote production files with the latest build.
+7. Verify the latest remote commit where build output has changed.
+8. Check the GitHub Pages deployment workflow.
+9. Check for publishing errors.
+10. Verify the public website if accessible.
+
+If necessary, make a harmless, identifiable build-output change through the normal project workflow to verify that a real change is published.
+
+Do not make unrelated visual or gameplay changes simply for testing.
+
+Remove temporary test changes before finalising the feature.
+
+Do not force-push unless explicitly authorised.
+
+
+### 11. Confirm Public Website Updates
+
+After deployment, verify that GitHub Pages serves the latest production version.
+
+Requirements:
+- Check the correct public GitHub Pages URL.
+- Verify the homepage loads.
+- Verify the latest changes are visible.
+- Check for outdated browser caching where relevant.
+- Verify that assets load successfully.
+- Verify navigation to Let's Count.
+- Verify navigation to Let's Spell.
+- Verify navigation to Let's Find.
+- Verify that the Home button works.
+- Verify direct routing and refresh behaviour.
+
+Allow for normal GitHub Pages publishing delays when checking results.
+
+If the remote branch updates but the Pages deployment fails:
+- Clearly distinguish the two outcomes.
+- Identify which publishing stage failed.
+- Provide the relevant error or blocker.
+- Do not report a complete deployment success.
+
+
+### 12. Deployment Feedback and Error Reporting
+
+Improve deployment feedback where practical.
+
+When running npm run deploy:
+- Build errors must be visible.
+- Authentication errors must be visible.
+- Git push failures must be visible.
+- The command must not falsely report success after an actual publishing failure.
+- Successful publication to the remote branch should be clear.
+
+Where practical, report:
+- The target repository.
+- The target deployment branch.
+- Whether production files changed.
+- Whether the remote push succeeded.
+- The remote deployment commit identifier.
+
+Do not falsely report that the public website has updated if GitHub Pages has not yet confirmed publication.
+
+It is acceptable for GitHub Pages to finish publishing asynchronously after the command completes.
+
+The command itself must reliably complete the build and remote branch update.
+
+
+### 13. Preserve Existing Project Configuration
+
+- Do not change the current application colours.
+- Do not modify existing animations.
+- Do not change React component structures unnecessarily.
+- Do not modify gameplay logic.
+- Preserve all existing routes.
+- Preserve existing mobile responsiveness improvements.
+- Preserve the current global Home button.
+- Preserve the source branch and its history.
+- Do not delete the existing gh-pages branch.
+- Do not create unnecessary additional deployment branches.
+- Do not introduce unrelated dependencies.
+- Do not commit credentials or access tokens.
+- Follow all existing instructions in AGENTS.md.
+
+
+### Acceptance Criteria
+
+Deployment Configuration:
+- Only one intended gh-pages deployment configuration remains.
+- npm run deploy uses the correct production build directory.
+- The correct GitHub repository is targeted.
+- The gh-pages branch is the deployment target.
+- Existing duplicated or conflicting configuration is resolved.
+
+Remote Branch:
+- Changes to the production build result in updated files on the remote gh-pages branch.
+- A new deployment commit appears when published files change.
+- The remote branch contains the latest compiled application.
+- Deployment does not silently publish to the wrong branch or repository.
+- Existing remote branch history is preserved where possible.
+
+GitHub Pages:
+- GitHub Pages is configured to publish from gh-pages at the branch root.
+- A successful branch update triggers the appropriate Pages deployment process.
+- Deployment errors are identified and addressed.
+- The public website serves the updated build once publishing completes.
+- If GitHub settings or permissions block publication, the exact required action is reported.
+
+Application:
+- The homepage loads successfully.
+- All three activities remain accessible.
+- Images, CSS and fonts load correctly.
+- React routing continues working.
+- Direct page access and refreshing remain functional.
+- No visual or gameplay regressions are introduced.
+
+Future Deployments:
+- Running npm run deploy builds the latest application.
+- Changed production files are pushed to the remote gh-pages branch.
+- GitHub Pages publishes the updated branch.
+- No manual branch creation is required.
+- No manual file copying is required.
+- No repeated initial setup is required.
+- Deployment failures produce visible errors.
+- Existing development workflows remain unchanged.

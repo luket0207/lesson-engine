@@ -10,9 +10,9 @@ import LetsSpellPlayback from './pages/letsSpell/letsSpellPlayback';
 import LetsSpellSetup from './pages/letsSpell/letsSpellSetup';
 import TeachersPage from './pages/teachers/teachersPage';
 
-function AppRoutes() {
+function AppRoutes({ location }) {
   return (
-    <Routes>
+    <Routes location={location}>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/letsSpell" element={<LetsSpellActivity />} />

@@ -100,7 +100,7 @@
       width: 1.5rem;
       height: 1.5rem;
       margin: 0;
-      accent-color: var(--color-deep-teal);
+      accent-color: var(--color-default-secondary);
     }
   }
 
@@ -210,7 +210,7 @@
     display: block;
     font-family: variables.$font-heading;
     line-height: 0.85;
-    color: variables.$color-text;
+    color: variables.$color-default-text;
     text-align: center;
     white-space: nowrap;
     transform-origin: center;

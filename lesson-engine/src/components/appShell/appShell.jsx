@@ -1,26 +1,26 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useLayoutEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { useLocation } from 'react-router-dom';
-import OptionsModal from '../optionsModal/optionsModal';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './appShell.scss';
 
 const AppShellContext = createContext({ isOptionsOpen: false });
+const APP_SHELL_CONTEXT_VALUE = { isOptionsOpen: false };
 
 export function useAppShell() {
   return useContext(AppShellContext);
 }
 
-function AppShell({ children }) {
+function AppShell({ children, themeLocation }) {
   const location = useLocation();
-  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const contextValue = useMemo(() => ({ isOptionsOpen }), [isOptionsOpen]);
+  const navigate = useNavigate();
+  const themePathname = themeLocation?.pathname ?? location.pathname;
   const usesLetsSpellTheme =
-    location.pathname === '/letsSpell' || location.pathname.startsWith('/letsSpell/');
+    themePathname === '/letsSpell' || themePathname.startsWith('/letsSpell/');
   const usesLetsFindTheme =
-    location.pathname === '/letsFind' || location.pathname.startsWith('/letsFind/');
+    themePathname === '/letsFind' || themePathname.startsWith('/letsFind/');
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const letsSpellThemeClass = 'theme--lets-spell';
     const letsFindThemeClass = 'theme--lets-find';
 
@@ -32,24 +32,24 @@ function AppShell({ children }) {
     };
   }, [usesLetsFindTheme, usesLetsSpellTheme]);
 
+  const goHome = () => {
+    if (location.pathname !== '/') {
+      navigate('/');
+    }
+  };
+
   return (
-    <AppShellContext.Provider value={contextValue}>
+    <AppShellContext.Provider value={APP_SHELL_CONTEXT_VALUE}>
       <div className="app-shell">
         {children}
         <button
           className="app-shell__menu"
-          aria-expanded={isOptionsOpen}
-          aria-haspopup="dialog"
-          aria-label="Open Options"
-          onClick={() => setIsOptionsOpen(true)}
+          aria-label="Go to Home"
+          onClick={goHome}
           type="button"
         >
-          <FontAwesomeIcon icon={faBars} />
+          <FontAwesomeIcon icon={faHouse} />
         </button>
-        <OptionsModal
-          isOpen={isOptionsOpen}
-          onClose={() => setIsOptionsOpen(false)}
-        />
       </div>
     </AppShellContext.Provider>
   );

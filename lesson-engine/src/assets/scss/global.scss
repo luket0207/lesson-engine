@@ -5,14 +5,14 @@
 :root {
   --font-heading: #{variables.$font-heading};
   --font-body: #{variables.$font-body};
-  --color-slate-blue: #{variables.$color-slate-blue};
-  --color-deep-teal: #{variables.$color-deep-teal};
-  --color-text: #{variables.$color-text};
-  --color-theme-primary: #{variables.$color-slate-blue};
-  --color-theme-primary-rgb: #{variables.$color-slate-blue-rgb};
-  --color-theme-secondary: #{variables.$color-deep-teal};
-  --color-theme-secondary-rgb: #{variables.$color-deep-teal-rgb};
-  --color-theme-shadow-rgb: #{variables.$color-shadow-rgb};
+  --color-default-primary: #{variables.$color-default-primary};
+  --color-default-secondary: #{variables.$color-default-secondary};
+  --color-text: #{variables.$color-default-text};
+  --color-theme-primary: #{variables.$color-default-primary};
+  --color-theme-primary-rgb: #{variables.$color-default-primary-rgb};
+  --color-theme-secondary: #{variables.$color-default-secondary};
+  --color-theme-secondary-rgb: #{variables.$color-default-secondary-rgb};
+  --color-theme-shadow-rgb: #{variables.$color-default-shadow-rgb};
   --color-glass-surface-rgb: 255, 255, 255;
   --color-glass-border-rgb: 255, 255, 255;
   --color-glass-highlight-rgb: 255, 255, 255;
@@ -25,10 +25,10 @@
 
   &.theme--lets-spell {
     --color-text: #{variables.$color-spell-text};
-    --color-theme-primary: #{variables.$color-spell-orange};
-    --color-theme-primary-rgb: #{variables.$color-spell-orange-rgb};
-    --color-theme-secondary: #{variables.$color-spell-dark-yellow};
-    --color-theme-secondary-rgb: #{variables.$color-spell-dark-yellow-rgb};
+    --color-theme-primary: #{variables.$color-spell-primary};
+    --color-theme-primary-rgb: #{variables.$color-spell-primary-rgb};
+    --color-theme-secondary: #{variables.$color-spell-secondary};
+    --color-theme-secondary-rgb: #{variables.$color-spell-secondary-rgb};
     --color-theme-shadow-rgb: #{variables.$color-spell-text-rgb};
     color-scheme: light;
   }
@@ -36,12 +36,12 @@
   &.theme--lets-find {
     --color-text: #{variables.$color-find-text};
     --color-find-object-highlight: #{variables.$color-find-object-highlight};
-    --color-theme-primary: #{variables.$color-find-white};
-    --color-theme-primary-rgb: #{variables.$color-find-white-rgb};
-    --color-theme-secondary: #{variables.$color-find-light-blue};
-    --color-theme-secondary-rgb: #{variables.$color-find-light-blue-rgb};
+    --color-theme-primary: #{variables.$color-find-primary};
+    --color-theme-primary-rgb: #{variables.$color-find-primary-rgb};
+    --color-theme-secondary: #{variables.$color-find-secondary};
+    --color-theme-secondary-rgb: #{variables.$color-find-secondary-rgb};
     --color-theme-shadow-rgb: #{variables.$color-find-text-rgb};
-    --color-glass-surface-rgb: #{variables.$color-find-secondary-blue-rgb};
+    --color-glass-surface-rgb: #{variables.$color-find-glass-surface-rgb};
     --color-glass-border-rgb: #{variables.$color-find-text-rgb};
     --color-focus-ring-rgb: #{variables.$color-find-text-rgb};
     --opacity-glass-surface: 0.58;

@@ -2,6 +2,7 @@
   "name": "lesson-engine",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://luket0207.github.io/lesson-engine",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
@@ -20,6 +21,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "node scripts/createSpaFallback.js",
+    "predeploy": "npm run build",
+    "deploy": "node scripts/deployToGitHubPages.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "sass": "^1.105.2"
   }
 }

@@ -65,6 +65,16 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
+## GitHub Pages deployment
+
+The public application is available at [https://luket0207.github.io/lesson-engine/](https://luket0207.github.io/lesson-engine/).
+
+Run `npm run deploy` from the project directory to create a fresh production build and publish it to the root of the `gh-pages` branch. GitHub Pages should remain configured to deploy from the `gh-pages` branch and the `/ (root)` folder.
+
+The command reports the target repository and final remote commit. If the production files are identical to the deployed files, it reports that no new commit or Pages run is needed instead of implying that GitHub received a new deployment.
+
+The production build also generates `404.html` from the application entry page so direct links and refreshed React routes load through the same client-side router.
+
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

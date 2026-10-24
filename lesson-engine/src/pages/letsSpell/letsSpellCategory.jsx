@@ -21,8 +21,8 @@ function LetsSpellCategory() {
   const navigate = useNavigate();
   const handleDirectionalNavigation = useDirectionalNavigation();
   const [isStarting, setIsStarting] = useState(false);
-  const [selectionMode, setSelectionMode] = useState(PLAYBACK_MODES.ALL);
-  const [shuffle, setShuffle] = useState(true);
+  const [selectionMode, setSelectionMode] = useState(PLAYBACK_MODES.RANDOM_THREE);
+  const [shuffle, setShuffle] = useState(false);
   const startRequestedRef = useRef(false);
   const category = SPELLING_CATEGORIES.find(({ id }) => id === categoryId);
 

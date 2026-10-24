@@ -1,0 +1,51 @@
+@use '../../assets/scss/mixins' as mixins;
+
+.page-transition {
+  min-height: 100vh;
+  min-height: 100dvh;
+  opacity: 1;
+
+  &:focus {
+    outline: none;
+  }
+
+  &--entering {
+    animation: page-transition-fade-in 250ms ease-out both;
+  }
+
+  &--exiting {
+    animation: page-transition-fade-out 250ms ease-in both;
+  }
+
+  &--entering,
+  &--exiting {
+    pointer-events: none;
+  }
+
+  @include mixins.reduced-motion {
+    &--entering,
+    &--exiting {
+      animation-duration: 1ms;
+    }
+  }
+}
+
+@keyframes page-transition-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-transition-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

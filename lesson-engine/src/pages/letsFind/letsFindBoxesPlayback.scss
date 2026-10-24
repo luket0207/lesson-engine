@@ -15,6 +15,7 @@
     100%,
     var(--boxes-success-object-max-dimension)
   );
+  --boxes-label-gap: calc(clamp(0.25rem, 1dvh, 0.75rem) + 5px);
   --boxes-label-responsive-font-size: 10vw;
   --boxes-upper-position: clamp(4.5rem, 15dvh, 9rem);
 
@@ -192,7 +193,7 @@
 
   &__box-label {
     position: absolute;
-    bottom: calc(100% + clamp(0.25rem, 1dvh, 0.75rem));
+    bottom: calc(100% + var(--boxes-label-gap));
     left: 50%;
     color: var(--color-text);
     font-family: var(--font-body);
