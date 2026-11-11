@@ -1,0 +1,513 @@
+
+# Epic-008 - Let's Spell Responsive Image Layout
+
+## Overview
+
+This epic addresses a longstanding responsive layout issue within the Let's Spell activity.
+
+Currently, on smaller screens, some object images extend into the area containing the spelling word.
+
+The word container overlaps the lower portion of these images, creating the appearance that the images are being cut off.
+
+Several previous attempts to resolve this issue have failed, sometimes introducing additional problems with image positioning and desktop layouts.
+
+This epic should provide a permanent solution by correcting the relationship between the image and word containers.
+
+IMPORTANT:
+The existing desktop layout looks correct and must remain visually unchanged.
+
+The objective is to improve responsiveness without changing the existing visual design, gameplay or animations.
+
+Follow all existing instructions in AGENTS.md.
+
+
+## Feature-001 - Make Let's Spell Images Fit Above the Spelling Word
+
+Status: complete
+
+Implementation notes: Applied the viewport-derived upper-region height directly to every gameplay image, rather than only mobile images, and removed image-region paint clipping that concealed overflow. The existing grid rows, word/completion positions, aspect-ratio sizing, short-screen scrolling and image/letter animations remain unchanged.
+
+### 1. Core Layout Requirement
+
+In the Let's Spell gameplay screen, the object image must always appear entirely above the word being spelled.
+
+The image should occupy the available space between:
+- The top of the usable gameplay area.
+- The top of the spelling word container.
+
+Include appropriate padding at both ends.
+
+The image must never overlap, cover or extend behind the spelling word container.
+
+The word container must never obscure any portion of the image.
+
+This requirement applies to every object image, regardless of its original dimensions or aspect ratio.
+
+
+### 2. Preserve the Existing Desktop Layout
+
+The desktop version of Let's Spell currently looks correct.
+
+Before implementing any changes:
+- Inspect the existing desktop layout.
+- Identify the current image dimensions.
+- Identify the current image position.
+- Identify the word container position.
+- Record the existing spacing between the image and word.
+- Record the existing image animation behaviour.
+
+Do not change:
+- Desktop image dimensions.
+- Desktop image positioning.
+- Desktop word positioning.
+- Desktop container dimensions.
+- Desktop typography.
+- Desktop animation behaviour.
+- Desktop spacing.
+- Desktop page structure unnecessarily.
+
+Make the responsive corrections through appropriately scoped layout changes.
+
+The final desktop appearance must be visually identical to the current version.
+
+
+### 3. Investigate the Existing Overlap
+
+Before changing any CSS, investigate why images are currently overlapping the spelling word container.
+
+Inspect:
+- The actual image element.
+- The image wrapper.
+- The parent gameplay container.
+- The word container.
+- The individual letter elements.
+- All relevant ancestor containers.
+
+Check for:
+- Fixed heights.
+- Minimum heights.
+- Maximum heights.
+- Overflow rules.
+- Absolute positioning.
+- Relative positioning offsets.
+- Flexbox alignment.
+- Grid alignment.
+- Margins and padding.
+- CSS transforms.
+- Animation transforms.
+- Stacking contexts.
+- Conflicting responsive media queries.
+
+Determine whether:
+- The image is larger than its available layout area.
+- The word container overlaps the image container.
+- The image wrapper has an incorrect height.
+- The image is being positioned too low.
+- An ancestor is clipping the image.
+- The word animation causes layout or stacking conflicts.
+
+Fix the actual cause of the overlap.
+
+Do not simply hide the problem with overflow clipping or z-index adjustments.
+
+
+### 4. Establish a Proper Responsive Layout
+
+On smaller screens, create a clear vertical relationship between the image and spelling word.
+
+The layout should contain two primary regions:
+
+IMAGE REGION
+- Occupies the available space above the word.
+- Uses the space remaining after accounting for the word region and necessary padding.
+- Can shrink as the viewport becomes smaller.
+- Contains the object image.
+- Keeps the image horizontally centred.
+
+WORD REGION
+- Sits beneath the image region.
+- Reserves sufficient space for the spelling text and its animations.
+- Must not overlap the image region.
+- Must remain visible throughout the activity.
+
+Requirements:
+- These regions must have separate layout boundaries.
+- The word region must follow the image region vertically.
+- The image region must not extend into the word region.
+- The image and word must have a consistent minimum gap.
+- The layout must respond automatically to changes in viewport dimensions.
+- Revealing letters must not change the dimensions of either region.
+
+Prefer CSS Grid or Flexbox using normal layout flow.
+
+Avoid absolute positioning for the relationship between these two regions.
+
+Do not introduce unnecessary additional wrappers.
+
+
+### 5. Word Position Determines Available Image Space
+
+This is the most important requirement of the epic.
+
+The spelling word container must act as the lower boundary of the image display region.
+
+The available image space should be determined by:
+
+- The usable gameplay viewport height.
+- The vertical position and required height of the word region.
+- Top padding.
+- Spacing between the image and word.
+- Any existing required controls or safe-area padding.
+
+The image must then fit within this remaining region.
+
+Requirements:
+- Reserve the necessary word region space first.
+- Do not allow image dimensions to push the word below its intended position.
+- Do not allow the image to overlap the word container.
+- Shrink the image proportionally when available height decreases.
+- Preserve the existing vertical placement of the word as closely as possible.
+- Do not move the image downwards unnecessarily.
+
+If the viewport is shorter, the image should become smaller.
+
+The spacing between the image and word must remain consistent.
+
+
+### 6. Scale the Actual Image Element
+
+Responsive restrictions must apply to the actual rendered image, not merely its wrapper.
+
+Requirements:
+- Preserve each image's original aspect ratio.
+- Scale width and height proportionally.
+- Never stretch an image.
+- Never crop an image.
+- Never distort an image.
+- Do not enlarge images beyond their original natural dimensions.
+- Preserve the existing desktop maximum dimensions of 750px by 750px.
+- Respect the available image container width.
+- Respect the available image container height.
+- Use the most restrictive dimension to determine the final image size.
+
+Images should occupy as much of their available space as possible without exceeding their natural size or the existing maximum dimensions.
+
+Ensure both width and height constraints are effective.
+
+Do not rely on max-height: 100% unless the containing element has a properly constrained height.
+
+Use appropriate sizing and layout rules to ensure the actual image fits.
+
+
+### 7. Image Positioning
+
+Images must appear naturally positioned within the space above the spelling word.
+
+Requirements:
+- Keep images horizontally centred.
+- Position images within the available upper region.
+- Maintain sensible top padding.
+- Maintain clear bottom padding above the word.
+- Avoid excessive empty space above images.
+- Do not push images down towards the word.
+- Do not add arbitrary large margins.
+- Do not use translateY adjustments to compensate for incorrect layout sizing.
+
+The image should look visually balanced within its available space.
+
+On desktop, preserve the existing positioning exactly.
+
+
+### 8. Prevent Word Container Overlap
+
+The existing spelling animation container must not obscure images.
+
+Requirements:
+- Ensure the word container begins below the image's allocated region.
+- Prevent any word container background or layer from covering image content.
+- Remove unintended overlapping positioning.
+- Correct any conflicting overflow rules.
+- Ensure letter animation wrappers do not extend over the image at their resting positions.
+- Preserve any necessary animation-specific clipping within the letter components themselves.
+
+Do not use z-index alone as the solution.
+
+The image and word containers must be genuinely separated in the layout.
+
+The final visible bottom edge of the image must always remain above the top of the spelling region, with appropriate padding.
+
+
+### 9. Preserve Image Entrance Animations
+
+Let's Spell images currently animate into view automatically.
+
+Preserve:
+- Automatic image entrance.
+- Existing growth animation.
+- Existing fade-in animation.
+- Existing animation timing.
+- Existing animation easing.
+- Automatic entrance when moving to the next item.
+
+Requirements:
+- The image must animate within its responsive layout region.
+- The image must finish at its correctly calculated responsive size.
+- Animation transforms must not override final image dimensions.
+- The image must not jump after the animation finishes.
+- The image must not move into the word region.
+- If the entrance animation temporarily enlarges the image, ensure its animation remains visually contained without clipping or covering the spelling word.
+
+Keep desktop animations visually unchanged.
+
+
+### 10. Preserve Spelling Word Animations
+
+Do not modify the existing spelling functionality.
+
+Preserve:
+- DynaPuff typography.
+- Existing letter sizes.
+- Existing letter reveal behaviour.
+- Individual letter rotations.
+- Letter growth and fade animations.
+- Fixed letter positions.
+- Manual forward progression.
+- Backward navigation.
+- Multiword support.
+- Completion controls.
+
+Requirements:
+- Revealing letters must not resize the image.
+- Revealing letters must not reposition the image.
+- Revealing letters must not change the layout height.
+- Hidden letter slots must continue reserving their space.
+- The word region must remain stable throughout the sequence.
+
+The image and word layout must be independent of the number of letters currently revealed.
+
+
+### 11. Responsive Viewport Handling
+
+The layout must adapt to different mobile screen sizes.
+
+Support:
+- Small mobile screens.
+- Larger mobile screens.
+- Tablets.
+- Portrait orientation.
+- Landscape orientation.
+- Mobile browser toolbar changes.
+- Mobile safe-area insets.
+
+Use responsive viewport units where appropriate.
+
+Requirements:
+- Keep the image fully visible.
+- Keep the spelling word fully visible.
+- Maintain separation between image and word.
+- Preserve horizontal centring.
+- Prevent horizontal overflow.
+- Do not introduce excessive empty vertical space.
+
+On extremely short screens where all content cannot fit at usable dimensions:
+- Allow vertical scrolling as a fallback.
+- Keep the image before the word in document flow.
+- Do not overlap or clip either region.
+- Do not change normal desktop scrolling behaviour.
+
+
+### 12. Image Shapes and Dimensions
+
+The layout must work with different types of images.
+
+Test:
+- Square images.
+- Portrait images.
+- Landscape images.
+- Large images.
+- Smaller natural-resolution images.
+
+Test multiple Let's Spell categories:
+- Animals.
+- Food.
+- Sports.
+- Clothes.
+
+Ensure every image:
+- Remains fully visible.
+- Maintains its aspect ratio.
+- Fits above the spelling word.
+- Retains its existing entrance animation.
+- Does not overlap any other content.
+
+
+### 13. Avoid Previous Failed Approaches
+
+Previous attempts at resolving this issue introduced regressions.
+
+Do not repeat the following mistakes:
+
+- Simply reducing image width without constraining image height.
+- Setting max-height percentages against an unconstrained parent.
+- Moving images downwards with additional margins.
+- Vertically centring images within the entire viewport without accounting for the word.
+- Using z-index to conceal overlapping layout regions.
+- Hiding oversized image content with overflow: hidden.
+- Adding multiple conflicting CSS media queries.
+- Changing global image styles.
+- Repositioning desktop image containers.
+- Changing desktop image sizes.
+- Applying arbitrary pixel offsets instead of correcting container layout.
+
+Review existing CSS before making changes.
+
+Prefer a small, maintainable correction to the current layout structure.
+
+
+### 14. Implementation Approach
+
+Use the application's existing SCSS architecture.
+
+Requirements:
+- Keep responsive rules scoped to Let's Spell gameplay.
+- Preserve all shared styles.
+- Preserve the existing colour variables and their values.
+- Preserve all existing animations.
+- Avoid unnecessary JavaScript.
+- Prefer CSS Grid or Flexbox for responsive sizing.
+- Use min-height: 0 where required for flexible containers.
+- Ensure image height constraints are calculated against a definite available region.
+- Maintain a single predictable layout mechanism.
+- Remove contradictory responsive rules where necessary.
+- Avoid introducing new dependencies.
+
+Do not modify unrelated components or activities.
+
+
+### 15. Verification and Testing
+
+This issue has survived several previous attempted fixes.
+
+Do not mark the feature complete based solely on successful compilation.
+
+Test the actual rendered layout.
+
+Mobile viewports:
+- 320x568.
+- 375x667.
+- 390x844.
+- 430x932.
+- Mobile landscape.
+
+Desktop viewports:
+- 1366x768.
+- 1920x1080.
+
+For each viewport, verify:
+- The image is fully visible.
+- The image is above the spelling word.
+- The word container does not cover the image.
+- The image is not unnecessarily low.
+- The image has appropriate top padding.
+- A visible gap exists between image and word.
+- No horizontal clipping occurs.
+- Image aspect ratio is preserved.
+- Image animation finishes in the correct position.
+- Revealing letters does not move the image.
+
+Inspect the actual rendered boundaries of the image and word regions.
+
+The image's visible bottom edge must remain above the word region's top edge, with an appropriate gap.
+
+Inspect the layout:
+- Before image entrance completes.
+- After image entrance completes.
+- After the first letter appears.
+- After the entire word has been revealed.
+- When completion controls become visible.
+
+Account for the image's temporary animation scale when verifying visible boundaries.
+
+Compare desktop screenshots before and after implementing this feature.
+
+Do not consider the feature successful if desktop positioning or dimensions have changed unexpectedly.
+
+If browser-based visual verification is unavailable, report that limitation rather than claiming the layout has been visually confirmed.
+
+
+### Acceptance Criteria
+
+Layout:
+- Every Let's Spell image appears entirely above the spelling word.
+- The word container never covers or clips images.
+- The image region uses the available space above the word.
+- Images automatically shrink when vertical space is limited.
+- Images never exceed the available image region.
+- There is appropriate padding above and below the images.
+- Images remain horizontally centred.
+- No excessive empty space is introduced.
+
+Responsive Behaviour:
+- Square images display correctly.
+- Portrait images display correctly.
+- Landscape images display correctly.
+- Short mobile screens are supported.
+- Mobile portrait and landscape orientations work.
+- No unintended horizontal overflow occurs.
+- Extremely short screens can scroll rather than overlap content.
+
+Desktop Preservation:
+- Desktop image dimensions remain unchanged.
+- Desktop image positioning remains unchanged.
+- Desktop word positioning remains unchanged.
+- Desktop animations remain unchanged.
+- Desktop spacing remains unchanged.
+- No visual desktop regressions are introduced.
+
+Functionality:
+- Images continue animating in automatically.
+- Letter animations remain unchanged.
+- Letter positions remain stable.
+- Forward and backward navigation continue working.
+- Completion controls remain functional.
+- Category and item selection remain unchanged.
+
+Quality:
+- The root cause of image clipping is resolved.
+- No arbitrary positioning workarounds are introduced.
+- No contradictory responsive rules remain.
+- The implementation is maintainable.
+- The issue is verified across multiple viewport sizes.
+
+
+## Epic-008 - General Rules
+
+1. Follow AGENTS.md.
+
+2. Preserve the existing desktop experience.
+
+3. Focus exclusively on Let's Spell gameplay image responsiveness.
+
+4. Do not change any existing colours.
+
+5. Do not modify global typography.
+
+6. Do not modify unrelated activities.
+
+7. Preserve all image and letter animations.
+
+8. Preserve existing gameplay behaviour.
+
+9. Avoid new dependencies.
+
+10. Prefer CSS layout corrections over JavaScript calculations.
+
+11. Do not repeat previously failed image sizing approaches.
+
+12. Verify actual rendered element positions.
+
+13. Check both mobile and desktop before completing the feature.
+
+14. If a change breaks desktop, correct it before proceeding.
+
+15. Do not mark the feature complete until the image and word regions are confirmed not to overlap.

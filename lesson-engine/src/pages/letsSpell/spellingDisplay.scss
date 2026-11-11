@@ -21,6 +21,18 @@
     env(safe-area-inset-left)
   );
   --spelling-word-region-height: clamp(4.5rem, 18dvh, 11rem);
+  --spelling-image-max-height: max(
+    0px,
+    calc(
+      100dvh - var(--spelling-padding-top) -
+        var(--spelling-padding-bottom) -
+        var(--spelling-word-region-height) -
+        var(--spelling-completion-region-height) -
+        var(--spelling-layout-gap) - var(--spelling-layout-gap) -
+        var(--spelling-image-region-padding) -
+        var(--spelling-image-region-padding)
+    )
+  );
 
   position: fixed;
   display: grid;
@@ -71,6 +83,7 @@
 
   &__image-region {
     padding: var(--spelling-image-region-padding);
+    contain: layout;
   }
 
   &__image {
@@ -78,7 +91,7 @@
     width: auto;
     height: auto;
     max-width: min(750px, 100%);
-    max-height: min(750px, 100%);
+    max-height: min(750px, var(--spelling-image-max-height));
     object-fit: contain;
     opacity: 0;
     visibility: hidden;
@@ -189,25 +202,6 @@
       visibility: visible;
       animation: spelling-completion-fade-out
         var(--spelling-completion-animation-duration, 350ms) ease-in both;
-    }
-  }
-
-  @media (max-width: 40rem), (max-height: 40rem) and (max-width: 64rem) {
-    --spelling-image-max-height: max(
-      0px,
-      calc(
-        100dvh - var(--spelling-padding-top) -
-          var(--spelling-padding-bottom) -
-          var(--spelling-word-region-height) -
-          var(--spelling-completion-region-height) -
-          var(--spelling-layout-gap) - var(--spelling-layout-gap) -
-          var(--spelling-image-region-padding) -
-          var(--spelling-image-region-padding)
-      )
-    );
-
-    &__image {
-      max-height: min(750px, var(--spelling-image-max-height));
     }
   }
 
